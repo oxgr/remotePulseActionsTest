@@ -7,7 +7,7 @@
 
 
 #include "customDefines.h"
-#include "dialHandler.h"
+#include "sensorHandler"
 #include "oscNetwork.h"
 #include "ofxDmx.h"
 #include "oneHeart.h"
@@ -52,7 +52,7 @@ class ofApp : public ofBaseApp{
     vector<string> getLocalIPs();
     
     //----serial button
-    dialHandler dial_object;
+    sensorHandler hands_object;
     
     //---OSC 
     ofxPanel gui_osc;
@@ -74,8 +74,8 @@ class ofApp : public ofBaseApp{
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
     void renderDMX();
     
-    ofParameter<bool> useTestBPM;
     ofParameter<int> meTestBPM;
      ofParameter<int> otherTestBPM;
+    
     ofParameter<float> beat2Offset;
 };

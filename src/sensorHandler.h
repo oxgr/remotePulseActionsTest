@@ -1,13 +1,13 @@
 //
-//  dialHandler.h
+//  sensorHandler.h
 //  clouddisplaycontrol
 //
 //  Created by Caroline Record on 4/24/19.
 //
 //
 
-#ifndef dialHandler_h
-#define dialHandler_h
+#ifndef sensorHandler_h
+#define sensorHandler_h
 
 #include "ofxSerial.h"
 
@@ -31,7 +31,7 @@ public:
 };
 
 
-class dialHandler {
+class sensorHandler {
     
 public:
     
@@ -42,7 +42,7 @@ public:
     std::vector<SerialMessage> serialMessages;
     
     
-    ofxPanel gui_dial;
+    ofxPanel gui_sensor;
     ofParameter<float> smoothing;
     float old_smoothing;
      float lastSin, lastCos;
@@ -83,17 +83,17 @@ public:
         
         setupSerial();
         
-        gui_dial.setup();
-        gui_dial.setName("serialDial");
-        gui_dial.setPosition(220,10);
-        gui_dial.setHeaderBackgroundColor(ofColor(255,0,0));
-        gui_dial.add(smoothing.set("smoothing",0.1,0.0001,1));
-        gui_dial.add(accumAmount.set("accumAmount",10,1,100));
+        gui_sensor.setup();
+        gui_sensor.setName("serialSensor");
+        gui_sensor.setPosition(220,10);
+        gui_sensor.setHeaderBackgroundColor(ofColor(255,0,0));
+        gui_sensor.add(smoothing.set("smoothing",0.1,0.0001,1));
+        gui_sensor.add(accumAmount.set("accumAmount",10,1,100));
         //        gui_button.add(restBright.set("restBright",100,0,255));
         //        gui_button.add(fadeDuration.set("fadeDuration",100,1,1500));
         //        gui_button.add(fadeMin.set("fadeMin",0,0,255));
         //        gui_button.add(fadeMax.set("fadeMax",255,0,255));
-        gui_dial.loadFromFile("gui_dial.xml");
+        gui_sensor.loadFromFile("gui_sensor.xml");
         
         //        setButtonOn(); 
         
@@ -125,7 +125,7 @@ public:
         
         if (!deviceDescriptors.empty()) {
             
-            ofLogNotice("dialHandler::setup") << "Connected Devices: ";
+            ofLogNotice("sensorHandler::setup") << "Connected Devices: ";
             for (auto deviceDescriptor: deviceDescriptors){
                 ofLogNotice("ofApp::setup") << "\t" << deviceDescriptor;
             }
@@ -620,5 +620,5 @@ public:
 };
 
 
-#endif /* dialHandler_h */
+#endif /* sensorHandler_h */
 

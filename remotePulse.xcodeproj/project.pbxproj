@@ -279,7 +279,7 @@
 		79F1B32CBD205754ECBE956E /* list_ports_win.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = list_ports_win.cc; path = ../../../addons/ofxSerial/libs/serial/src/impl/list_ports/list_ports_win.cc; sourceTree = SOURCE_ROOT; };
 		7A6C877B8EC4F7438DED9FB4 /* ecdh.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ecdh.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/ecdh.h; sourceTree = SOURCE_ROOT; };
 		7B8F262E90F842B6011F0935 /* SerialDevice.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SerialDevice.cpp; path = ../../../addons/ofxSerial/libs/ofxSerial/src/SerialDevice.cpp; sourceTree = SOURCE_ROOT; };
-		7CCB2DF3DEE053201914D608 /* dialHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = dialHandler.h; path = src/dialHandler.h; sourceTree = SOURCE_ROOT; };
+		7CCB2DF3DEE053201914D608 /* sensorHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sensorHandler.h; path = src/sensorHandler.h; sourceTree = SOURCE_ROOT; };
 		7D3A8C6EA022F43F7B57C119 /* pkcs12.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pkcs12.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/pkcs12.h; sourceTree = SOURCE_ROOT; };
 		7DBD4311D51383233476A246 /* decode.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = decode.c; path = ../../../addons/ofxIO/libs/brotli/src/dec/decode.c; sourceTree = SOURCE_ROOT; };
 		7E25FB5473A2AF9C1578BDB6 /* find_match_length.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = find_match_length.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/find_match_length.h; sourceTree = SOURCE_ROOT; };
@@ -1701,7 +1701,7 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				E23148ED237B898E0070FDA9 /* oneHeart.h */,
-				7CCB2DF3DEE053201914D608 /* dialHandler.h */,
+				7CCB2DF3DEE053201914D608 /* sensorHandler.h */,
 				E23148E9237B4ED30070FDA9 /* oscNetwork.h */,
 			);
 			path = src;

@@ -37,9 +37,9 @@ void ofApp::setup(){
     gui_main.add(allHearts[0].bUseSound.set("useAudio for "+allHearts[0].myLabel,false));
     gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
 
-     gui_main.add(useTestBPM.set("useTestBPM",false));
-    gui_main.add(meTestBPM.set("meTestBPM",60,50,200));
-    gui_main.add(otherTestBPM.set("otherTestBPM",60,50,200));
+//     gui_main.add(useTestBPM.set("useTestBPM",false));
+    gui_main.add(meTestBPM.set("meTestBPM",60,0,200));
+    gui_main.add(otherTestBPM.set("otherTestBPM",60,0,200));
    
      gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
     
@@ -57,8 +57,7 @@ void ofApp::setup(){
     
     
     //---serial
-    dial_object.setup();
-//    dial_object.gui_dial.setPosition(10,100);
+    hands_object.setup();
     
     //--osc
     osc_object.setup(myIP, broadCastIP);
@@ -82,8 +81,8 @@ void ofApp::setup(){
 void ofApp::exit(){
     osc_object.exit();
     
-    dial_object.exit();
-    dial_object.gui_dial.saveToFile("GUIs/gui_dial.xml");
+    hands_object.exit();
+//    hands_object.gui_sensor.saveToFile("GUIs/gui-sensor.xml");
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -106,10 +105,11 @@ void ofApp::update(){
         
     }
     
-    if(useTestBPM == true){
-        allHearts[0].bpm = meTestBPM;
-        allHearts[1].bpm = otherTestBPM;
-    }
+    
+    if(meTestBPM > 0) allHearts[0].bpm = meTestBPM;
+    if(otherTestBPM > 0)  allHearts[1].bpm = otherTestBPM;
+    
+    //--pass on OSC received BPM
     if(osc_object.gotBPM == true){
         allHearts[1].bpm = osc_object.rxBPM;
         osc_object.gotBPM = false;
@@ -118,21 +118,15 @@ void ofApp::update(){
     for(auto & aHeart : allHearts){
         aHeart.update(bEnableDMX, beat2Offset);
     }
-
-//    if(test_delayTimer.tick()){
-//        allHearts[0].bpm = ofRandom(50,160);
-//    }
     
+    //send out to OSC my BPM
     if(allHearts[0].old_bpm != allHearts[0].bpm){
         allHearts[0].old_bpm = allHearts[0].bpm;
         osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
     }
     
+    hands_object.update();
     
-    
-    //    ofLog()<<"dmxValues[0] "<<int(dmxValues[0]);
-    
-    dial_object.update();
     if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
     
     renderDMX();
@@ -155,7 +149,7 @@ void ofApp::draw(){
     allHearts[0].draw(50, 200);
     allHearts[1].draw(350, 200); 
     
-    dial_object.draw(250,10);
+    hands_object.draw(250,10);
     
     
 #ifdef USE_DMX
@@ -165,7 +159,7 @@ void ofApp::draw(){
     if(bShowGui == true){
         gui_main.draw();
         gui_osc.draw();
-        dial_object.gui_dial.draw();
+        hands_object.gui_sensor.draw();
     }
 }
 
@@ -198,7 +192,7 @@ void ofApp::saveGui(){
     //    gui_main.saveToFile("GUIs/gui_main.xml");
     
     
-    dial_object.gui_dial.saveToFile("GUIs/gui_dial.xml");
+    hands_object.gui_sensor.saveToFile("GUIs/gui_sensor.xml");
     gui_osc.saveToFile("GUIs/gui_osc.xml");
 }
 

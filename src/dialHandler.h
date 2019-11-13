@@ -85,7 +85,7 @@ public:
         
         gui_dial.setup();
         gui_dial.setName("serialDial");
-        gui_dial.setPosition(10,200);
+        gui_dial.setPosition(220,10);
         gui_dial.setHeaderBackgroundColor(ofColor(255,0,0));
         gui_dial.add(smoothing.set("smoothing",0.1,0.0001,1));
         gui_dial.add(accumAmount.set("accumAmount",10,1,100));

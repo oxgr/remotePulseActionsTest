@@ -10,6 +10,7 @@
 #include "dialHandler.h"
 #include "oscNetwork.h"
 #include "ofxDmx.h"
+#include "oneHeart.h"
 
 #include "ofxTiming.h"
 
@@ -61,14 +62,10 @@ class ofApp : public ofBaseApp{
     void drawRuntime(int _x, int _y);
     string runtime_str;
     
-    //BPM
-    int meBPM;
-    int old_meBPM;
-    int otherBPM;
-    int old_otherBPM;
+    vector<oneHeart> allHearts;
     
-    float bpmInSeconds;
-    float old_bpmInSeconds;
+    DelayTimer test_delayTimer;
+    
     //--dmx
     ofxDmx dmx;
     string dmxDeviceString;
@@ -77,14 +74,8 @@ class ofApp : public ofBaseApp{
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
     void renderDMX();
     
-    //__BPM
-     DelayTimer bpm_delayTimer;
-     LerpTimer bpm_lerpTimer;
-    
-    DelayTimer test_delayTimer;
-    
-    ofSoundPlayer  beat1;
-    ofSoundPlayer  beat2;
-    
-    bool bStart2ndBeat;
+    ofParameter<bool> useTestBPM;
+    ofParameter<int> meTestBPM;
+     ofParameter<int> otherTestBPM;
+    ofParameter<float> beat2Offset;
 };

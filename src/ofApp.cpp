@@ -21,6 +21,10 @@ void ofApp::setup(){
         ofLog()<<ip_list[i];
     }
     
+    allHearts.resize(2);
+    
+    allHearts[0].setup("me",0,1,dmx);
+    allHearts[1].setup("other",1,3,dmx);
     
     gui_main.setup();
     gui_main.setName("remotePulse");
@@ -29,6 +33,16 @@ void ofApp::setup(){
     //    gui_main.add(versionString.set("ver", ""));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bEnableDMX.set("enableDMX",false));
+
+    gui_main.add(allHearts[0].bUseSound.set("useAudio for "+allHearts[0].myLabel,false));
+    gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
+
+     gui_main.add(useTestBPM.set("useTestBPM",false));
+    gui_main.add(meTestBPM.set("meTestBPM",60,50,200));
+    gui_main.add(otherTestBPM.set("otherTestBPM",60,50,200));
+   
+     gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
+    
     gui_main.loadFromFile("GUIs/gui_main.xml");
     
     //---dmx
@@ -44,7 +58,7 @@ void ofApp::setup(){
     
     //---serial
     dial_object.setup();
-    dial_object.gui_dial.setPosition(10,200);
+//    dial_object.gui_dial.setPosition(10,100);
     
     //--osc
     osc_object.setup(myIP, broadCastIP);
@@ -58,18 +72,10 @@ void ofApp::setup(){
     osc_object.init();
     
     bShowGui = true;
-    meBPM = 50;
-    
-    bpm_delayTimer.setPeriod(1); // to get it started
-    
     test_delayTimer.setPeriod(10);
     
-    beat1.load("sounds/oneBeat.wav");
-    beat2.load("sounds/oneBeat2.wav");
-    beat1.setVolume(1.0f);
-    beat2.setVolume(1.0f);
-    beat1.setMultiPlay(false);
-    beat2.setMultiPlay(false);
+
+    
     //    bpm_lerpTimer.setDuration(1);
 }
 
@@ -95,86 +101,35 @@ void ofApp::update(){
             osc_object.addAliveMessage(myIP,runtime_str);
             
         }else{
-            ofLog()<<"wrong IP range. is"<<myIP<<" should be "<<MX_IP<<" or "<<US_IP;
+//            ofLog()<<"wrong IP range. is"<<myIP<<" should be "<<MX_IP<<" or "<<US_IP;
         }
         
     }
     
-    
+    if(useTestBPM == true){
+        allHearts[0].bpm = meTestBPM;
+        allHearts[1].bpm = otherTestBPM;
+    }
     if(osc_object.gotBPM == true){
-        otherBPM = osc_object.rxBPM;
+        allHearts[1].bpm = osc_object.rxBPM;
         osc_object.gotBPM = false;
-        
-        //        float bpmMillis = otherBPM / 60.0;
-        
-        //        ofLog()<<"bpmMillis "<<bpmMillis;
-        //        bpm_delayTimer.setPeriod(bpmMillis);
-        //        bpm_lerpTimer.setDuration(bpmMillis);
     }
     
-    
-    //    meBPM += 1;
-    //    if(meBPM > 200) meBPM = 50;
-    
-    if(test_delayTimer.tick()){
-        meBPM = ofRandom(50,200);
+    for(auto & aHeart : allHearts){
+        aHeart.update(bEnableDMX, beat2Offset);
     }
-    
-    if(old_meBPM != meBPM){
-        old_meBPM = meBPM;
-        osc_object.addBPMMessage(osc_object.sendToIP, meBPM);
-    }
-    
-    
-    
-   
-        if(old_otherBPM != otherBPM){
-            old_otherBPM = otherBPM;
-            bpmInSeconds = 60.0 / float(otherBPM);
-            //            ofLog()<<"bpmInSeconds "<<bpmInSeconds;
-            //            bpm_delayTimer.setPeriod(bpmInSeconds);
-            //            bpm_lerpTimer.setDuration(bpmInSeconds);
-            
-        }
 
+//    if(test_delayTimer.tick()){
+//        allHearts[0].bpm = ofRandom(50,160);
+//    }
     
-    
-    if(bpm_delayTimer.tick() == true){
-        
-        bStart2ndBeat = true;
-        if(beat1.isPlaying() == false) beat1.play();
-        ofLog()<<ofGetElapsedTimef()<<" beat1.play()";
-        
-        if(old_bpmInSeconds != bpmInSeconds){
-            old_bpmInSeconds = bpmInSeconds;
-            ofLog()<<"BPM "<<otherBPM<<" in bpmInSeconds "<<bpmInSeconds;
-            bpm_delayTimer.setPeriod(bpmInSeconds);
-            bpm_lerpTimer.setDuration(bpmInSeconds);
-        }
-        
-        bpm_lerpTimer.setToValue(0);
-        bpm_lerpTimer.lerpToValue(1);
+    if(allHearts[0].old_bpm != allHearts[0].bpm){
+        allHearts[0].old_bpm = allHearts[0].bpm;
+        osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
     }
     
     
-//    ofLog()<<"bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress()<<" bStart2ndBeat "<<bStart2ndBeat;
-    if(bpm_lerpTimer.getProgress() > 0.15 && bStart2ndBeat == true){
-        if(beat2.isPlaying() == false){
-            beat2.play();
-            ofLog()<<ofGetElapsedTimef()<<" beat2.play()";
-            bStart2ndBeat = false;
-        }
-    }
     
-    //    bpm_lerpTimer.lerpToValue(1);
-    
-    if(bpm_lerpTimer.getProgress() < 0.6){
-        dmxValues[0] = ofMap(bpm_lerpTimer.getProgress(), 0, 0.6, 0, 255,true);
-        dmxValues[1] = ofMap(bpm_lerpTimer.getProgress(), 0.15, 0.6, 0, 255,true);
-    }else{
-        dmxValues[0] = 0;
-        dmxValues[1] = 0;
-    }
     //    ofLog()<<"dmxValues[0] "<<int(dmxValues[0]);
     
     dial_object.update();
@@ -188,32 +143,23 @@ void ofApp::draw(){
     
     drawRuntime(ofGetWidth()/2, 10);
     
-    ofPushMatrix();
-    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
+//    ofPushMatrix();
+//    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
     
-    int tempY = 0;
-    ofSetColor(255);
-    ofDrawBitmapString("meBPM "+ofToString(meBPM),0,tempY+=15);
-    ofDrawBitmapString("otherBPM "+ofToString(otherBPM),0,tempY+=15);
-    osc_object.drawAliveMsg(0,tempY+=15);
+     osc_object.drawAliveMsg(40,300);
     
-    ofSetColor(255);
-    stringstream msg;
-    msg << "beat1.isPlaying: " << beat1.isPlaying() << endl;
-    msg << "lerpTimer:"
-    << " from " << bpm_lerpTimer.getStartValue()
-    << " to " << bpm_lerpTimer.getTargetValue()
-    << " : " << int(bpm_lerpTimer.getValue())
-    << " (" << int(100*bpm_lerpTimer.getProgress()) << "%)" << endl;
-    ofDrawBitmapString(msg.str(),0,tempY+=15);
-    
-    ofPopMatrix();
+//    for(auto & aHeart : allHearts){
+//        aHeart.draw(50,50);
+//    }
+
+    allHearts[0].draw(50, 200);
+    allHearts[1].draw(350, 200); 
     
     dial_object.draw(250,10);
     
     
 #ifdef USE_DMX
-    drawDmxBar(5,ofGetHeight() - 50, 1 ,2); 
+    drawDmxBar(5,ofGetHeight() - 50, 2 ,24); 
 #endif
     
     if(bShowGui == true){
@@ -226,9 +172,9 @@ void ofApp::draw(){
 void ofApp::renderDMX() {
     
 #ifdef USE_DMX
-    for (int i = 0; i < dmxValues.size()-1; i++) {
-        dmx.setLevel(i+1, dmxValues[i]);
-    }
+//    for (int i = 0; i < dmxValues.size()-1; i++) {
+//        dmx.setLevel(i+1, dmxValues[i]);
+//    }
     
     if(bEnableDMX == true)    dmx.update();
 #endif
@@ -386,7 +332,7 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
     ofDrawBitmapStringHighlight("dmx device = "+dmxDeviceString,0,yy+=15);
     
     
-    int _w = 11;
+    int _w = 50; //11;
     int groupCnt = 0;
     int temp_group = 0;
     int temp_x = 0;
@@ -397,6 +343,7 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
         
 #ifdef USE_DMX
         int temp_level = dmx.getLevel(i);
+//        ofLog()<<i<<" temp_level "<<temp_level;
 #else
         int temp_level = 255;
 #endif

@@ -8,6 +8,6 @@
 		<oscSendInterval>10</oscSendInterval>
 		<bpm_rx />
 		<other_bpm_received></other_bpm_received>
-		<me_bpm_sent>172</me_bpm_sent>
+		<me_bpm_sent>60</me_bpm_sent>
 	</osc_speakers>
 </OSC>

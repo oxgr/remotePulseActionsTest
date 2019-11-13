@@ -38,6 +38,8 @@ void ofApp::setup(){
     gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
 
 //     gui_main.add(useTestBPM.set("useTestBPM",false));
+     gui_main.add(meTouched.set("meTouched",false));
+     gui_main.add(otherTouched.set("otherTouched",false));
     gui_main.add(meTestBPM.set("meTestBPM",60,0,200));
     gui_main.add(otherTestBPM.set("otherTestBPM",60,0,200));
    
@@ -115,13 +117,15 @@ void ofApp::update(){
         osc_object.gotBPM = false;
     }
     
-    for(auto & aHeart : allHearts){
-        aHeart.update(bEnableDMX, beat2Offset);
-    }
+//    for(auto & aHeart : allHearts){
+//    for(int i=0; i<allHearts.size(); i++)
+        allHearts[0].update(bEnableDMX, beat2Offset, meTouched);
+     allHearts[1].update(bEnableDMX, beat2Offset, otherTouched);
+//    }
     
     //send out to OSC my BPM
-    if(allHearts[0].old_bpm != allHearts[0].bpm){
-        allHearts[0].old_bpm = allHearts[0].bpm;
+    if(allHearts[0].haveNewBPM == true){
+        allHearts[0].haveNewBPM = false;
         osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
     }
     

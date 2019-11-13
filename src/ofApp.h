@@ -7,7 +7,7 @@
 
 
 #include "customDefines.h"
-#include "sensorHandler"
+#include "sensorHandler.h"
 #include "oscNetwork.h"
 #include "ofxDmx.h"
 #include "oneHeart.h"
@@ -74,8 +74,11 @@ class ofApp : public ofBaseApp{
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
     void renderDMX();
     
+    //---test
     ofParameter<int> meTestBPM;
      ofParameter<int> otherTestBPM;
+    ofParameter<bool> meTouched;
+    ofParameter<bool> otherTouched;
     
     ofParameter<float> beat2Offset;
 };

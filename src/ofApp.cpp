@@ -6,7 +6,7 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     
     ofSetFrameRate(60);
-    ofBackground(20);
+    ofBackground(127);
     
     //IP
     MX_IP = "10.0.1.191";
@@ -21,6 +21,48 @@ void ofApp::setup(){
         ofLog()<<ip_list[i];
     }
     
+
+    
+    allHearts.resize(2);
+    
+    allHearts[0].setup("me",0,1,dmx);
+    allHearts[1].setup("other",1,5,dmx);
+    
+    group_debug.setName("debug");
+    group_debug.add(triggerFakeMe.set("triggerFake",false));
+    group_debug.add(meTestTouched.set("meTouched",false));
+    group_debug.add(meTestBPM.set("meTestBPM",60,0,200));
+    
+    group_debug.add(triggerFakeOther.set("triggerFake",false));
+    group_debug.add(otherTestTouched.set("otherTouched",false));
+    group_debug.add(otherTestBPM.set("otherTestBPM",60,0,200));
+    
+    gui_main.setup();
+    gui_main.setName("remotePulse");
+    gui_main.setPosition(10,50);
+    gui_main.setHeaderBackgroundColor(ofColor(255,0,0));
+    gui_main.add(versionString.set("ver", ""));
+    gui_main.add(bEnableDMX.set("enableDMX",false));
+    gui_main.add(bShowGui.set("showGui",true));
+    gui_main.add(bDebug.set("debug",false));
+    gui_main.add(group_debug);
+    
+    gui_main.add(allHearts[0].bUseSound.set("useAudio for "+allHearts[0].myLabel,false));
+    gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
+    
+    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
+    gui_main.add(touchBrightness.set("touchBright",100,0,255));
+    gui_main.add(firstMaxBrightness.set("firstBright",127,0,255));
+    gui_main.add(secondMaxBrightness.set("secondBright",127,0,255));
+    gui_main.add(firstVolume.set("firstVol",0.5,0,1));
+    gui_main.add(secondVolume.set("secondVol",0.5,0,1)); 
+ 
+    gui_main.loadFromFile("GUIs/gui_main.xml");
+    gui_main.minimizeAll();
+    
+    allHearts[0].bUseSound = false;
+    allHearts[1].bUseSound = true;
+    
     string temp_versionString = version_object.getVersionString("ofApp.h");
     if(temp_versionString != ""){
         versionString = temp_versionString;
@@ -30,39 +72,7 @@ void ofApp::setup(){
     }
     ofLog()<<"used versionString "<<versionString;
     
-    allHearts.resize(2);
-    
-    allHearts[0].setup("me",0,1,dmx);
-    allHearts[1].setup("other",1,5,dmx);
-    
-    gui_main.setup();
-    gui_main.setName("remotePulse");
-    gui_main.setPosition(10,10);
-    gui_main.setHeaderBackgroundColor(ofColor(255,0,0));
-      gui_main.add(versionString.set("ver", ""));
-    gui_main.add(bShowGui.set("showGui",true));
-     gui_main.add(bDebug.set("debug",false));
-    
-    gui_main.add(bEnableDMX.set("enableDMX",false));
-    
-    gui_main.add(allHearts[0].bUseSound.set("useAudio for "+allHearts[0].myLabel,false));
-    gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
-    
-    gui_main.add(triggerFakeBPMReading.set("triggerFake",false));
-    gui_main.add(meTouched.set("meTouched",false));
-    gui_main.add(otherTouched.set("otherTouched",false));
-    gui_main.add(meTestBPM.set("meTestBPM",60,0,200));
-    gui_main.add(otherTestBPM.set("otherTestBPM",60,0,200));
-    
-    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
-    
-       gui_main.add(touchBrightness.set("touchBright",100,0,255));
-    gui_main.add(firstMaxBrightness.set("firstBright",127,0,255));
-    gui_main.add(secondMaxBrightness.set("secondBright",127,0,255));
-    gui_main.add(firstVolume.set("firstVol",0.5,0,1));
-    gui_main.add(secondVolume.set("secondVol",0.5,0,1)); 
- 
-    gui_main.loadFromFile("GUIs/gui_main.xml");
+    bEnableDMX = true;
     
     //---dmx
     dmxValues.resize(MAX_DMX_CHANNELS+1);
@@ -81,7 +91,7 @@ void ofApp::setup(){
     osc_object.setup(myIP, broadCastIP);
     gui_osc.setup();
     gui_osc.setName("OSC");
-    gui_osc.setPosition(430, 10);
+    gui_osc.setPosition(430, 50);
     gui_osc.setHeaderBackgroundColor(ofColor(255,0,0));
     gui_osc.add(osc_object.parameters_oscManualControls);
     
@@ -117,7 +127,7 @@ void ofApp::update(){
             buf.set(ofGetTimestampString());
             ofBufferToFile("runLogs/heartbeat.txt", buf);
             
-            osc_object.addAliveMessage(myIP,runtime_str, hands_object.aliveCounter);
+            osc_object.addAliveMessage(osc_object.sendToIP,runtime_str, hands_object.aliveCounter);
             
         }else{
             //            ofLog()<<"wrong IP range. is"<<myIP<<" should be "<<MX_IP<<" or "<<US_IP;
@@ -125,11 +135,7 @@ void ofApp::update(){
         
     }
     
-    if(triggerFakeBPMReading == true){
-        triggerFakeBPMReading = false;
-        allHearts[0].setBPM(meTestBPM); //allHearts[0].bpm = meTestBPM;
-        allHearts[1].setBPM(otherTestBPM); //allHearts[1].bpm = otherTestBPM;
-    }
+    
     
     //--------------
 
@@ -149,8 +155,8 @@ void ofApp::update(){
     
     //    for(auto & aHeart : allHearts){
     //    for(int i=0; i<allHearts.size(); i++)
-    allHearts[0].update(bEnableDMX, beat2Offset, meTouched);
-    allHearts[1].update(bEnableDMX, beat2Offset, otherTouched);
+    allHearts[0].update(bEnableDMX, beat2Offset);
+    allHearts[1].update(bEnableDMX, beat2Offset);
     //    }
     
     //send out to OSC my BPM
@@ -177,6 +183,27 @@ void ofApp::update(){
     
     if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
     
+    //----debugging
+    if(old_meTestTouched != meTestTouched){
+        old_meTestTouched = meTestTouched;
+        allHearts[0].setTouch(meTestTouched);
+        osc_object.addTouchMessage(osc_object.sendToIP, meTestTouched);
+    }
+    if(triggerFakeMe == true && meTestTouched == true){
+        triggerFakeMe = false;
+        allHearts[0].setBPM(meTestBPM); //allHearts[0].bpm = meTestBPM;
+        osc_object.addBPMMessage(osc_object.sendToIP, meTestBPM);
+    }
+    
+    if(old_otherTestTouched != otherTestTouched){
+        old_otherTestTouched = otherTestTouched;
+        allHearts[1].setTouch(otherTestTouched);
+    }
+    if(triggerFakeOther == true  && otherTestTouched == true ){
+        triggerFakeOther = false;
+        allHearts[1].setBPM(otherTestBPM); //allHearts[0].bpm = meTestBPM;
+    }
+    
     renderDMX();
 }
 
@@ -184,20 +211,13 @@ void ofApp::update(){
 void ofApp::draw(){
     
     drawRuntime(ofGetWidth()/2, 10);
-    
-    //    ofPushMatrix();
-    //    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
-    
-    osc_object.drawAliveMsg(40,300);
-    
-    //    for(auto & aHeart : allHearts){
-    //        aHeart.draw(50,50);
-    //    }
+    osc_object.drawAliveMsg(ofGetWidth()/2, 10+30);
+
     
     allHearts[0].draw(50, 400);
     allHearts[1].draw(350, 400); 
     
-    hands_object.draw(250,10);
+    hands_object.draw(10,10);
     
     
 #ifdef USE_DMX
@@ -232,14 +252,12 @@ void ofApp::drawRuntime(int _x, int _y){
     
     int temp_y = 10;
     runtime_str = ofToString(myHours)+":"+ofToString(myMin)+":"+ofToString(mySec);
-    ofDrawBitmapString(runtime_str, _x, _y);
+    ofDrawBitmapString("my runtime: "+runtime_str, _x, _y);
     
 }
 
 void ofApp::saveGui(){
-    //    gui_main.saveToFile("GUIs/gui_main.xml");
-    
-    
+        gui_main.saveToFile("GUIs/gui_main.xml");
     hands_object.gui_sensor.saveToFile("GUIs/gui_sensor.xml");
     gui_osc.saveToFile("GUIs/gui_osc.xml");
 }

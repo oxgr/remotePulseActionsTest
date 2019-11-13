@@ -21,7 +21,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "5 20191113 780266c"
+#define APP_VERSION "6 20191113 235c310"
 
 class ofApp : public ofBaseApp{
 public:
@@ -45,6 +45,8 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    
+    ofParameterGroup group_debug;
     
     ofxPanel gui_main;
     ofParameter<bool> bShowGui;
@@ -90,6 +92,7 @@ public:
     ofParameter<int> firstMaxBrightness;
     ofParameter<int> secondMaxBrightness;
     ofParameter<int> touchBrightness;
+    ofParameter<float> beat2Offset;
     
     ofParameter<float> firstVolume;
     float old_firstVolume;
@@ -97,13 +100,16 @@ public:
     float old_secondVolume;
     
     //---test
-    ofParameter<bool> triggerFakeBPMReading;
+    ofParameter<bool> triggerFakeMe;
+    ofParameter<bool> triggerFakeOther;
     
     ofParameter<int> meTestBPM;
     ofParameter<int> otherTestBPM;
     
-    ofParameter<bool> meTouched;
-    ofParameter<bool> otherTouched;
+    ofParameter<bool> meTestTouched;
+    bool old_meTestTouched;
+    ofParameter<bool> otherTestTouched;
+    bool old_otherTestTouched;
     
-    ofParameter<float> beat2Offset;
+    
 };

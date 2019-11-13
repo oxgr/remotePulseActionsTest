@@ -98,7 +98,7 @@ public:
         
         gui_sensor.setup();
         gui_sensor.setName("serialSensor");
-        gui_sensor.setPosition(220,10);
+        gui_sensor.setPosition(220,50);
         gui_sensor.setHeaderBackgroundColor(ofColor(255,0,0));
         gui_sensor.add(smoothing.set("smoothing",0.1,0.0001,1));
         gui_sensor.add(accumAmount.set("accumAmount",10,1,100));
@@ -230,7 +230,7 @@ public:
         //        for(auto oneDevice: devices){
         //            ss << "Connected to: " << oneDevice.port() << std::endl;
         //        }
-        ss <<"Serial buttons:"<<endl;
+        ss <<"Serial Hands:"<<endl;
         if(bDeviceConnected == true){
             for(int i=0; i<devices.size(); i++){
                 ss <<i<<" Connected to: " << devices[i].port() << std::endl;
@@ -247,9 +247,9 @@ public:
         
         //----------serial alive info
         if(ofGetElapsedTimef() - aliveTimer <= 10){
-            ofDrawBitmapString("sensor alive "+ofToString(aliveCounter), ofVec2f(0, 50));
+            ofDrawBitmapString("local sensor alive "+ofToString(aliveCounter), ofVec2f(0, 50));
         }else{
-            ofDrawBitmapString("sensor NOT alive ", ofVec2f(0, 50));
+            ofDrawBitmapString("local sensor NOT alive ", ofVec2f(0, 50));
         }
         
         

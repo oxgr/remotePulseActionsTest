@@ -97,7 +97,7 @@ public:
         ofLog()<<myLabel<<"setTouch() _touch "<<isTouched;
     }
     
-    void update(bool _useDmx, float _beatPlayer2Offset, bool _touched){
+    void update(bool _useDmx, float _beatPlayer2Offset){ //}, bool _touched){
         
         //        isTouched = _touched;
         

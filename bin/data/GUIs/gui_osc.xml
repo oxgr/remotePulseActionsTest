@@ -8,8 +8,9 @@
 		<oscSendInterval>10</oscSendInterval>
 		<bpm_rx />
 		<other_bpm_received></other_bpm_received>
-		<me_bpm_sent>-1</me_bpm_sent>
+		<me_bpm_sent>70</me_bpm_sent>
 		<other_touch_received></other_touch_received>
 		<be_touch_sent>0</be_touch_sent>
+		<me_touch_sent>0</me_touch_sent>
 	</osc_speakers>
 </OSC>

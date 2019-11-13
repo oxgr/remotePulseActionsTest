@@ -66,6 +66,7 @@ public:
     float other_runtime_fade = 255;
     string other_runtimeStr;
     string old_other_runtimeStr;
+    string other_serialStr;
     
     void setup(string _myIP, string _broadCastIP){
         
@@ -92,8 +93,8 @@ public:
         
         parameters_oscManualControls.add(rxTouch_str.set("other touch received", ""));
         parameters_oscManualControls.add(rxBPM_str.set("other bpm received", ""));
-       
-         parameters_oscManualControls.add(txTouch_str.set("me touch sent", ""));
+        
+        parameters_oscManualControls.add(txTouch_str.set("me touch sent", ""));
         parameters_oscManualControls.add(txBPM_str.set("me bpm sent", ""));
         
         inputType = -1;
@@ -153,7 +154,7 @@ public:
     
     void addAliveMessage(string _ip, string _runtimeStr, int _serialAliveStr){
         
-        if(bDebug) ofLog()<<"addAliveMessage "<<_runtimeStr;
+        if(bDebug) ofLog()<<"addAliveMessage to _ip "<<_ip<<" _runtimeStr "<<_runtimeStr<<" _serialAliveStr "<<_serialAliveStr;
         ofxOscMessage myMessage;
         
         myMessage.setAddress("/appAlive");
@@ -228,6 +229,8 @@ public:
             receiver.getNextMessage(m);
             
             // check for mouse moved message
+            if(bDebug) ofLog()<<"osc receivere m.getAddress() "<<m.getAddress();
+            
             if(m.getAddress() == "/status"){
                 // both the arguments are int32's
                 //                int temp_id = m.getArgAsInt32(0);
@@ -235,32 +238,34 @@ public:
                 //                feedbackStatus[temp_id] = 1;
             }else if(m.getAddress() == "/BPM"){
                 string temp_forWhom = m.getArgAsString(0);
-                //                ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
+                if(bDebug) ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     rxBPM = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
-                }                
+                }       
+                
             }else if(m.getAddress() == "/Touch"){
                 string temp_forWhom = m.getArgAsString(0);
-                //                ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
-                
+                if(bDebug){
+                    ofLog()<<"myIP "<<myIP<<" osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
+                }
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     rxTouch = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
                     rxTouch_str = ofToString(rxTouch);
                     gotTouch= true;
-                }       
+                }    
+                
             }else if(m.getAddress() == "/appAlive"){
-                
                 string temp_forWhom = m.getArgAsString(0);
-                string temp_runtimeStr = m.getArgAsString(1);
-                int temp_serialAlive = m.getArgAsInt(2);
-                
+                if(bDebug) ofLog()<<"temp_forWhom "<<temp_forWhom<<" runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
+
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
-                    other_runtimeStr = temp_runtimeStr;
+                    other_runtimeStr = m.getArgAsString(1);
+                    other_serialStr = ofToString(m.getArgAsInt(2));
                     other_runtime_fade = 255;
-                }         
+                 }         
                 
             }else{
                 // unrecognized message: display on the bottom of the screen
@@ -356,11 +361,19 @@ public:
         ofTranslate(_x,_y);
         other_runtime_fade -= 1;
         other_runtime_fade = MAX(10,other_runtime_fade);
+        
         ofSetColor(0,other_runtime_fade);
-        ofDrawBitmapString("m:"+other_runtimeStr,0, 50);
+        ofDrawBitmapString("other runtime:"+other_runtimeStr,0, 0);
         ofSetColor(0);
-        ofDrawBitmapString("m:",0, 50);
+        ofDrawBitmapString("other runtime:"+other_runtimeStr,0, 0);
+        
+        ofSetColor(0,other_runtime_fade);
+        ofDrawBitmapString("other serial:"+other_serialStr,0, 20);
+        ofSetColor(0);
+        ofDrawBitmapString("other serial:"+other_serialStr,0, 20);
+        
         ofPopMatrix();
+        
     }
     
     void checkGui(){

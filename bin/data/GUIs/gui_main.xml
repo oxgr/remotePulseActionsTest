@@ -1,2 +1,26 @@
 <?xml version="1.0"?>
 <group />
+<remotePulse>
+	<ver>6 20191113 235c310</ver>
+	<showGui>0</showGui>
+	<debug>0<triggerFake>0</triggerFake>
+		<meTouched>0</meTouched>
+		<meTestBPM>60</meTestBPM>
+		<otherTouched>0</otherTouched>
+		<otherTestBPM>60</otherTestBPM>
+	</debug>
+	<enableDMX>1</enableDMX>
+	<useAudio_for_me>0</useAudio_for_me>
+	<useAudio_for_other>1</useAudio_for_other>
+	<triggerFake>0</triggerFake>
+	<meTouched>0</meTouched>
+	<otherTouched>0</otherTouched>
+	<meTestBPM>60</meTestBPM>
+	<otherTestBPM>60</otherTestBPM>
+	<beat2Offset>0.2</beat2Offset>
+	<touchBright>76</touchBright>
+	<firstBright>127</firstBright>
+	<secondBright>127</secondBright>
+	<firstVol>0.525</firstVol>
+	<secondVol>0.355</secondVol>
+</remotePulse>

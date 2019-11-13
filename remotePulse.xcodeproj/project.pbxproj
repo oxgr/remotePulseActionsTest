@@ -414,6 +414,7 @@
 		E23148E9237B4ED30070FDA9 /* oscNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oscNetwork.h; sourceTree = "<group>"; };
 		E23148EA237B61EC0070FDA9 /* customDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = customDefines.h; sourceTree = "<group>"; };
 		E23148ED237B898E0070FDA9 /* oneHeart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oneHeart.h; sourceTree = "<group>"; };
+		E23148EE237CA4DE0070FDA9 /* versionNumbering.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = versionNumbering.h; sourceTree = "<group>"; };
 		E33245F4A84B5ECC7F2DD52A /* bit_cost.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = bit_cost.c; path = ../../../addons/ofxIO/libs/brotli/src/enc/bit_cost.c; sourceTree = SOURCE_ROOT; };
 		E362E12547978AB05ABA9C57 /* DirectoryFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DirectoryFilter.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/DirectoryFilter.cpp; sourceTree = SOURCE_ROOT; };
 		E42962AC2163EDD300A6A9E2 /* ofCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ofCamera.cpp; path = ../../../libs/openFrameworks/3d/ofCamera.cpp; sourceTree = SOURCE_ROOT; };
@@ -1703,6 +1704,7 @@
 				E23148ED237B898E0070FDA9 /* oneHeart.h */,
 				7CCB2DF3DEE053201914D608 /* sensorHandler.h */,
 				E23148E9237B4ED30070FDA9 /* oscNetwork.h */,
+				E23148EE237CA4DE0070FDA9 /* versionNumbering.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

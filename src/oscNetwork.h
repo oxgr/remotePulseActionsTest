@@ -42,15 +42,17 @@ public:
     ofParameter<string> sendToIP;
     
     ofParameter<int> oscSendInterval;
-
+    
     int rxBPM;
     ofParameter<string> rxBPM_str;
-    
     ofParameter<string> txBPM_str;
     
+    int rxTouch;
+    ofParameter<string> rxTouch_str;
+    ofParameter<string> txTouch_str;
     bool initDone;
     float initTimer;
-
+    
     
     float lastOscTimer;
     
@@ -59,6 +61,7 @@ public:
     int inputType;
     
     bool gotBPM = false;
+    bool gotTouch = false;
     
     float other_runtime_fade = 255;
     string other_runtimeStr;
@@ -73,8 +76,8 @@ public:
         
         current_msg_string = 0;
         
-//        oscSendPort = 19924;
-//        oscReceivePort = 19923;
+        //        oscSendPort = 19924;
+        //        oscReceivePort = 19923;
         
         parameters_oscManualControls.setName("osc_speakers");
         
@@ -86,9 +89,13 @@ public:
         parameters_oscManualControls.add(sendToIP.set("sendToIP", "10.0.1.191"));
         
         parameters_oscManualControls.add(oscSendInterval.set("oscSendInterval", 10,0,100));
+        
+        parameters_oscManualControls.add(rxTouch_str.set("other touch received", ""));
         parameters_oscManualControls.add(rxBPM_str.set("other bpm received", ""));
+       
+         parameters_oscManualControls.add(txTouch_str.set("me touch sent", ""));
         parameters_oscManualControls.add(txBPM_str.set("me bpm sent", ""));
-
+        
         inputType = -1;
     }
     
@@ -119,29 +126,32 @@ public:
         
         myMessage.setAddress("/BPM");
         myMessage.addStringArg(_ip); 
-        myMessage.addFloatArg(_value);
-        //        if(bDebug) ofLog()<<"send osc msg: "<<_ip<<" vu "<<_value; //<<" /"<<function<<" / "<<_data;
+        myMessage.addIntArg(_value);
+        
+        if(bDebug) ofLog()<<"addBPMMessage() send osc msg: "<<_ip<<" value "<<_value;
         
         messageBuffer.push_back(myMessage);
         
         txBPM_str = ofToString(_value);
     }
     
-    void addDmxMessage(string _ip, float _degreeValue, float _dirValue){
+    void addTouchMessage(string _ip, int _value){
+        
+        
         ofxOscMessage myMessage;
         
-        myMessage.setAddress("/Dmx");
+        myMessage.setAddress("/Touch");
         myMessage.addStringArg(_ip); 
-        myMessage.addFloatArg(_degreeValue);
-        myMessage.addFloatArg(_dirValue);
-        //        if(bDebug) ofLog()<<"send osc msg: "<<_ip<<" dial "<<_value; //<<" /"<<function<<" / "<<_data;
+        myMessage.addIntArg(_value);
+        if(bDebug) ofLog()<<"addTouchMessage() send osc msg: "<<_ip<<" value "<<_value;
         
         messageBuffer.push_back(myMessage);
         
-       
+        txTouch_str = ofToString(_value);
     }
     
-    void addAliveMessage(string _ip, string _runtimeStr){
+    
+    void addAliveMessage(string _ip, string _runtimeStr, int _serialAliveStr){
         
         if(bDebug) ofLog()<<"addAliveMessage "<<_runtimeStr;
         ofxOscMessage myMessage;
@@ -149,7 +159,7 @@ public:
         myMessage.setAddress("/appAlive");
         myMessage.addStringArg(_ip); 
         myMessage.addStringArg(_runtimeStr);
-//        myMessage.addStringArg(_aliveStr); 
+        myMessage.addIntArg(_serialAliveStr); 
         
         messageBuffer.push_back(myMessage);
     }
@@ -172,38 +182,38 @@ public:
                 sendTimer = ofGetElapsedTimeMillis();
                 
                 
-                 if(messageBuffer.size() > 0){
-                 
-                 if(bDebug) ofLog()<<"messageBuffer.front() "<<messageBuffer.front();
-                 sender.sendMessage(messageBuffer.front(), true);
-                 
-                 //                    assert(!messageBuffer.empty());
-                 //                    messageBuffer.front() = std::move(messageBuffer .back());
-                 //                    messageBuffer.pop_back();
-                 
-                 assert(!messageBuffer.empty());
-                 messageBuffer.erase(messageBuffer.begin());
-                 
-                 //TODO: remove first. maybe use deque instead of vector
-                 }
-                 
+                if(messageBuffer.size() > 0){
+                    
+                    if(bDebug) ofLog()<<"messageBuffer.front() "<<messageBuffer.front();
+                    sender.sendMessage(messageBuffer.front(), true);
+                    
+                    //                    assert(!messageBuffer.empty());
+                    //                    messageBuffer.front() = std::move(messageBuffer .back());
+                    //                    messageBuffer.pop_back();
+                    
+                    assert(!messageBuffer.empty());
+                    messageBuffer.erase(messageBuffer.begin());
+                    
+                    //TODO: remove first. maybe use deque instead of vector
+                }
                 
-//                if(last_vuValue != cur_vuValue || last_degreeValue != cur_degreeValue || last_dirValue != cur_dirValue){
-//                    lastOscTimer = ofGetElapsedTimef();
-//                    last_vuValue =  cur_vuValue;
-//                    last_degreeValue = cur_degreeValue;
-//                    last_dirValue = cur_dirValue;
-//                    
-//                    ofxOscMessage myMessage;
-//                    myMessage.setAddress("/Dial+VU");
-//                    myMessage.addStringArg(_myIP); 
-//                    myMessage.addFloatArg(cur_vuValue);
-//                    myMessage.addFloatArg(cur_degreeValue);
-//                    myMessage.addFloatArg(cur_dirValue);
-//                    myMessage.addIntArg(autoPlayerCount);
-//                    sender.sendMessage(myMessage, true);
-//                    
-//                }
+                
+                //                if(last_vuValue != cur_vuValue || last_degreeValue != cur_degreeValue || last_dirValue != cur_dirValue){
+                //                    lastOscTimer = ofGetElapsedTimef();
+                //                    last_vuValue =  cur_vuValue;
+                //                    last_degreeValue = cur_degreeValue;
+                //                    last_dirValue = cur_dirValue;
+                //                    
+                //                    ofxOscMessage myMessage;
+                //                    myMessage.setAddress("/Dial+VU");
+                //                    myMessage.addStringArg(_myIP); 
+                //                    myMessage.addFloatArg(cur_vuValue);
+                //                    myMessage.addFloatArg(cur_degreeValue);
+                //                    myMessage.addFloatArg(cur_dirValue);
+                //                    myMessage.addIntArg(autoPlayerCount);
+                //                    sender.sendMessage(myMessage, true);
+                //                    
+                //                }
             }
             
             
@@ -225,18 +235,27 @@ public:
                 //                feedbackStatus[temp_id] = 1;
             }else if(m.getAddress() == "/BPM"){
                 string temp_forWhom = m.getArgAsString(0);
-//                ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
+                //                ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     rxBPM = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
                 }                
+            }else if(m.getAddress() == "/Touch"){
+                string temp_forWhom = m.getArgAsString(0);
+                //                ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
+                if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
+                    rxTouch = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
+                    rxTouch_str = ofToString(rxTouch);
+                    gotTouch= true;
+                }       
             }else if(m.getAddress() == "/appAlive"){
                 
                 string temp_forWhom = m.getArgAsString(0);
                 string temp_runtimeStr = m.getArgAsString(1);
+                int temp_serialAlive = m.getArgAsInt(2);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     other_runtimeStr = temp_runtimeStr;
@@ -284,9 +303,9 @@ public:
         myMessage.setAddress(_handle);
         myMessage.addStringArg(myIP); 
         myMessage.addIntArg(_valueA);
-//        myMessage.addFloatArg(cur_degreeValue);
-//        myMessage.addFloatArg(cur_dirValue);
-//        myMessage.addIntArg(autoPlayerCount);
+        //        myMessage.addFloatArg(cur_degreeValue);
+        //        myMessage.addFloatArg(cur_dirValue);
+        //        myMessage.addIntArg(autoPlayerCount);
         sender.sendMessage(myMessage, true);
     }
     
@@ -305,7 +324,7 @@ public:
                 //                ofTranslate(ofGetWidth() - 400, 200);
                 
                 
-//                ofSetColor(219,235,243);
+                //                ofSetColor(219,235,243);
                 int temp_y = 0;
                 string buf;
                 buf = "listening for osc messages on port " + ofToString(oscReceivePort);
@@ -341,7 +360,7 @@ public:
         ofDrawBitmapString("m:"+other_runtimeStr,0, 50);
         ofSetColor(0);
         ofDrawBitmapString("m:",0, 50);
-           ofPopMatrix();
+        ofPopMatrix();
     }
     
     void checkGui(){
@@ -352,7 +371,7 @@ public:
         }
         
     }
-
+    
     
     
 private:

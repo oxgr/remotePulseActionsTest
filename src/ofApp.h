@@ -1,50 +1,64 @@
 #pragma once
 
 #include "ofMain.h"
+
 #include "ofxGui.h"
+
 #include "ofxBiquadFilter.h"
 
-
-
 #include "customDefines.h"
-#include "sensorHandler.h"
+
 #include "oscNetwork.h"
+
+#include "sensorHandler.h"
+
 #include "ofxDmx.h"
+
 #include "oneHeart.h"
 
 #include "ofxTiming.h"
 
+#include "versionNumbering.h"
+
+
+#define APP_VERSION "5 20191113 780266c"
+
 class ofApp : public ofBaseApp{
-	public:
-		void setup();
+public:
+    
+    ofParameter<string> versionString;
+    versionNumbering version_object;
+    
+    void setup();
     void exit();
-		void update();
-		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y);
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
+    void update();
+    void draw();
+    
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y);
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
     
     ofxPanel gui_main;
     ofParameter<bool> bShowGui;
     ofParameter<bool> bDebug;
-//    bool bShowGui;
+    //    bool bShowGui;
     
     void saveGui();
     void checkGui();
     float logTimer;
     
+    
     //---IP
     string myIP;
-
+    
     string MX_IP, US_IP;
     string broadCastIP;
     
@@ -73,10 +87,21 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> bEnableDMX;
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
     void renderDMX();
+    ofParameter<int> firstMaxBrightness;
+    ofParameter<int> secondMaxBrightness;
+    ofParameter<int> touchBrightness;
+    
+    ofParameter<float> firstVolume;
+    float old_firstVolume;
+    ofParameter<float> secondVolume;
+    float old_secondVolume;
     
     //---test
+    ofParameter<bool> triggerFakeBPMReading;
+    
     ofParameter<int> meTestBPM;
-     ofParameter<int> otherTestBPM;
+    ofParameter<int> otherTestBPM;
+    
     ofParameter<bool> meTouched;
     ofParameter<bool> otherTouched;
     

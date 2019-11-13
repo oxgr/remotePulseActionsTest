@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<OSC>
+	<osc_speakers>
+		<enableOSC>1</enableOSC>
+		<oscOutPort>9924</oscOutPort>
+		<oscInPort>9923</oscInPort>
+		<sendToIP>10.0.1.171</sendToIP>
+		<oscSendInterval>10</oscSendInterval>
+		<bpm_rx />
+		<other_bpm_received></other_bpm_received>
+		<me_bpm_sent>172</me_bpm_sent>
+	</osc_speakers>
+</OSC>

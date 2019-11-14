@@ -5,7 +5,6 @@ void ofApp::setup(){
     
     ofSetFrameRate(30);
     
-    ofSetFrameRate(60);
     ofBackground(127);
     
     //IP
@@ -15,31 +14,37 @@ void ofApp::setup(){
     broadCastIP = "10.0.1.255"; //not really broadcast. just an indicator if i should be listen to this message
     
     vector<string> ip_list = getLocalIPs();
-    myIP = ip_list[0];
+    if(ip_list.empty()){
+        myIP = "offline";
+    }else{
+        myIP = ip_list[0];
+    }
     
     for(int i=0; i<ip_list.size(); i++){
         ofLog()<<ip_list[i];
     }
     
-
+    system("osascript -e \"set Volume 100\"");
     
     allHearts.resize(2);
     
     allHearts[0].setup("me",0,1,dmx);
-    allHearts[1].setup("other",1,5,dmx);
+    allHearts[1].setup("other",1,3,dmx);
     
     group_debug.setName("debug");
-    group_debug.add(triggerFakeMe.set("triggerFake",false));
+    group_debug.add(triggerFakeMe.set("triggerMeFake",false));
     group_debug.add(meTestTouched.set("meTouched",false));
     group_debug.add(meTestBPM.set("meTestBPM",60,0,200));
     
-    group_debug.add(triggerFakeOther.set("triggerFake",false));
+    group_debug.add(triggerFakeOther.set("triggerOtherFake",false));
     group_debug.add(otherTestTouched.set("otherTouched",false));
     group_debug.add(otherTestBPM.set("otherTestBPM",60,0,200));
     
+    //TODO: do not save debug states
+    
     gui_main.setup();
     gui_main.setName("remotePulse");
-    gui_main.setPosition(10,50);
+    gui_main.setPosition(10,70);
     gui_main.setHeaderBackgroundColor(ofColor(255,0,0));
     gui_main.add(versionString.set("ver", ""));
     gui_main.add(bEnableDMX.set("enableDMX",false));
@@ -47,8 +52,8 @@ void ofApp::setup(){
     gui_main.add(bDebug.set("debug",false));
     gui_main.add(group_debug);
     
-    gui_main.add(allHearts[0].bUseSound.set("useAudio for "+allHearts[0].myLabel,false));
-    gui_main.add(allHearts[1].bUseSound.set("useAudio for "+allHearts[1].myLabel,false));
+    gui_main.add(allHearts[0].group_heart);
+    gui_main.add(allHearts[1].group_heart);
     
     gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
     gui_main.add(touchBrightness.set("touchBright",100,0,255));
@@ -56,7 +61,7 @@ void ofApp::setup(){
     gui_main.add(secondMaxBrightness.set("secondBright",127,0,255));
     gui_main.add(firstVolume.set("firstVol",0.5,0,1));
     gui_main.add(secondVolume.set("secondVol",0.5,0,1)); 
- 
+    
     gui_main.loadFromFile("GUIs/gui_main.xml");
     gui_main.minimizeAll();
     
@@ -85,13 +90,13 @@ void ofApp::setup(){
     dmxDeviceString = dmx.getDeviceString();
     
     
- 
+    
     
     //--osc
     osc_object.setup(myIP, broadCastIP);
     gui_osc.setup();
     gui_osc.setName("OSC");
-    gui_osc.setPosition(430, 50);
+    gui_osc.setPosition(430, 70);
     gui_osc.setHeaderBackgroundColor(ofColor(255,0,0));
     gui_osc.add(osc_object.parameters_oscManualControls);
     
@@ -107,6 +112,14 @@ void ofApp::setup(){
 }
 
 void ofApp::exit(){
+    
+    for(int i=1; i<=512; i++){
+        dmx.setLevel(i,0);
+    }
+    
+    
+    dmx.update();
+    
     osc_object.exit();
     
     hands_object.exit();
@@ -138,7 +151,7 @@ void ofApp::update(){
     
     
     //--------------
-
+    
     
     //Mark:--pass on OSC received BPM and touch
     if(osc_object.gotBPM == true){
@@ -160,10 +173,10 @@ void ofApp::update(){
     //    }
     
     //send out to OSC my BPM
-//    if(allHearts[0].haveNewBPM == true){
-//        allHearts[0].haveNewBPM = false;
-//        osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
-//    }
+    //    if(allHearts[0].haveNewBPM == true){
+    //        allHearts[0].haveNewBPM = false;
+    //        osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
+    //    }
     
     //TODO: relay touched message from serial to OSC / other station
     
@@ -212,17 +225,20 @@ void ofApp::draw(){
     
     drawRuntime(ofGetWidth()/2, 10);
     osc_object.drawAliveMsg(ofGetWidth()/2, 10+30);
-
     
-    allHearts[0].draw(50, 400);
-    allHearts[1].draw(350, 400); 
+    ofPushMatrix();
+    ofTranslate(50, ofGetHeight() - 300);
+    allHearts[0].draw(0, 0);
+    allHearts[1].draw(300, 0); 
+    ofPopMatrix();
     
     hands_object.draw(10,10);
-    
     
 #ifdef USE_DMX
     drawDmxBar(5,ofGetHeight() - 50, 2 ,24); 
 #endif
+    
+    ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetHeight()-100, ofGetHeight() - 30);
     
     if(bShowGui == true){
         gui_main.draw();
@@ -257,26 +273,38 @@ void ofApp::drawRuntime(int _x, int _y){
 }
 
 void ofApp::saveGui(){
-        gui_main.saveToFile("GUIs/gui_main.xml");
+    gui_main.saveToFile("GUIs/gui_main.xml");
     hands_object.gui_sensor.saveToFile("GUIs/gui_sensor.xml");
     gui_osc.saveToFile("GUIs/gui_osc.xml");
 }
 
 void ofApp::checkGui(){
+    
     hands_object.bDebug = bDebug;
     osc_object.bDebug = bDebug;
     
-    if(old_firstVolume != firstVolume && old_secondVolume != secondVolume){
+    if(old_firstVolume != firstVolume || old_secondVolume != secondVolume){
         old_firstVolume = firstVolume;
         old_secondVolume = secondVolume;
-         for(auto & aHeart : allHearts){
-             aHeart.setVolume(firstVolume, secondVolume);
-         }
+        ofLog()<<"aHeart.setVolume(firstVolume, secondVolume)";
+        
+        for(auto & aHeart : allHearts){
+            aHeart.setVolume(firstVolume, secondVolume);
+        }
     }
+    
     for(auto & aHeart : allHearts){
         aHeart.touchBrightness = touchBrightness;
         aHeart.firstMaxBrightness = firstMaxBrightness;
         aHeart.secondMaxBrightness = secondMaxBrightness;
+    }
+    
+    if(old_bEnableDMX != bEnableDMX){
+        old_bEnableDMX = bEnableDMX;
+        for(int i=1; i<=512; i++){
+            dmx.setLevel(i,0);
+        }
+        dmx.update();
     }
 }
 //--------------------------------------------------------------

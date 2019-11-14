@@ -18,8 +18,10 @@ public:
     string myLabel;
     int myIndex;
     
-    ofParameter<bool> bUseSound;
+    ofParameterGroup group_heart;
     
+    ofParameter<bool> bUseSound;
+    ofTrueTypeFont    arial;
     //BPM
     int bpm;
     int old_bpm;
@@ -53,12 +55,17 @@ public:
     float firstVolume;
     float seconVolume;
     
+    ofParameter<int> beat1Channel;
+    ofParameter<int> beat2Channel;
+    
     void setup(string _label, int _index, int _dmxStart, ofxDmx & dmx){
         
         this->dmx = &dmx;
         myLabel = _label;
         myIndex = _index;
-        dmxStartChannel = _dmxStart;
+//        dmxStartChannel = _dmxStart;
+        
+        arial.load("Arial.ttf", 24, true, true);
         
         bpm = 50;
         bpmInSeconds = 60.0 / bpm;
@@ -68,8 +75,8 @@ public:
         
         //        beatPlayer1.load("sounds/oneBeat.wav");
         //        beatPlayer2.load("sounds/onebeatPlayer2.wav");
-//        beatPlayer1.load("sounds/oneBeat3.wav");
-//        beatPlayer2.load("sounds/oneBeat4.wav");
+        //        beatPlayer1.load("sounds/oneBeat3.wav");
+        //        beatPlayer2.load("sounds/oneBeat4.wav");
         beatPlayer1.load("sounds/S1.wav");
         beatPlayer2.load("sounds/S2.wav");
         beatPlayer1.setVolume(0.5f);
@@ -77,9 +84,15 @@ public:
         beatPlayer1.setMultiPlay(false);
         beatPlayer2.setMultiPlay(false);
         
+        group_heart.setName("heart "+myLabel);
+        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,512));
+        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,512));
+        group_heart.add(bUseSound.set("useAudio",false));
+
     }
     
     void setVolume(float _vol0, float _vol1){
+        ofLog()<<"setVolume "<<_vol0<<" , "<<_vol1;
         firstVolume = _vol0;
         seconVolume = _vol1;
         beatPlayer1.setVolume(_vol0);
@@ -172,8 +185,8 @@ public:
             if(_useDmx){
                 
                 if(bpmCounter < 3){
-                      dmx->setLevel(0 + dmxStartChannel,0);
-                      dmx->setLevel(1 + dmxStartChannel,touchBrightness);
+                    dmx->setLevel(beat1Channel,0);
+                    dmx->setLevel(beat2Channel,touchBrightness);
                     
                 }else{
                     
@@ -182,9 +195,9 @@ public:
                     
                     if(bpm_lerpTimer.getProgress() < 0.6){
                         temp_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, 0.6, firstMaxBrightness, 0,true);
-                        dmx->setLevel(0 + dmxStartChannel,temp_level_0);
+                        dmx->setLevel(beat1Channel,temp_level_0);
                     }else{
-                        dmx->setLevel(0 + dmxStartChannel,0);
+                        dmx->setLevel(beat1Channel,0);
                     }
                     
                     //second beat
@@ -193,11 +206,11 @@ public:
                     
                     if(bpm_lerpTimer.getProgress() > _beatPlayer2Offset && bpm_lerpTimer.getProgress() < 0.6){
                         temp_level_1 = ofMap(bpm_lerpTimer.getProgress(), _beatPlayer2Offset, 0.6, secondMaxBrightness, 0,true);
-                        dmx->setLevel(1 + dmxStartChannel,temp_level_1);
+                        dmx->setLevel(beat2Channel,temp_level_1);
                         
                         //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
                     }else{
-                        dmx->setLevel(1 + dmxStartChannel,0);
+                        dmx->setLevel(beat2Channel,0);
                     }
                 }//end if(bpmCounter < 3
             }
@@ -211,8 +224,8 @@ public:
             }
             bpmCounter = 0;
             
-            dmx->setLevel(0 + dmxStartChannel,0);
-            dmx->setLevel(1 + dmxStartChannel,0);
+            dmx->setLevel(beat1Channel,0);
+            dmx->setLevel(beat2Channel,0);
         }
         
     }
@@ -224,6 +237,7 @@ public:
         int tempY = 0;
         ofSetColor(255);
         //        ofDrawBitmapString("meBPM "+ofToString(meBPM),0,tempY+=15);
+        arial.drawString(myLabel+": "+ofToString(bpm), 0, tempY+=30);
         ofDrawBitmapString(myLabel,0,tempY+=15);
         ofDrawBitmapString("touch "+ofToString(isTouched),0,tempY+=15);
         ofDrawBitmapString("bpm "+ofToString(bpm),0,tempY+=15);

@@ -123,7 +123,7 @@ public:
         accumIndex = 0;
         
         bDebug = false;
-        aliveCounter = 0;
+        aliveCounter = -1;
         aliveTimer = ofGetElapsedTimef();
     }
     
@@ -230,6 +230,7 @@ public:
         //        for(auto oneDevice: devices){
         //            ss << "Connected to: " << oneDevice.port() << std::endl;
         //        }
+        int tempY = 0;
         ss <<"Serial Hands:"<<endl;
         if(bDeviceConnected == true){
             for(int i=0; i<devices.size(); i++){
@@ -244,13 +245,15 @@ public:
         }
         ofDrawBitmapString(ss.str(), ofVec2f(0, 0));
         
-        
+        tempY = 30;
         //----------serial alive info
         if(ofGetElapsedTimef() - aliveTimer <= 10){
-            ofDrawBitmapString("local sensor alive "+ofToString(aliveCounter), ofVec2f(0, 50));
+            ofDrawBitmapString("local sensor alive "+ofToString(aliveCounter), ofVec2f(0, tempY+=15));
         }else{
-            ofDrawBitmapString("local sensor NOT alive ", ofVec2f(0, 50));
+            ofDrawBitmapString("local sensor NOT alive ", ofVec2f(0, tempY+=15));
         }
+        
+        ofDrawBitmapString("last T: "+ofToString(touch)+" B: "+ofToString(bpm), ofVec2f(0, tempY+=15));
         
         
         //-----------print serial messages on screen

@@ -50,6 +50,7 @@ void ofApp::setup(){
     gui_main.add(bEnableDMX.set("enableDMX",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
+     gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
     
     gui_main.add(allHearts[0].group_heart);
@@ -64,6 +65,12 @@ void ofApp::setup(){
     
     gui_main.loadFromFile("GUIs/gui_main.xml");
     gui_main.minimizeAll();
+    
+    triggerFakeMe = false;
+    meTestTouched = false;
+    
+    triggerFakeOther = false;
+    otherTestTouched = false;
     
     allHearts[0].bUseSound = false;
     allHearts[1].bUseSound = true;
@@ -117,9 +124,9 @@ void ofApp::exit(){
         dmx.setLevel(i,0);
     }
     
-    
+#ifdef USE_DMX
     dmx.update();
-    
+#endif
     osc_object.exit();
     
     hands_object.exit();
@@ -217,7 +224,9 @@ void ofApp::update(){
         allHearts[1].setBPM(otherTestBPM); //allHearts[0].bpm = meTestBPM;
     }
     
-    renderDMX();
+#ifdef USE_DMX
+    if(bEnableDMX == true) dmx.update();
+#endif
 }
 
 //--------------------------------------------------------------
@@ -227,7 +236,7 @@ void ofApp::draw(){
     osc_object.drawAliveMsg(ofGetWidth()/2, 10+30);
     
     ofPushMatrix();
-    ofTranslate(50, ofGetHeight() - 300);
+    ofTranslate(50, ofGetHeight() - 400);
     allHearts[0].draw(0, 0);
     allHearts[1].draw(300, 0); 
     ofPopMatrix();
@@ -247,17 +256,6 @@ void ofApp::draw(){
     }
 }
 
-void ofApp::renderDMX() {
-    
-#ifdef USE_DMX
-    //    for (int i = 0; i < dmxValues.size()-1; i++) {
-    //        dmx.setLevel(i+1, dmxValues[i]);
-    //    }
-    
-    if(bEnableDMX == true)    dmx.update();
-#endif
-    
-}
 void ofApp::drawRuntime(int _x, int _y){
     
     float myTime = ofGetElapsedTimef();
@@ -268,6 +266,7 @@ void ofApp::drawRuntime(int _x, int _y){
     
     int temp_y = 10;
     runtime_str = ofToString(myHours)+":"+ofToString(myMin)+":"+ofToString(mySec);
+    ofSetColor(0);
     ofDrawBitmapString("my runtime: "+runtime_str, _x, _y);
     
 }
@@ -283,6 +282,12 @@ void ofApp::checkGui(){
     hands_object.bDebug = bDebug;
     osc_object.bDebug = bDebug;
     
+    if(old_systemVolume != systemVolume){
+        old_systemVolume = systemVolume;
+//         system("osascript -e \"set Volume 100\"");
+        ofSystem("osascript -e \"set Volume "+ofToString(systemVolume)+"\"");
+
+    }
     if(old_firstVolume != firstVolume || old_secondVolume != secondVolume){
         old_firstVolume = firstVolume;
         old_secondVolume = secondVolume;
@@ -299,12 +304,15 @@ void ofApp::checkGui(){
         aHeart.secondMaxBrightness = secondMaxBrightness;
     }
     
+    
     if(old_bEnableDMX != bEnableDMX){
         old_bEnableDMX = bEnableDMX;
         for(int i=1; i<=512; i++){
             dmx.setLevel(i,0);
         }
+#ifdef USE_DMX
         dmx.update();
+#endif
     }
 }
 //--------------------------------------------------------------

@@ -34,6 +34,11 @@ public:
     
     int stage;
     
+    int dmx_level_0, dmx_level_1;
+    
+    float lastTimer;
+    float lastDuration;
+    
     //__BPM
     //    DelayTimer bpm_delayTimer;
     LerpTimer bpm_lerpTimer;
@@ -103,6 +108,8 @@ public:
         bpm = _bpm;
         ofLog()<<myLabel<<"setBPM() bpm "<<bpm<<" wait a few pulse before play "<<bpmCounter;
         bpmCounter++;
+        
+        lastTimer = ofGetElapsedTimef();
     }
     
     void setTouch(int _touch){
@@ -113,6 +120,8 @@ public:
     void update(bool _useDmx, float _beatPlayer2Offset){ //}, bool _touched){
         
         //        isTouched = _touched;
+        
+        lastDuration = ofGetElapsedTimef() - lastTimer;
         
         if(isTouched == true){
             
@@ -191,22 +200,22 @@ public:
                 }else{
                     
                     //first beat
-                    int temp_level_0 = 0;
+                    dmx_level_0 = 0;
                     
                     if(bpm_lerpTimer.getProgress() < 0.6){
-                        temp_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, 0.6, firstMaxBrightness, 0,true);
-                        dmx->setLevel(beat1Channel,temp_level_0);
+                        dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, 0.6, firstMaxBrightness, 0,true);
+                        dmx->setLevel(beat1Channel,dmx_level_0);
                     }else{
                         dmx->setLevel(beat1Channel,0);
                     }
                     
                     //second beat
-                    int temp_level_1 = 0;
+                    dmx_level_1 = 0;
                     
                     
                     if(bpm_lerpTimer.getProgress() > _beatPlayer2Offset && bpm_lerpTimer.getProgress() < 0.6){
-                        temp_level_1 = ofMap(bpm_lerpTimer.getProgress(), _beatPlayer2Offset, 0.6, secondMaxBrightness, 0,true);
-                        dmx->setLevel(beat2Channel,temp_level_1);
+                        dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), _beatPlayer2Offset, 0.6, secondMaxBrightness, 0,true);
+                        dmx->setLevel(beat2Channel,dmx_level_1);
                         
                         //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
                     }else{
@@ -235,20 +244,53 @@ public:
         ofTranslate(_x,_y);
         
         int tempY = 0;
+        
+        ofSetColor(0);
+        ofFill();
+        ofDrawRectangle(0,0,100,50);
+        
+        ofSetColor(255,255);
+        ofNoFill();
+        ofSetLineWidth(2);
+        ofDrawRectangle(0,0,100,50);
+        if(isTouched == false){
+            ofDrawLine(0,0,100,50);
+            ofDrawLine(100,0,0,50);
+        }
+        
+      
+        ofFill();
+        ofSetColor(255, dmx_level_0);
+        ofDrawCircle(25,25,20);
+        ofNoFill();
+        ofSetColor(255);
+        ofDrawCircle(25,25,20);
+        
+        ofFill();
+        ofSetColor(255, dmx_level_1);
+        ofDrawCircle(75,25,20);
+        ofNoFill();
+        ofSetColor(255);
+        ofDrawCircle(75,25,20);
+        
+        ofSetLineWidth(1);
+        
+        tempY+=60;
+        
         ofSetColor(255);
         //        ofDrawBitmapString("meBPM "+ofToString(meBPM),0,tempY+=15);
         arial.drawString(myLabel+": "+ofToString(bpm), 0, tempY+=30);
-        ofDrawBitmapString(myLabel,0,tempY+=15);
         ofDrawBitmapString("touch "+ofToString(isTouched),0,tempY+=15);
         ofDrawBitmapString("bpm "+ofToString(bpm),0,tempY+=15);
         ofDrawBitmapString("bpmSec "+ofToString(bpmInSeconds),0,tempY+=15);
         ofDrawBitmapString("bpmCounter "+ofToString(bpmCounter),0,tempY+=15);
+        ofDrawBitmapString("last time "+ofToString(lastDuration,1),0,tempY+=15);
+ 
         
         
-        ofSetColor(255);
         stringstream msg;
-        msg << "beatPlayer1.isPlaying: " << beatPlayer1.isPlaying() << endl;
-        msg << "beatPlayer2.isPlaying: " << beatPlayer2.isPlaying() << endl;
+        msg << "beat1: " << beatPlayer1.isPlaying();
+        msg << " beat2: " << beatPlayer2.isPlaying() << endl;
         
         msg << "lerpTimer:"
         << " from " << bpm_lerpTimer.getStartValue()
@@ -257,6 +299,7 @@ public:
         << " (" << int(100*bpm_lerpTimer.getProgress()) << "%)" << endl;
         ofDrawBitmapString(msg.str(),0,tempY+=15);
         
+       
         ofPopMatrix();
     }
     

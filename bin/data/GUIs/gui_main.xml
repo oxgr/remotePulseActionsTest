@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>8 20191113 46aaab4</ver>
+	<ver>9 20191114 b60eca8</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -35,4 +35,5 @@
 		<dmxChan_beat2>4</dmxChan_beat2>
 		<useAudio>1</useAudio>
 	</heart_other>
+	<systemVolume>100</systemVolume>
 </remotePulse>

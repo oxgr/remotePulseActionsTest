@@ -24,6 +24,7 @@ void ofApp::setup(){
         ofLog()<<ip_list[i];
     }
     
+    ofLog()<<"set system volume";
     system("osascript -e \"set Volume 100\"");
     
     allHearts.resize(2);
@@ -50,12 +51,14 @@ void ofApp::setup(){
     gui_main.add(bEnableDMX.set("enableDMX",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
-     gui_main.add(systemVolume.set("systemVolume",100,0,100));
+//    gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
     
     gui_main.add(allHearts[0].group_heart);
     gui_main.add(allHearts[1].group_heart);
     
+    
+    gui_main.add(minBpmCounter.set("minBpmCount",2,0,4));
     gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
     gui_main.add(touchBrightness.set("touchBright",100,0,255));
     gui_main.add(firstMaxBrightness.set("firstBright",127,0,255));
@@ -155,53 +158,100 @@ void ofApp::update(){
         
     }
     
-    
+    if(initDone == false){
+        if(initStage == 0){
+            ofLog()<<"start init";
+            initTimer = ofGetElapsedTimef();
+            
+            
+            dmx.setLevel(allHearts[0].beat1Channel,100);
+            allHearts[0].beatPlayer1.play();
+            
+            initDuration = 2;
+            initStage++;
+        } else if(initStage == 1 && ofGetElapsedTimef() - initTimer > initDuration){
+            initTimer = ofGetElapsedTimef();
+            
+            
+            dmx.setLevel(allHearts[0].beat1Channel,0);
+            dmx.setLevel(allHearts[1].beat1Channel,100);
+            allHearts[1].beatPlayer1.play();
+            
+            initDuration = 2;
+            initStage++;
+        } else if(initStage == 2 && ofGetElapsedTimef() - initTimer > initDuration){
+            initTimer = ofGetElapsedTimef();
+            
+            
+            dmx.setLevel(allHearts[1].beat1Channel,0);
+            dmx.setLevel(allHearts[0].beat2Channel,100);
+            allHearts[0].beatPlayer2.play();
+            
+            initDuration = 2;
+            initStage++;
+        } else if(initStage == 3 && ofGetElapsedTimef() - initTimer > initDuration){
+            initTimer = ofGetElapsedTimef();
+            
+            
+            dmx.setLevel(allHearts[0].beat2Channel,0);
+            dmx.setLevel(allHearts[1].beat2Channel,100);
+            allHearts[1].beatPlayer2.play();
+            
+            initDuration = 2;
+            initStage++;
+        } else if(initStage == 4 && ofGetElapsedTimef() - initTimer > initDuration){
+            initTimer = ofGetElapsedTimef();
+            
+            dmx.setLevel(allHearts[0].beat1Channel,0);
+            dmx.setLevel(allHearts[0].beat2Channel,0);
+            dmx.setLevel(allHearts[1].beat1Channel,0);
+            dmx.setLevel(allHearts[1].beat2Channel,0);
+            
+            initDuration = 2;
+            initDone = true;
+            ofLog()<<"end init";
+        }
+    } else {
+        
+        
+        //Mark:--pass on OSC received BPM and touch
+        if(osc_object.gotBPM == true){
+            //        allHearts[1].bpm = osc_object.rxBPM;
+            allHearts[1].setBPM(osc_object.rxBPM);
+            osc_object.gotBPM = false;
+        }
+        if(osc_object.gotTouch == true){
+            allHearts[1].setTouch(osc_object.rxTouch);
+            osc_object.gotTouch = false;
+        }
+        
+        //-----
+        allHearts[0].update(bEnableDMX, beat2Offset);
+        allHearts[1].update(bEnableDMX, beat2Offset);
+
+        
+        //send out to OSC my BPM        
+        //MARK:-----check serial and set local and remote
+        hands_object.update();
+        
+        if(hands_object.gotBPM == true){
+            allHearts[0].setBPM(hands_object.bpm);
+            osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
+            hands_object.gotBPM = false;
+        }
+        if(hands_object.gotTouch == true){
+            allHearts[0].setTouch(hands_object.touch);
+            osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
+            hands_object.gotTouch = false;
+        }
+        
+        if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
+        
+    }//end else if initDone
     
     //--------------
     
     
-    //Mark:--pass on OSC received BPM and touch
-    if(osc_object.gotBPM == true){
-        //        allHearts[1].bpm = osc_object.rxBPM;
-        allHearts[1].setBPM(osc_object.rxBPM);
-        osc_object.gotBPM = false;
-    }
-    if(osc_object.gotTouch == true){
-        allHearts[1].setTouch(osc_object.rxTouch);
-        osc_object.gotTouch = false;
-    }
-    
-    //-----
-    
-    //    for(auto & aHeart : allHearts){
-    //    for(int i=0; i<allHearts.size(); i++)
-    allHearts[0].update(bEnableDMX, beat2Offset);
-    allHearts[1].update(bEnableDMX, beat2Offset);
-    //    }
-    
-    //send out to OSC my BPM
-    //    if(allHearts[0].haveNewBPM == true){
-    //        allHearts[0].haveNewBPM = false;
-    //        osc_object.addBPMMessage(osc_object.sendToIP, allHearts[0].bpm);
-    //    }
-    
-    //TODO: relay touched message from serial to OSC / other station
-    
-    //MARK:-----check serial and set local and remote
-    hands_object.update();
-    
-    if(hands_object.gotBPM == true){
-        allHearts[0].setBPM(hands_object.bpm);
-        osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
-        hands_object.gotBPM = false;
-    }
-    if(hands_object.gotTouch == true){
-        allHearts[0].setTouch(hands_object.touch);
-        osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
-        hands_object.gotTouch = false;
-    }
-    
-    if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
     
     //----debugging
     if(old_meTestTouched != meTestTouched){
@@ -282,12 +332,21 @@ void ofApp::checkGui(){
     hands_object.bDebug = bDebug;
     osc_object.bDebug = bDebug;
     
+    /*
     if(old_systemVolume != systemVolume){
         old_systemVolume = systemVolume;
-//         system("osascript -e \"set Volume 100\"");
-        ofSystem("osascript -e \"set Volume "+ofToString(systemVolume)+"\"");
-
+        ofLog()<<"osascript  55";
+        
+//                 system("osascript -e \"set Volume 0.1\"");
+//        ofSystem("osascript -e \"set Volume "+ofToString(systemVolume)+"\"")
+        
+        string cmd = "osascript -e \"set Volume "+ofToString(systemVolume)+"\"";
+        system(cmd.c_str());
+        cout << cmd.c_str() << endl;
+        
     }
+     */
+    
     if(old_firstVolume != firstVolume || old_secondVolume != secondVolume){
         old_firstVolume = firstVolume;
         old_secondVolume = secondVolume;
@@ -302,6 +361,7 @@ void ofApp::checkGui(){
         aHeart.touchBrightness = touchBrightness;
         aHeart.firstMaxBrightness = firstMaxBrightness;
         aHeart.secondMaxBrightness = secondMaxBrightness;
+        aHeart.minBpmCounter = minBpmCounter;
     }
     
     

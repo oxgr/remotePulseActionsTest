@@ -21,7 +21,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "9 20191114 b60eca8"
+#define APP_VERSION "10 20191114 a072af7"
 
 class ofApp : public ofBaseApp{
 public:
@@ -57,6 +57,10 @@ public:
     void checkGui();
     float logTimer;
     
+    bool initDone;
+    int initStage;
+    float initTimer;
+    float initDuration;
     
     //---IP
     string myIP;
@@ -114,5 +118,8 @@ public:
     
     ofParameter<int> systemVolume;
     int old_systemVolume;
+    
+    ofParameter<int> minBpmCounter;
+    
     
 };

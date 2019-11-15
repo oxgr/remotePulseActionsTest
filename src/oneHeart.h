@@ -31,6 +31,7 @@ public:
     float old_bpmInSeconds;
     float bpmTimer;
     int bpmCounter;
+    int minBpmCounter;
     
     int stage;
     
@@ -139,7 +140,7 @@ public:
             
             if(stage == 0){
                 
-                if(bpmCounter >= 2){
+                if(bpmCounter >= minBpmCounter){
                     stage++;
                 }
                 

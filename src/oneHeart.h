@@ -54,9 +54,15 @@ public:
     
     int dmxStartChannel;
     
+     int firstMinBrightness;
     int firstMaxBrightness;
+     int secondMinBrightness;
     int secondMaxBrightness;
     int touchBrightness;
+    
+    float firstBeatOnDur;
+    float firstPause;
+    float secondBeatOnDur;
     
     float firstVolume;
     float seconVolume;
@@ -118,7 +124,7 @@ public:
         ofLog()<<myLabel<<"setTouch() _touch "<<isTouched;
     }
     
-    void update(bool _useDmx, float _beatPlayer2Offset){ //}, bool _touched){
+    void update(bool _useDmx){ //}, float _beatPlayer2Offset){ //}, bool _touched){
         
         //        isTouched = _touched;
         
@@ -167,62 +173,92 @@ public:
                 if(beatPlayer1.isPlaying() == false && bUseSound == true) beatPlayer1.play();
                 //            ofLog()<<ofGetElapsedTimef()<<" beatPlayer1.play()";
                 
-                //                if(old_bpmInSeconds != bpmInSeconds){
-                //                    old_bpmInSeconds = bpmInSeconds;
-                //                    ofLog()<<"BPM "<<bpm<<" in bpmInSeconds "<<bpmInSeconds;
-                ////                    bpm_delayTimer.setPeriod(bpmInSeconds);
-                //                   
-                
-                
                 bpm_lerpTimer.setToValue(0);
                 bpm_lerpTimer.lerpToValue(1);
             }
             
-            
+            //            if(beat1Channel != beat2Channel){
             //    ofLog()<<"bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress()<<" bStart2ndBeat "<<bStart2ndBeat;
-            if(bpm_lerpTimer.getProgress() > _beatPlayer2Offset && bStart2ndBeat == true){
+            if(bpm_lerpTimer.getProgress() >= firstPause && bStart2ndBeat == true){
                 if(beatPlayer2.isPlaying() == false && bUseSound == true){
                     beatPlayer2.play();
                     //                ofLog()<<ofGetElapsedTimef()<<" beatPlayer2.play()";
                     bStart2ndBeat = false;
                 }
             }
-            
+            //            }else{
+            //                if(bpm_lerpTimer.getProgress() > (firstBeatOnDur+firstPause) && bStart2ndBeat == true){
+            //                    if(beatPlayer2.isPlaying() == false && bUseSound == true){
+            //                        beatPlayer2.play();
+            //                        //                ofLog()<<ofGetElapsedTimef()<<" beatPlayer2.play()";
+            //                        bStart2ndBeat = false;
+            //                    }
+//                }
+//            }
             //    bpm_lerpTimer.lerpToValue(1);
             
             
             
             if(_useDmx){
                 
-                if(bpmCounter < 3){
-                    dmx->setLevel(beat1Channel,0);
-                    dmx->setLevel(beat2Channel,touchBrightness);
-                    
+                if(bpmCounter < minBpmCounter){
+                    if(beat1Channel != beat2Channel){
+                        dmx->setLevel(beat1Channel,0);
+                        dmx->setLevel(beat2Channel,touchBrightness);
+                    }else{
+                        dmx->setLevel(beat1Channel,touchBrightness);
+                        dmx->setLevel(beat2Channel,touchBrightness);
+                    }
                 }else{
                     
                     //first beat
-                    dmx_level_0 = 0;
-                    
-                    if(bpm_lerpTimer.getProgress() < 0.6){
-                        dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, 0.6, firstMaxBrightness, 0,true);
-                        dmx->setLevel(beat1Channel,dmx_level_0);
-                    }else{
-                        dmx->setLevel(beat1Channel,0);
-                    }
-                    
-                    //second beat
-                    dmx_level_1 = 0;
-                    
-                    
-                    if(bpm_lerpTimer.getProgress() > _beatPlayer2Offset && bpm_lerpTimer.getProgress() < 0.6){
-                        dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), _beatPlayer2Offset, 0.6, secondMaxBrightness, 0,true);
-                        dmx->setLevel(beat2Channel,dmx_level_1);
+                    if(beat1Channel != beat2Channel){
+//                        dmx_level_0 = 0;
+                        //firstBeatOnDur = 0.6
+                        if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
+                            dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
+                            dmx->setLevel(beat1Channel,dmx_level_0);
+                        }else{
+                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                        }
                         
-                        //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
+                        //second beat
+                        dmx_level_1 = 0;
+                        if(bpm_lerpTimer.getProgress() >= firstPause){ //} && bpm_lerpTimer.getProgress() < firstBeatOnDur){
+                            dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
+                            dmx->setLevel(beat2Channel,dmx_level_1);
+                            
+                            //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
+                        }else{
+                            dmx->setLevel(beat2Channel,secondMinBrightness);
+                        }
                     }else{
-                        dmx->setLevel(beat2Channel,0);
-                    }
-                }//end if(bpmCounter < 3
+                        //no dual channel bulb
+//                        dmx_level_0 = 0;
+                        //firstBeatOnDur = 0.6
+//                        float stageOne = firstBeatOnDur;
+//                        float stageTwo = stageOne+firstPause;
+//                        float stageThree = stageTwo+secondBeatOnDur;
+                        if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
+                            
+                            dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
+                            dmx->setLevel(beat1Channel,dmx_level_0);
+                            
+                        }else if(bpm_lerpTimer.getProgress() >= firstBeatOnDur && bpm_lerpTimer.getProgress() < firstPause) {
+                            
+                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                            
+                        }else if(bpm_lerpTimer.getProgress() >= firstPause && bpm_lerpTimer.getProgress() < secondBeatOnDur){
+                            
+                            dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
+                            dmx->setLevel(beat1Channel,dmx_level_1);
+                            
+                        }else{
+                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                        }
+                        
+                    }//end else  if(beat1Channel != beat2Channel)
+                }//end if(bpmCounter < minBpmCounter
             }
         }else{
             

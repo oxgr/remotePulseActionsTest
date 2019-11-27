@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>11 20191115 0e31b9e</ver>
+	<ver>12 20191126 c7c913a</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
 		<meTestBPM>89</meTestBPM>
 		<otherTouched>0</otherTouched>
-		<otherTestBPM>60</otherTestBPM>
+		<otherTestBPM>102</otherTestBPM>
 		<triggerMeFake>0</triggerMeFake>
 		<triggerOtherFake>0</triggerOtherFake>
 	</debug>
@@ -20,21 +20,28 @@
 	<meTestBPM>60</meTestBPM>
 	<otherTestBPM>60</otherTestBPM>
 	<beat2Offset>0.2</beat2Offset>
-	<touchBright>76</touchBright>
+	<touchBright>47</touchBright>
 	<firstBright>209</firstBright>
 	<secondBright>206</secondBright>
 	<firstVol>0.525</firstVol>
 	<secondVol>0.355</secondVol>
 	<heart_me>
-		<dmxChan_beat1>3</dmxChan_beat1>
+		<dmxChan_beat1>4</dmxChan_beat1>
 		<dmxChan_beat2>4</dmxChan_beat2>
 		<useAudio>0</useAudio>
 	</heart_me>
 	<heart_other>
 		<dmxChan_beat1>1</dmxChan_beat1>
-		<dmxChan_beat2>2</dmxChan_beat2>
+		<dmxChan_beat2>1</dmxChan_beat2>
 		<useAudio>1</useAudio>
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>2</minBpmCount>
+	<firstMinBright>17</firstMinBright>
+	<firstMaxBright>81</firstMaxBright>
+	<secondMinBright>14</secondMinBright>
+	<secondMaxBright>81</secondMaxBright>
+	<firstBeatOnDur>0.175</firstBeatOnDur>
+	<firstPause>0.3</firstPause>
+	<secondBeatOnDur>0.485</secondBeatOnDur>
 </remotePulse>

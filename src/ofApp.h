@@ -21,7 +21,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "11 20191115 0e31b9e"
+#define APP_VERSION "12 20191126 c7c913a"
 
 class ofApp : public ofBaseApp{
 public:
@@ -94,10 +94,16 @@ public:
     bool old_bEnableDMX;
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
   
+    ofParameter<int> firstMinBrightness;
     ofParameter<int> firstMaxBrightness;
+     ofParameter<int> secondMinBrightness;
     ofParameter<int> secondMaxBrightness;
     ofParameter<int> touchBrightness;
-    ofParameter<float> beat2Offset;
+//    ofParameter<float> beat2Offset;
+    
+    ofParameter<float> firstBeatOnDur;
+    ofParameter<float> firstPause;
+    ofParameter<float> secondBeatOnDur;
     
     ofParameter<float> firstVolume;
     float old_firstVolume;

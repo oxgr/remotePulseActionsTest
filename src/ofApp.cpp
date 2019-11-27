@@ -59,10 +59,17 @@ void ofApp::setup(){
     
     
     gui_main.add(minBpmCounter.set("minBpmCount",2,0,4));
-    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
+//    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
+    
+     gui_main.add(firstBeatOnDur.set("firstBeatOnDur",0.2,0,1));
+     gui_main.add(firstPause.set("firstPause",0.2,0,1));
+     gui_main.add(secondBeatOnDur.set("secondBeatOnDur",0.2,0,1));
+    
     gui_main.add(touchBrightness.set("touchBright",100,0,255));
-    gui_main.add(firstMaxBrightness.set("firstBright",127,0,255));
-    gui_main.add(secondMaxBrightness.set("secondBright",127,0,255));
+    gui_main.add(firstMinBrightness.set("firstMinBright",0,0,255));
+    gui_main.add(firstMaxBrightness.set("firstMaxBright",127,0,255));
+    gui_main.add(secondMinBrightness.set("secondMinBright",0,0,255));
+    gui_main.add(secondMaxBrightness.set("secondMaxBright",127,0,255));
     gui_main.add(firstVolume.set("firstVol",0.5,0,1));
     gui_main.add(secondVolume.set("secondVol",0.5,0,1)); 
     
@@ -164,7 +171,7 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             
-            dmx.setLevel(allHearts[0].beat1Channel,100);
+            dmx.setLevel(allHearts[0].beat1Channel,firstMaxBrightness);
             allHearts[0].beatPlayer1.play();
             
             initDuration = 2;
@@ -174,7 +181,7 @@ void ofApp::update(){
             
             
             dmx.setLevel(allHearts[0].beat1Channel,0);
-            dmx.setLevel(allHearts[1].beat1Channel,100);
+            dmx.setLevel(allHearts[1].beat1Channel,firstMaxBrightness);
             allHearts[1].beatPlayer1.play();
             
             initDuration = 2;
@@ -184,7 +191,7 @@ void ofApp::update(){
             
             
             dmx.setLevel(allHearts[1].beat1Channel,0);
-            dmx.setLevel(allHearts[0].beat2Channel,100);
+            dmx.setLevel(allHearts[0].beat2Channel,secondMaxBrightness);
             allHearts[0].beatPlayer2.play();
             
             initDuration = 2;
@@ -194,7 +201,7 @@ void ofApp::update(){
             
             
             dmx.setLevel(allHearts[0].beat2Channel,0);
-            dmx.setLevel(allHearts[1].beat2Channel,100);
+            dmx.setLevel(allHearts[1].beat2Channel,secondMaxBrightness);
             allHearts[1].beatPlayer2.play();
             
             initDuration = 2;
@@ -226,8 +233,8 @@ void ofApp::update(){
         }
         
         //-----
-        allHearts[0].update(bEnableDMX, beat2Offset);
-        allHearts[1].update(bEnableDMX, beat2Offset);
+        allHearts[0].update(bEnableDMX); //, firstPause);
+        allHearts[1].update(bEnableDMX); //, firstPause);
 
         
         //send out to OSC my BPM        
@@ -286,7 +293,7 @@ void ofApp::draw(){
     osc_object.drawAliveMsg(ofGetWidth()/2, 10+30);
     
     ofPushMatrix();
-    ofTranslate(50, ofGetHeight() - 400);
+    ofTranslate(50, ofGetHeight() - 350);
     allHearts[0].draw(0, 0);
     allHearts[1].draw(300, 0); 
     ofPopMatrix();
@@ -359,9 +366,15 @@ void ofApp::checkGui(){
     
     for(auto & aHeart : allHearts){
         aHeart.touchBrightness = touchBrightness;
+        aHeart.firstMinBrightness = firstMinBrightness;
         aHeart.firstMaxBrightness = firstMaxBrightness;
+        aHeart.secondMinBrightness = secondMinBrightness;
         aHeart.secondMaxBrightness = secondMaxBrightness;
         aHeart.minBpmCounter = minBpmCounter;
+        
+        aHeart.firstBeatOnDur = firstBeatOnDur;
+        aHeart.firstPause = firstPause;
+        aHeart.secondBeatOnDur = secondBeatOnDur;
     }
     
     

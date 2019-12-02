@@ -73,6 +73,7 @@ public:
     //    ofParameter<int> minPressTime;
     
     int bpm, touch;
+    int old_bpm;
     bool gotTouch;
     bool gotBPM;
     ofColor bpmColor;
@@ -351,7 +352,7 @@ public:
             ////            ofLog()<<"encoderPos "<<encoderPos<<" raw_deg "<<raw_deg<<" temp_diff "<<temp_diff;
             //            
             //            accum_deg+= temp_diff;
-            
+            old_bpm = bpm;
             bpm = ofToInt(splitStr[1]);
             gotBPM = true;
             bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));

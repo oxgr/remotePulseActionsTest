@@ -247,7 +247,7 @@ void ofApp::update(){
             allHearts[0].setBPM(hands_object.bpm);
             osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
             hands_object.gotBPM = false;
-            bpmChangeTimer = ofGetElapsedTimef();
+           if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
         }
         
         if(ofGetElapsedTimef() - bpmChangeTimer >= forceUnTouchDuration){
@@ -260,6 +260,7 @@ void ofApp::update(){
         }
         
         if(hands_object.gotTouch == true){
+            ofLog()<<" hands_object.gotTouch == true ";
             allHearts[0].setTouch(hands_object.touch);
             osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
             hands_object.gotTouch = false;

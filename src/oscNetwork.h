@@ -43,6 +43,11 @@ public:
     
     ofParameter<int> oscSendInterval;
     
+    ofParameter <bool> bPeriodicResend;
+    float resendTimer;
+    string lastTouchIP = "";
+    int lastTouchValue;
+    
     int rxBPM;
     ofParameter<string> rxBPM_str;
     ofParameter<string> txBPM_str;
@@ -85,8 +90,8 @@ public:
         parameters_oscManualControls.add(bEnableOSC.set("enableOSC", false));
         //        parameters_oscManualControls.add(bRunMode.set("run", false));
         //        
-        parameters_oscManualControls.add(oscSendPort.set("oscOutPort", 9924,9000,10000));
-        parameters_oscManualControls.add(oscReceivePort.set("oscInPort", 9923,9000,10000));
+        parameters_oscManualControls.add(oscSendPort.set("oscOutPort", 9924,9923,9924));
+        parameters_oscManualControls.add(oscReceivePort.set("oscInPort", 9923,9923,9924));
         parameters_oscManualControls.add(sendToIP.set("sendToIP", "10.0.1.191"));
         
         parameters_oscManualControls.add(oscSendInterval.set("oscSendInterval", 10,0,100));
@@ -96,6 +101,8 @@ public:
         
         parameters_oscManualControls.add(txTouch_str.set("me touch sent", ""));
         parameters_oscManualControls.add(txBPM_str.set("me bpm sent", ""));
+        
+        parameters_oscManualControls.add(bPeriodicResend.set("periodicResend", false));
         
         inputType = -1;
     }
@@ -138,6 +145,8 @@ public:
     
     void addTouchMessage(string _ip, int _value){
         
+        lastTouchIP = _ip;
+        lastTouchValue = _value;
         
         ofxOscMessage myMessage;
         
@@ -149,6 +158,9 @@ public:
         messageBuffer.push_back(myMessage);
         
         txTouch_str = ofToString(_value);
+        
+        resendTimer = ofGetElapsedTimef();
+       
     }
     
     
@@ -178,7 +190,7 @@ public:
         
         
         if(bEnableOSC){
-            
+        
             if(ofGetElapsedTimeMillis() - sendTimer > oscSendInterval){
                 sendTimer = ofGetElapsedTimeMillis();
                 
@@ -217,7 +229,10 @@ public:
                 //                }
             }
             
-            
+            if(lastTouchIP != "" && ofGetElapsedTimef() - resendTimer > 10){
+                resendTimer = ofGetElapsedTimef();
+                addTouchMessage(lastTouchIP,lastTouchValue);
+            }
         }//end if(bEnableOSC)
         
         

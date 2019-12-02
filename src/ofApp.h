@@ -21,7 +21,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "12 20191126 c7c913a"
+#define APP_VERSION "13 20191127 73de4ad"
 
 class ofApp : public ofBaseApp{
 public:
@@ -127,5 +127,7 @@ public:
     
     ofParameter<int> minBpmCounter;
     
+    ofParameter<float> forceUnTouchDuration;
+    float bpmChangeTimer;
     
 };

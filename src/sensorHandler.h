@@ -75,6 +75,7 @@ public:
     int bpm, touch;
     bool gotTouch;
     bool gotBPM;
+    ofColor bpmColor;
     
     bool bDeviceConnected;
     float lastConnectionTimer;
@@ -125,6 +126,8 @@ public:
         bDebug = false;
         aliveCounter = -1;
         aliveTimer = ofGetElapsedTimef();
+        
+        bpmColor = ofColor(255,255,255);
     }
     
     void exit(){
@@ -225,7 +228,7 @@ public:
     void drawSerialInfo(){
         //-----------print info about connected devices
         
-        
+        ofSetColor(255);
         std::stringstream ss;
         //        for(auto oneDevice: devices){
         //            ss << "Connected to: " << oneDevice.port() << std::endl;
@@ -253,6 +256,7 @@ public:
             ofDrawBitmapString("local sensor NOT alive ", ofVec2f(0, tempY+=15));
         }
         
+        ofSetColor(bpmColor);
         ofDrawBitmapString("last T: "+ofToString(touch)+" B: "+ofToString(bpm), ofVec2f(0, tempY+=15));
         
         
@@ -350,7 +354,7 @@ public:
             
             bpm = ofToInt(splitStr[1]);
             gotBPM = true;
-     
+            bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
             
         } else if(splitStr[0] == "a"){
             //alive

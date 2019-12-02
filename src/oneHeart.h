@@ -54,9 +54,9 @@ public:
     
     int dmxStartChannel;
     
-     int firstMinBrightness;
+    int firstMinBrightness;
     int firstMaxBrightness;
-     int secondMinBrightness;
+    int secondMinBrightness;
     int secondMaxBrightness;
     int touchBrightness;
     
@@ -75,7 +75,7 @@ public:
         this->dmx = &dmx;
         myLabel = _label;
         myIndex = _index;
-//        dmxStartChannel = _dmxStart;
+        //        dmxStartChannel = _dmxStart;
         
         arial.load("Arial.ttf", 24, true, true);
         
@@ -97,10 +97,10 @@ public:
         beatPlayer2.setMultiPlay(false);
         
         group_heart.setName("heart "+myLabel);
-        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,512));
-        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,512));
+        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,4));
+        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,4));
         group_heart.add(bUseSound.set("useAudio",false));
-
+        
     }
     
     void setVolume(float _vol0, float _vol1){
@@ -121,7 +121,7 @@ public:
     
     void setTouch(int _touch){
         isTouched = _touch;
-        ofLog()<<myLabel<<"setTouch() _touch "<<isTouched;
+        ofLog()<<myLabel<<" setTouch() _touch "<<isTouched;
     }
     
     void update(bool _useDmx){ //}, float _beatPlayer2Offset){ //}, bool _touched){
@@ -193,15 +193,18 @@ public:
             //                        //                ofLog()<<ofGetElapsedTimef()<<" beatPlayer2.play()";
             //                        bStart2ndBeat = false;
             //                    }
-//                }
-//            }
+            //                }
+            //            }
             //    bpm_lerpTimer.lerpToValue(1);
             
             
-            
+#ifndef USE_DMX
+            _useDmx = false;
+#endif
             if(_useDmx){
                 
                 if(bpmCounter < minBpmCounter){
+
                     if(beat1Channel != beat2Channel){
                         dmx->setLevel(beat1Channel,0);
                         dmx->setLevel(beat2Channel,touchBrightness);
@@ -209,11 +212,12 @@ public:
                         dmx->setLevel(beat1Channel,touchBrightness);
                         dmx->setLevel(beat2Channel,touchBrightness);
                     }
+
                 }else{
                     
                     //first beat
                     if(beat1Channel != beat2Channel){
-//                        dmx_level_0 = 0;
+                        //                        dmx_level_0 = 0;
                         //firstBeatOnDur = 0.6
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
@@ -232,13 +236,14 @@ public:
                         }else{
                             dmx->setLevel(beat2Channel,secondMinBrightness);
                         }
+                        
                     }else{
                         //no dual channel bulb
-//                        dmx_level_0 = 0;
+                        //                        dmx_level_0 = 0;
                         //firstBeatOnDur = 0.6
-//                        float stageOne = firstBeatOnDur;
-//                        float stageTwo = stageOne+firstPause;
-//                        float stageThree = stageTwo+secondBeatOnDur;
+                        //                        float stageOne = firstBeatOnDur;
+                        //                        float stageTwo = stageOne+firstPause;
+                        //                        float stageThree = stageTwo+secondBeatOnDur;
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
@@ -269,9 +274,10 @@ public:
                 
             }
             bpmCounter = 0;
-            
+#ifdef USE_DMX
             dmx->setLevel(beat1Channel,0);
             dmx->setLevel(beat2Channel,0);
+#endif
         }
         
     }
@@ -295,7 +301,7 @@ public:
             ofDrawLine(100,0,0,50);
         }
         
-      
+        
         ofFill();
         ofSetColor(255, dmx_level_0);
         ofDrawCircle(25,25,20);
@@ -322,7 +328,7 @@ public:
         ofDrawBitmapString("bpmSec "+ofToString(bpmInSeconds),0,tempY+=15);
         ofDrawBitmapString("bpmCounter "+ofToString(bpmCounter),0,tempY+=15);
         ofDrawBitmapString("last time "+ofToString(lastDuration,1),0,tempY+=15);
- 
+        
         
         
         stringstream msg;
@@ -336,7 +342,7 @@ public:
         << " (" << int(100*bpm_lerpTimer.getProgress()) << "%)" << endl;
         ofDrawBitmapString(msg.str(),0,tempY+=15);
         
-       
+        
         ofPopMatrix();
     }
     

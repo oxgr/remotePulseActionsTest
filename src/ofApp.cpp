@@ -8,10 +8,10 @@ void ofApp::setup(){
     ofBackground(127);
     
     //IP
-    MX_IP = "10.0.1.191";
-    US_IP = "10.0.1.192";
+    //    MX_IP = "188.188.188.154";
+    //    US_IP = "188.188.188.153";
     
-    broadCastIP = "10.0.1.255"; //not really broadcast. just an indicator if i should be listen to this message
+    broadCastIP = "188.188.188.255"; //not really broadcast. just an indicator if i should be listen to this message
     
     vector<string> ip_list = getLocalIPs();
     if(ip_list.empty()){
@@ -51,7 +51,7 @@ void ofApp::setup(){
     gui_main.add(bEnableDMX.set("enableDMX",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
-//    gui_main.add(systemVolume.set("systemVolume",100,0,100));
+    //    gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
     
     gui_main.add(allHearts[0].group_heart);
@@ -59,11 +59,11 @@ void ofApp::setup(){
     
     
     gui_main.add(minBpmCounter.set("minBpmCount",2,0,4));
-//    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
+    //    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
     
-     gui_main.add(firstBeatOnDur.set("firstBeatOnDur",0.2,0,1));
-     gui_main.add(firstPause.set("firstPause",0.2,0,1));
-     gui_main.add(secondBeatOnDur.set("secondBeatOnDur",0.2,0,1));
+    gui_main.add(firstBeatOnDur.set("firstBeatOnDur",0.2,0,1));
+    gui_main.add(firstPause.set("firstPause",0.2,0,1));
+    gui_main.add(secondBeatOnDur.set("secondBeatOnDur",0.2,0,1));
     
     gui_main.add(touchBrightness.set("touchBright",100,0,255));
     gui_main.add(firstMinBrightness.set("firstMinBright",0,0,255));
@@ -72,6 +72,8 @@ void ofApp::setup(){
     gui_main.add(secondMaxBrightness.set("secondMaxBright",127,0,255));
     gui_main.add(firstVolume.set("firstVol",0.5,0,1));
     gui_main.add(secondVolume.set("secondVol",0.5,0,1)); 
+    gui_main.add(forceUnTouchDuration.set("forceUnTouch",7,0,20)); 
+    
     
     gui_main.loadFromFile("GUIs/gui_main.xml");
     gui_main.minimizeAll();
@@ -130,11 +132,11 @@ void ofApp::setup(){
 
 void ofApp::exit(){
     
+#ifdef USE_DMX
     for(int i=1; i<=512; i++){
         dmx.setLevel(i,0);
     }
     
-#ifdef USE_DMX
     dmx.update();
 #endif
     osc_object.exit();
@@ -151,16 +153,16 @@ void ofApp::update(){
     if(ofGetElapsedTimef() - logTimer > 2){
         logTimer = ofGetElapsedTimef() ;
         
-        if(ofIsStringInString(myIP, MX_IP.substr (0,6)) == true){
+        osc_object.addAliveMessage(osc_object.sendToIP,runtime_str, hands_object.aliveCounter);
+        
+        if(ofIsStringInString(myIP, osc_object.sendToIP.get().substr (0,6)) == true){
             
             ofBuffer buf;
             buf.set(ofGetTimestampString());
             ofBufferToFile("runLogs/heartbeat.txt", buf);
             
-            osc_object.addAliveMessage(osc_object.sendToIP,runtime_str, hands_object.aliveCounter);
-            
         }else{
-            //            ofLog()<<"wrong IP range. is"<<myIP<<" should be "<<MX_IP<<" or "<<US_IP;
+            if(bDebug)  ofLog()<<"wrong IP range. is"<<myIP<<" should be someting around "<<osc_object.sendToIP;
         }
         
     }
@@ -235,7 +237,7 @@ void ofApp::update(){
         //-----
         allHearts[0].update(bEnableDMX); //, firstPause);
         allHearts[1].update(bEnableDMX); //, firstPause);
-
+        
         
         //send out to OSC my BPM        
         //MARK:-----check serial and set local and remote
@@ -245,7 +247,18 @@ void ofApp::update(){
             allHearts[0].setBPM(hands_object.bpm);
             osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
             hands_object.gotBPM = false;
+            bpmChangeTimer = ofGetElapsedTimef();
         }
+        
+        if(ofGetElapsedTimef() - bpmChangeTimer >= forceUnTouchDuration){
+            ofLog()<<" force unTouch after "<<forceUnTouchDuration<<" seconds";
+            bpmChangeTimer = ofGetElapsedTimef();
+            
+            allHearts[0].setTouch(false);
+            osc_object.addTouchMessage(osc_object.sendToIP, false);
+            
+        }
+        
         if(hands_object.gotTouch == true){
             allHearts[0].setTouch(hands_object.touch);
             osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
@@ -304,7 +317,7 @@ void ofApp::draw(){
     drawDmxBar(5,ofGetHeight() - 50, 2 ,24); 
 #endif
     
-    ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetHeight()-100, ofGetHeight() - 30);
+    ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetWidth()-100, ofGetHeight() - 30);
     
     if(bShowGui == true){
         gui_main.draw();
@@ -340,18 +353,18 @@ void ofApp::checkGui(){
     osc_object.bDebug = bDebug;
     
     /*
-    if(old_systemVolume != systemVolume){
-        old_systemVolume = systemVolume;
-        ofLog()<<"osascript  55";
-        
-//                 system("osascript -e \"set Volume 0.1\"");
-//        ofSystem("osascript -e \"set Volume "+ofToString(systemVolume)+"\"")
-        
-        string cmd = "osascript -e \"set Volume "+ofToString(systemVolume)+"\"";
-        system(cmd.c_str());
-        cout << cmd.c_str() << endl;
-        
-    }
+     if(old_systemVolume != systemVolume){
+     old_systemVolume = systemVolume;
+     ofLog()<<"osascript  55";
+     
+     //                 system("osascript -e \"set Volume 0.1\"");
+     //        ofSystem("osascript -e \"set Volume "+ofToString(systemVolume)+"\"")
+     
+     string cmd = "osascript -e \"set Volume "+ofToString(systemVolume)+"\"";
+     system(cmd.c_str());
+     cout << cmd.c_str() << endl;
+     
+     }
      */
     
     if(old_firstVolume != firstVolume || old_secondVolume != secondVolume){
@@ -378,15 +391,17 @@ void ofApp::checkGui(){
     }
     
     
+#ifdef USE_DMX
     if(old_bEnableDMX != bEnableDMX){
         old_bEnableDMX = bEnableDMX;
         for(int i=1; i<=512; i++){
             dmx.setLevel(i,0);
         }
-#ifdef USE_DMX
+        
         dmx.update();
-#endif
+        
     }
+#endif
 }
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){

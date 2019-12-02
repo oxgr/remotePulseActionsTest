@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>12 20191126 c7c913a</ver>
+	<ver>13 20191127 73de4ad</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -44,4 +44,5 @@
 	<firstBeatOnDur>0.175</firstBeatOnDur>
 	<firstPause>0.3</firstPause>
 	<secondBeatOnDur>0.485</secondBeatOnDur>
+	<forceUnTouch>7</forceUnTouch>
 </remotePulse>

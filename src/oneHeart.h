@@ -8,7 +8,7 @@
 #ifndef oneHeart_h
 #define oneHeart_h
 
-#include "ofxTiming.h"
+//#include "ofxTiming.h"
 
 class oneHeart {
 private:

@@ -152,7 +152,7 @@ public:
             int matchingDeviceCount = 0;
             for (auto deviceDescriptor: deviceDescriptors){
 #ifdef USE_SERIAL
-                if(ofIsStringInString(deviceDescriptor.description(), "Teensyduino")){
+                if(ofIsStringInString(deviceDescriptor.description(), "Teensy")){
 #endif
                     matchingDeviceCount++;
 #ifdef USE_SERIAL
@@ -166,7 +166,7 @@ public:
             int cnt = 0;
             for (auto deviceDescriptor: deviceDescriptors){
 #ifdef USE_SERIAL
-                if(ofIsStringInString(deviceDescriptor.description(), "Teensyduino")){
+                if(ofIsStringInString(deviceDescriptor.description(), "Teensy")){
 #endif
                     // Choose a device based on correct deviceDescriptor and connect
                     bool success = devices[cnt].setup(deviceDescriptor, 9600); //115200);

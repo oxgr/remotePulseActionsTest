@@ -14,7 +14,9 @@ public:
     string commitVersion;
     
     
+#ifdef TARGET_OSX
     bool generateVersionNumber(){
+        
         string xcodeMsg = ofSystem("xcode-select -p");
         ofLog()<<"xcodeMsg "<<xcodeMsg<<"@";
         string commit;
@@ -54,6 +56,12 @@ public:
             return false;
         }
     }
+#else
+    bool generateVersionNumber(){
+        return false;   
+    }
+#endif
+    
     
     string getVersionString(string _fileName){
         

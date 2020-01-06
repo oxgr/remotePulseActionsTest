@@ -10,18 +10,18 @@
 
 #include "oscNetwork.h"
 
+#include "ofxTiming.h"
+
 #include "sensorHandler.h"
 
 #include "ofxDmx.h"
 
 #include "oneHeart.h"
 
-#include "ofxTiming.h"
-
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "14 20191201 47142be"
+#define APP_VERSION "15 20191202 17d8c0a"
 
 class ofApp : public ofBaseApp{
 public:

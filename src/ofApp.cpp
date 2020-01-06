@@ -24,8 +24,10 @@ void ofApp::setup(){
         ofLog()<<ip_list[i];
     }
     
+#ifdef TARGET_OSX
     ofLog()<<"set system volume";
     system("osascript -e \"set Volume 100\"");
+#endif
     
     allHearts.resize(2);
     

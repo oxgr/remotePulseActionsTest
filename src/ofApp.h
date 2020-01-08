@@ -14,14 +14,18 @@
 
 #include "sensorHandler.h"
 
+//#ifdef USE_DMX
+
 #include "ofxDmx.h"
+
+//#endif
 
 #include "oneHeart.h"
 
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "15 20191202 17d8c0a"
+#define APP_VERSION "16 20200106 3a54b29"
 
 class ofApp : public ofBaseApp{
 public:
@@ -52,6 +56,10 @@ public:
     ofParameter<bool> bShowGui;
     ofParameter<bool> bDebug;
     //    bool bShowGui;
+    ofParameter<int> testDmxChannel;
+    ofParameter<int> testDmxValues;
+    int old_testDmxValues;
+    ofParameter<bool> bFadeTest;
     
     void saveGui();
     void checkGui();
@@ -73,6 +81,8 @@ public:
     
     //----serial button
     sensorHandler hands_object;
+    vector<string> serialSendBuffer;
+    
     
     //---OSC 
     ofxPanel gui_osc;
@@ -88,10 +98,15 @@ public:
     
     //--dmx
     ofxDmx dmx;
+    ofParameter<bool> lightViaDmx;
+    ofParameter<bool> lightViaSerial;
+    bool old_lightViaDmx;
+    bool old_lightViaSerial;
+    
     string dmxDeviceString;
     vector<uint8_t> dmxValues;
-    ofParameter<bool> bEnableDMX;
-    bool old_bEnableDMX;
+//    ofParameter<bool> bEnableDMX;
+//    bool old_bEnableDMX;
     void drawDmxBar(int _x, int _y, int _groupSize, int _devices);
   
     ofParameter<int> firstMinBrightness;

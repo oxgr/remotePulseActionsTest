@@ -37,6 +37,9 @@ public:
     
     int dmx_level_0, dmx_level_1;
     
+     std::vector<string> * serialSendBuffer;
+    string old_sendMessage;
+    
     float lastTimer;
     float lastDuration;
     
@@ -70,13 +73,23 @@ public:
     ofParameter<int> beat1Channel;
     ofParameter<int> beat2Channel;
     
-    void setup(string _label, int _index, int _dmxStart, ofxDmx & dmx){
+    bool lightViaDmx;
+    bool lightViaSerial;
+    
+    int channelValues[513];
+    
+    void setup(string _label, int _index, int _dmxStart, ofxDmx & dmx, std::vector<string> & _serialTxBuffer){
         
         this->dmx = &dmx;
         myLabel = _label;
         myIndex = _index;
+        
+        serialSendBuffer = &_serialTxBuffer;
+            
         //        dmxStartChannel = _dmxStart;
         
+        lightViaDmx = false;
+        lightViaSerial = false;
         arial.load("Arial.ttf", 24, true, true);
         
         bpm = 50;
@@ -113,7 +126,7 @@ public:
     
     void setBPM(int _bpm){
         bpm = _bpm;
-        ofLog()<<myLabel<<"setBPM() bpm "<<bpm<<" wait a few pulse before play "<<bpmCounter;
+        ofLog()<<myLabel<<" setBPM() bpm "<<bpm<<" wait a few pulse before play "<<bpmCounter;
         bpmCounter++;
         
         lastTimer = ofGetElapsedTimef();
@@ -124,7 +137,10 @@ public:
         ofLog()<<myLabel<<" setTouch() _touch "<<isTouched;
     }
     
-    void update(bool _useDmx){ //}, float _beatPlayer2Offset){ //}, bool _touched){
+    void update(){ //bool _lightViaDmx, bool _lightViaSerial){ //}, float _beatPlayer2Offset){ //}, bool _touched){
+        
+//        lightViaDmx = _lightViaDmx;
+//        lightViaSerial = _lightViaSerial;
         
         //        isTouched = _touched;
         
@@ -198,19 +214,17 @@ public:
             //    bpm_lerpTimer.lerpToValue(1);
             
             
-#ifndef USE_DMX
-            _useDmx = false;
-#endif
-            if(_useDmx){
+
+            if(lightViaDmx || lightViaSerial){
                 
                 if(bpmCounter < minBpmCounter){
 
                     if(beat1Channel != beat2Channel){
-                        dmx->setLevel(beat1Channel,0);
-                        dmx->setLevel(beat2Channel,touchBrightness);
+                        setLevel(beat1Channel,0);
+                        setLevel(beat2Channel,touchBrightness);
                     }else{
-                        dmx->setLevel(beat1Channel,touchBrightness);
-                        dmx->setLevel(beat2Channel,touchBrightness);
+                        setLevel(beat1Channel,touchBrightness);
+                        setLevel(beat2Channel,touchBrightness);
                     }
 
                 }else{
@@ -221,20 +235,20 @@ public:
                         //firstBeatOnDur = 0.6
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
-                            dmx->setLevel(beat1Channel,dmx_level_0);
+                            setLevel(beat1Channel,dmx_level_0);
                         }else{
-                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(beat1Channel,firstMinBrightness);
                         }
                         
                         //second beat
                         dmx_level_1 = 0;
                         if(bpm_lerpTimer.getProgress() >= firstPause){ //} && bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
-                            dmx->setLevel(beat2Channel,dmx_level_1);
+                            setLevel(beat2Channel,dmx_level_1);
                             
                             //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
                         }else{
-                            dmx->setLevel(beat2Channel,secondMinBrightness);
+                            setLevel(beat2Channel,secondMinBrightness);
                         }
                         
                     }else{
@@ -247,19 +261,19 @@ public:
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
-                            dmx->setLevel(beat1Channel,dmx_level_0);
+                            setLevel(beat1Channel,dmx_level_0);
                             
                         }else if(bpm_lerpTimer.getProgress() >= firstBeatOnDur && bpm_lerpTimer.getProgress() < firstPause) {
                             
-                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(beat1Channel,firstMinBrightness);
                             
                         }else if(bpm_lerpTimer.getProgress() >= firstPause && bpm_lerpTimer.getProgress() < secondBeatOnDur){
                             
                             dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
-                            dmx->setLevel(beat1Channel,dmx_level_1);
+                            setLevel(beat1Channel,dmx_level_1);
                             
                         }else{
-                            dmx->setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(beat1Channel,firstMinBrightness);
                         }
                         
                     }//end else  if(beat1Channel != beat2Channel)
@@ -274,12 +288,39 @@ public:
                 
             }
             bpmCounter = 0;
-#ifdef USE_DMX
-            dmx->setLevel(beat1Channel,0);
-            dmx->setLevel(beat2Channel,0);
-#endif
+
+            setLevel(beat1Channel,0);
+            setLevel(beat2Channel,0);
+
         }
         
+    }
+    
+    void setLevel(int _channel, int _value){
+        
+       
+        if(lightViaDmx){
+            dmx->setLevel(_channel,_value);
+        }
+        if(lightViaSerial){
+//             ofLog()<<"setLevel via serial chan "<<_channel<<" value "<<_value;
+//            string _label;
+            string msg;
+            msg = "["+ofToString(_value);
+            if(_channel == 1) msg += "a]";
+            else if(_channel == 2) msg += "b]";
+            else if(_channel == 3) msg += "c]";
+            else if(_channel == 4) msg += "d]";
+            
+//            string msg = "["+ofToString(_value) +_label+"]"; //as per teensy handleSettingMsg() function in serial_com
+//            if(_channel >= 1 && _channel<= 4 && old_sendMessage != msg){
+            if(_channel >= 1 && _channel<= 4 && channelValues[_channel] != _value){
+                old_sendMessage = msg;
+                serialSendBuffer->push_back(msg);
+            }
+            
+        }
+        channelValues[_channel] = _value;
     }
     void draw(int _x, int _y){
         

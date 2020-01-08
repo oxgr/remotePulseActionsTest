@@ -1699,8 +1699,8 @@
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E23148EA237B61EC0070FDA9 /* customDefines.h */,
-				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E23148ED237B898E0070FDA9 /* oneHeart.h */,
 				7CCB2DF3DEE053201914D608 /* sensorHandler.h */,
 				E23148E9237B4ED30070FDA9 /* oscNetwork.h */,

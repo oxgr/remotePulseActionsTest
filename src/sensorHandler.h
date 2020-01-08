@@ -59,7 +59,10 @@ public:
     
     vector<ofxIO::BufferedSerialDevice> devices;
     
-    std::vector<SerialMessage> serialMessages;
+    std::vector<SerialMessage> serialReceiveMessages;
+    
+    long serialSendTimer;
+    std::vector<string> * serialSendBuffer;
     
     
     ofxPanel gui_sensor;
@@ -92,8 +95,9 @@ public:
     
     bool bDebug;
     
-    void setup(){ //oscNetwork & _osc){
+    void setup(std::vector<string> & _serialTxBuffer){ //oscNetwork & _osc){
         
+        serialSendBuffer = &_serialTxBuffer;
 //        this->osc_object = &_osc;
         
         setupSerial();
@@ -169,7 +173,7 @@ public:
                 if(ofIsStringInString(deviceDescriptor.description(), "Teensy")){
 #endif
                     // Choose a device based on correct deviceDescriptor and connect
-                    bool success = devices[cnt].setup(deviceDescriptor, 9600); //115200);
+                    bool success = devices[cnt].setup(deviceDescriptor, 115200); //9600); //115200);
                     
                     if (success){
                         devices[cnt].registerAllEvents(this);
@@ -201,6 +205,11 @@ public:
         //        
         //        filter.update(encoderPos);
         
+      
+        
+    }
+    
+    void updateSerial(bool _ignoreBuffer){
         if(bDeviceConnected == false){
             
             if(ofGetElapsedTimef() - lastConnectionTimer > 10){
@@ -212,11 +221,38 @@ public:
                 
                 setupSerial();
             }
+            
         }else{
             lastConnectionTimer = ofGetElapsedTimef();
+            
+            if(ofGetElapsedTimeMillis() - serialSendTimer > 10){
+                
+#ifdef USE_SERIAL
+                
+                if(serialSendBuffer->size() > 0){
+                    serialSendTimer = ofGetElapsedTimeMillis();
+                    
+                    if(_ignoreBuffer){
+                        ofLog()<<"sendBytes() newest "<<serialSendBuffer->back();
+                        ofx::IO::ByteBuffer textBuffer(serialSendBuffer->back());
+                        devices[0].writeBytes(textBuffer);
+                        devices[0].writeByte('\n');
+                        serialSendBuffer->clear();
+                    }else{
+                        ofLog()<<"sendBytes() "<<serialSendBuffer->front();
+                        ofx::IO::ByteBuffer textBuffer(serialSendBuffer->front());
+                        devices[0].writeBytes(textBuffer);
+                        devices[0].writeByte('\n');
+                        assert(!serialSendBuffer->empty());
+                        serialSendBuffer->erase(serialSendBuffer->begin());
+                    }
+                    
+                    
+                }
+#endif
+            }
         }
     }
-    
     void draw(int _x, int _y){
         ofPushMatrix();
         ofTranslate(_x,_y);
@@ -267,14 +303,14 @@ public:
         
         int height = 20;
         
-        auto iter = serialMessages.begin();
+        auto iter = serialReceiveMessages.begin();
         
         // Cycle through each of our messages and delete those that have expired.
-        while (iter != serialMessages.end()) {
+        while (iter != serialReceiveMessages.end()) {
             iter->fade -= 1;
             
             if (iter->fade < 0){
-                iter = serialMessages.erase(iter);
+                iter = serialReceiveMessages.erase(iter);
             }else{
                 ofSetColor(255, ofClamp(iter->fade, 0, 255));
                 ofDrawBitmapString(iter->message, ofVec2f(x, y));
@@ -289,7 +325,7 @@ public:
                 
                 ++iter;
             }
-        }//end  while (iter != serialMessages.end()) 
+        }//end  while (iter != serialReceiveMessages.end()) 
         
         
     }
@@ -340,10 +376,10 @@ public:
         //        ofNotifyEvent(buttonPressed, message.message, this);
         //ofApp::update();
          if(bDebug == true)       ofLog()<<"received serial: " << args.buffer().toString();
-        //        serialMessages.push_back(message);
+        //        serialReceiveMessages.push_back(message);
         
         vector<string> splitStr = ofSplitString(args.buffer().toString(), ":");
-        if(splitStr[0] == "BPM"){
+        if(splitStr[0] == "bpm"){
             //            encoderPos = ofToInt(args.buffer().toString());
             //            encoderPos = ofToInt(splitStr[1]);
             //            old_raw_deg = raw_deg;
@@ -352,11 +388,16 @@ public:
             ////            ofLog()<<"encoderPos "<<encoderPos<<" raw_deg "<<raw_deg<<" temp_diff "<<temp_diff;
             //            
             //            accum_deg+= temp_diff;
-            old_bpm = bpm;
-            bpm = ofToInt(splitStr[1]);
-            gotBPM = true;
-            bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
             
+//            vector<string> splitStr2 = ofSplitString(splitStr[1], " ");
+            ofLog()<<"splitStr.size "<<splitStr.size();
+            ofLog()<<"splitStr[3] "<<splitStr[3]<<" splitStr[4] "<<splitStr[4];
+           
+                old_bpm = bpm;
+                bpm = ofToInt(splitStr[4]);
+                gotBPM = true;
+                bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
+//            }
         } else if(splitStr[0] == "a"){
             //alive
             aliveTimer = ofGetElapsedTimef();
@@ -403,7 +444,7 @@ public:
         SerialMessage message(args.buffer().toString(),
                               args.exception().displayText(),
                               500);
-        serialMessages.push_back(message);
+        serialReceiveMessages.push_back(message);
         
         ofLog()<<"error";
         ofLog()<<args.buffer().toString();

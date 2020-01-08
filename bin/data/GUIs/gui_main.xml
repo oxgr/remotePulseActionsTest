@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>15 20191202 17d8c0a</ver>
+	<ver>16 20200106 3a54b29</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -10,6 +10,9 @@
 		<otherTestBPM>102</otherTestBPM>
 		<triggerMeFake>0</triggerMeFake>
 		<triggerOtherFake>0</triggerOtherFake>
+		<testDmxValues>0</testDmxValues>
+		<fadeTest>0</fadeTest>
+		<testDmxChan>4</testDmxChan>
 	</debug>
 	<enableDMX>1</enableDMX>
 	<useAudio_for_me>0</useAudio_for_me>
@@ -31,12 +34,12 @@
 		<useAudio>0</useAudio>
 	</heart_me>
 	<heart_other>
-		<dmxChan_beat1>1</dmxChan_beat1>
-		<dmxChan_beat2>1</dmxChan_beat2>
+		<dmxChan_beat1>3</dmxChan_beat1>
+		<dmxChan_beat2>3</dmxChan_beat2>
 		<useAudio>1</useAudio>
 	</heart_other>
 	<systemVolume>100</systemVolume>
-	<minBpmCount>2</minBpmCount>
+	<minBpmCount>1</minBpmCount>
 	<firstMinBright>17</firstMinBright>
 	<firstMaxBright>81</firstMaxBright>
 	<secondMinBright>14</secondMinBright>
@@ -44,5 +47,7 @@
 	<firstBeatOnDur>0.175</firstBeatOnDur>
 	<firstPause>0.3</firstPause>
 	<secondBeatOnDur>0.485</secondBeatOnDur>
-	<forceUnTouch>7</forceUnTouch>
+	<forceUnTouch>0</forceUnTouch>
+	<lightViaDmx>0</lightViaDmx>
+	<lightViaSerial>1</lightViaSerial>
 </remotePulse>

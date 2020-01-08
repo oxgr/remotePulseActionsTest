@@ -31,10 +31,15 @@ void ofApp::setup(){
     
     allHearts.resize(2);
     
-    allHearts[0].setup("me",0,1,dmx);
-    allHearts[1].setup("other",1,3,dmx);
+    allHearts[0].setup("me",0,1,dmx,serialSendBuffer);
+    allHearts[1].setup("other",1,3,dmx,serialSendBuffer);
     
     group_debug.setName("debug");
+    
+    group_debug.add(bFadeTest.set("fadeTest",false));
+    group_debug.add(testDmxChannel.set("testDmxChan",1,1,4));
+    group_debug.add(testDmxValues.set("testDmxValues",0,0,255));
+    
     group_debug.add(triggerFakeMe.set("triggerMeFake",false));
     group_debug.add(meTestTouched.set("meTouched",false));
     group_debug.add(meTestBPM.set("meTestBPM",60,0,200));
@@ -50,7 +55,8 @@ void ofApp::setup(){
     gui_main.setPosition(10,70);
     gui_main.setHeaderBackgroundColor(ofColor(255,0,0));
     gui_main.add(versionString.set("ver", ""));
-    gui_main.add(bEnableDMX.set("enableDMX",false));
+    gui_main.add(lightViaDmx.set("lightViaDmx",false));
+     gui_main.add(lightViaSerial.set("lightViaSerial",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
     //    gui_main.add(systemVolume.set("systemVolume",100,0,100));
@@ -89,6 +95,10 @@ void ofApp::setup(){
     allHearts[0].bUseSound = false;
     allHearts[1].bUseSound = true;
     
+    bFadeTest = false;
+    testDmxValues = 0;
+    old_testDmxValues = 0;
+    
     string temp_versionString = version_object.getVersionString("ofApp.h");
     if(temp_versionString != ""){
         versionString = temp_versionString;
@@ -98,7 +108,7 @@ void ofApp::setup(){
     }
     ofLog()<<"used versionString "<<versionString;
     
-    bEnableDMX = true;
+//    bEnableDMX = true;
     
     //---dmx
     dmxValues.resize(MAX_DMX_CHANNELS+1);
@@ -125,7 +135,7 @@ void ofApp::setup(){
     osc_object.init();
     
     //---serial
-    hands_object.setup();
+    hands_object.setup(serialSendBuffer);
     
     bShowGui = true;
     test_delayTimer.setPeriod(10);
@@ -134,13 +144,14 @@ void ofApp::setup(){
 
 void ofApp::exit(){
     
-#ifdef USE_DMX
+    if(lightViaDmx){
     for(int i=1; i<=512; i++){
         dmx.setLevel(i,0);
     }
     
     dmx.update();
-#endif
+    }
+
     osc_object.exit();
     
     hands_object.exit();
@@ -175,7 +186,9 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             
-            dmx.setLevel(allHearts[0].beat1Channel,firstMaxBrightness);
+//            if(lightViaDmx){
+               allHearts[0].setLevel(allHearts[0].beat1Channel,firstMaxBrightness);
+//            }
             allHearts[0].beatPlayer1.play();
             
             initDuration = 2;
@@ -183,9 +196,10 @@ void ofApp::update(){
         } else if(initStage == 1 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            
-            dmx.setLevel(allHearts[0].beat1Channel,0);
-            dmx.setLevel(allHearts[1].beat1Channel,firstMaxBrightness);
+//              if(lightViaDmx){
+            allHearts[0].setLevel(allHearts[0].beat1Channel,0);
+            allHearts[1].setLevel(allHearts[1].beat1Channel,firstMaxBrightness);
+//              }
             allHearts[1].beatPlayer1.play();
             
             initDuration = 2;
@@ -193,9 +207,10 @@ void ofApp::update(){
         } else if(initStage == 2 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            
-            dmx.setLevel(allHearts[1].beat1Channel,0);
-            dmx.setLevel(allHearts[0].beat2Channel,secondMaxBrightness);
+           //   if(lightViaDmx){
+            allHearts[1].setLevel(allHearts[1].beat1Channel,0);
+            allHearts[0].setLevel(allHearts[0].beat2Channel,secondMaxBrightness);
+            //  }
             allHearts[0].beatPlayer2.play();
             
             initDuration = 2;
@@ -203,9 +218,10 @@ void ofApp::update(){
         } else if(initStage == 3 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            
-            dmx.setLevel(allHearts[0].beat2Channel,0);
-            dmx.setLevel(allHearts[1].beat2Channel,secondMaxBrightness);
+            //  if(lightViaDmx){
+            allHearts[0].setLevel(allHearts[0].beat2Channel,0);
+            allHearts[1].setLevel(allHearts[1].beat2Channel,secondMaxBrightness);
+           //   }
             allHearts[1].beatPlayer2.play();
             
             initDuration = 2;
@@ -213,11 +229,12 @@ void ofApp::update(){
         } else if(initStage == 4 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            dmx.setLevel(allHearts[0].beat1Channel,0);
-            dmx.setLevel(allHearts[0].beat2Channel,0);
-            dmx.setLevel(allHearts[1].beat1Channel,0);
-            dmx.setLevel(allHearts[1].beat2Channel,0);
-            
+            //  if(lightViaDmx){
+            allHearts[0].setLevel(allHearts[0].beat1Channel,0);
+            allHearts[0].setLevel(allHearts[0].beat2Channel,0);
+            allHearts[1].setLevel(allHearts[1].beat1Channel,0);
+            allHearts[1].setLevel(allHearts[1].beat2Channel,0);
+             // }
             initDuration = 2;
             initDone = true;
             ofLog()<<"end init";
@@ -237,13 +254,14 @@ void ofApp::update(){
         }
         
         //-----
-        allHearts[0].update(bEnableDMX); //, firstPause);
-        allHearts[1].update(bEnableDMX); //, firstPause);
-        
+        if(bFadeTest == false){
+        allHearts[0].update(); //, firstPause);
+        allHearts[1].update(); //, firstPause);
+        }
         
         //send out to OSC my BPM        
         //MARK:-----check serial and set local and remote
-        hands_object.update();
+//        hands_object.update();
         
         if(hands_object.gotBPM == true){
             allHearts[0].setBPM(hands_object.bpm);
@@ -252,7 +270,7 @@ void ofApp::update(){
            if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
         }
         
-        if(ofGetElapsedTimef() - bpmChangeTimer >= forceUnTouchDuration){
+        if(forceUnTouchDuration > 0 && ofGetElapsedTimef() - bpmChangeTimer >= forceUnTouchDuration){
             ofLog()<<" force unTouch after "<<forceUnTouchDuration<<" seconds";
             bpmChangeTimer = ofGetElapsedTimef();
             
@@ -273,7 +291,7 @@ void ofApp::update(){
     }//end else if initDone
     
     //--------------
-    
+
     
     
     //----debugging
@@ -297,9 +315,10 @@ void ofApp::update(){
         allHearts[1].setBPM(otherTestBPM); //allHearts[0].bpm = meTestBPM;
     }
     
-#ifdef USE_DMX
-    if(bEnableDMX == true) dmx.update();
-#endif
+    hands_object.updateSerial(bFadeTest);
+     hands_object.update();
+    if(lightViaDmx == true) dmx.update();
+
 }
 
 //--------------------------------------------------------------
@@ -394,17 +413,29 @@ void ofApp::checkGui(){
     }
     
     
-#ifdef USE_DMX
-    if(old_bEnableDMX != bEnableDMX){
-        old_bEnableDMX = bEnableDMX;
-        for(int i=1; i<=512; i++){
-            dmx.setLevel(i,0);
+    if(old_lightViaDmx != lightViaDmx){
+        old_lightViaDmx = lightViaDmx;
+        
+        if(lightViaDmx){
+            for(int i=1; i<=512; i++){
+                dmx.setLevel(i,0);
+            }
+            
+            dmx.update();
         }
-        
-        dmx.update();
-        
     }
-#endif
+
+    if(old_testDmxValues != testDmxValues){
+        old_testDmxValues = testDmxValues;
+        ofLog()<<"testDmxValues "<<testDmxValues;
+        allHearts[0].setLevel(testDmxChannel,testDmxValues);
+    }
+    
+    allHearts[0].lightViaSerial = lightViaSerial;
+    allHearts[0].lightViaDmx = lightViaDmx;
+    allHearts[1].lightViaSerial = lightViaSerial;
+    allHearts[1].lightViaDmx = lightViaDmx;
+ 
 }
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
@@ -531,10 +562,13 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
     //        ofPushMatrix();
     
     int yy = - 50;
-    if(bEnableDMX == false)  ofDrawBitmapStringHighlight("!!DISABLED!!", 0, yy+=15);
-    ofDrawBitmapStringHighlight("uses DMX USB", 0, yy+=15);
-    ofDrawBitmapStringHighlight("dmx device = "+dmxDeviceString,0,yy+=15);
-    
+    if(lightViaDmx == false){
+        ofDrawBitmapStringHighlight("!!DISABLED!!", 0, yy+=15);
+        ofDrawBitmapStringHighlight("dmx device = "+dmxDeviceString,0,yy+=15);
+    }else{
+        ofDrawBitmapStringHighlight("uses DMX USB", 0, yy+=15);
+        ofDrawBitmapStringHighlight("dmx device = "+dmxDeviceString,0,yy+=15);
+    }
     
     int _w = 50; //11;
     int groupCnt = 0;
@@ -545,12 +579,13 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
     //        ofLog()<<"_groupSize*_devices "<<(_groupSize*_devices);
     for(int i=1; i<=(_groupSize*_devices); i++){
         
-#ifdef USE_DMX
-        int temp_level = dmx.getLevel(i);
-        //        ofLog()<<i<<" temp_level "<<temp_level;
-#else
         int temp_level = 255;
-#endif
+        
+
+      if(lightViaDmx)  temp_level = dmx.getLevel(i);
+        //        ofLog()<<i<<" temp_level "<<temp_level;
+
+
         ofFill();
         ofSetColor(temp_level);
         ofDrawRectangle(temp_x, temp_y, _w, _w);

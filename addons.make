@@ -1,8 +1,9 @@
 ofxBiquadFilter
 ofxDmx
 ofxGui
-ofxIO
-ofxOsc
 ofxPoco
+ofxIO
+ofxJSON
+ofxOsc
 ofxSerial
 ofxTiming

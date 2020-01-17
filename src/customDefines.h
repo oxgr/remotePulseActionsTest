@@ -7,15 +7,12 @@
 #ifndef customDefines_h
 #define customDefines_h
 
-//#define LIGHTS_AMOUNT 18
-//#define STATION_AMOUNT 6
-//#define LIGHTS_PER_STATION 3
-
-//#define USE_SOCKET //through which we send bridge data to the website
+#define USE_WEB // or use OSC to communicate between both remote pulse stations
+//#define USE_OSC 
 
 #define USE_SERIAL
 
-#define USE_DMX
+//#define USE_DMX
 #define DMX_UNIVERSES 1
 #define MAX_DMX_CHANNELS 512
 #endif /* customDefines_h */

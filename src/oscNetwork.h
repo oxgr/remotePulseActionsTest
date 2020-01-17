@@ -3,6 +3,8 @@
 #ifndef oscNetwork_h
 #define oscNetwork_h
 
+#ifdef USE_OSC
+
 #include "ofxOsc.h"
 
 #include "ofParameterGroup.h"
@@ -34,7 +36,8 @@ public:
     float timers[NUM_MSG_STRINGS];
     
     
-    ofParameterGroup parameters_oscManualControls;
+    //    ofParameterGroup parameters_oscManualControls;
+    ofxPanel gui_osc;
     ofParameter <bool> bEnableOSC;
     bool old_bEnableOSC;
     ofParameter<int> oscSendPort;
@@ -85,24 +88,29 @@ public:
         //        oscSendPort = 19924;
         //        oscReceivePort = 19923;
         
-        parameters_oscManualControls.setName("osc_speakers");
         
-        parameters_oscManualControls.add(bEnableOSC.set("enableOSC", false));
+        gui_osc.setup();
+        gui_osc.setName("osc");
+        gui_osc.setHeaderBackgroundColor(ofColor(255,0,0));
+        
+        gui_osc.add(bEnableOSC.set("enableOSC", false));
         //        parameters_oscManualControls.add(bRunMode.set("run", false));
         //        
-        parameters_oscManualControls.add(oscSendPort.set("oscOutPort", 9924,9923,9924));
-        parameters_oscManualControls.add(oscReceivePort.set("oscInPort", 9923,9923,9924));
-        parameters_oscManualControls.add(sendToIP.set("sendToIP", "10.0.1.191"));
+        gui_osc.add(oscSendPort.set("oscOutPort", 9924,9923,9924));
+        gui_osc.add(oscReceivePort.set("oscInPort", 9923,9923,9924));
+        gui_osc.add(sendToIP.set("sendToIP", "10.0.1.191"));
         
-        parameters_oscManualControls.add(oscSendInterval.set("oscSendInterval", 10,0,100));
+        gui_osc.add(oscSendInterval.set("oscSendInterval", 10,0,100));
         
-        parameters_oscManualControls.add(rxTouch_str.set("other touch received", ""));
-        parameters_oscManualControls.add(rxBPM_str.set("other bpm received", ""));
+        gui_osc.add(rxTouch_str.set("other touch received", ""));
+        gui_osc.add(rxBPM_str.set("other bpm received", ""));
         
-        parameters_oscManualControls.add(txTouch_str.set("me touch sent", ""));
-        parameters_oscManualControls.add(txBPM_str.set("me bpm sent", ""));
+        gui_osc.add(txTouch_str.set("me touch sent", ""));
+        gui_osc.add(txBPM_str.set("me bpm sent", ""));
         
-        parameters_oscManualControls.add(bPeriodicResend.set("periodicResend", false));
+        gui_osc.add(bPeriodicResend.set("periodicResend", false));
+        
+        gui_osc.loadFromFile("GUIs/gui_osc.xml");
         
         inputType = -1;
     }
@@ -160,7 +168,7 @@ public:
         txTouch_str = ofToString(_value);
         
         resendTimer = ofGetElapsedTimef();
-       
+        
     }
     
     
@@ -190,7 +198,7 @@ public:
         
         
         if(bEnableOSC){
-        
+            
             if(ofGetElapsedTimeMillis() - sendTimer > oscSendInterval){
                 sendTimer = ofGetElapsedTimeMillis();
                 
@@ -275,12 +283,12 @@ public:
             }else if(m.getAddress() == "/appAlive"){
                 string temp_forWhom = m.getArgAsString(0);
                 if(bDebug) ofLog()<<"temp_forWhom "<<temp_forWhom<<" runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
-
+                
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     other_runtimeStr = m.getArgAsString(1);
                     other_serialStr = ofToString(m.getArgAsInt(2));
                     other_runtime_fade = 255;
-                 }         
+                }         
                 
             }else{
                 // unrecognized message: display on the bottom of the screen
@@ -405,5 +413,7 @@ public:
 private:
     
 };
+
+#endif
 
 #endif /* oscNetwork_h */

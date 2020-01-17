@@ -117,31 +117,33 @@ void ofApp::setup(){
     //MARK: -------DMX setup-----------
 #ifdef USE_DMX
     
-#ifdef TARGET_LINUX_ARM
+#if defined(TARGET_LINUX_ARM)
     // stuff for the raspi
      dmx.connect("ttyUSB0", MAX_DMX_CHANNELS ); // use the name
-#else if defined(TARGET_OSX)
+#elif defined(TARGET_OSX)
     // code for osx
      dmx.connect("serial-EN", MAX_DMX_CHANNELS ); // use the name
+#else
+    
 #endif
     
    
-#endif
+#endif //dmx
     dmxDeviceString = dmx.getDeviceString();
     
     
     
-    
+#ifdef USE_OSC
     //--osc
     osc_object.setup(myIP, broadCastIP);
-    gui_osc.setup();
-    gui_osc.setName("OSC");
-    gui_osc.setPosition(430, 70);
-    gui_osc.setHeaderBackgroundColor(ofColor(255,0,0));
-    gui_osc.add(osc_object.parameters_oscManualControls);
-    
-    gui_osc.loadFromFile("GUIs/gui_osc.xml");
+    osc_object.gui_osc.setPosition(430, 70);
     osc_object.init();
+#endif
+    
+#ifdef USE_WEB
+    web_object.setup(); //myIP, broadCastIP);
+    web_object.gui_web.setPosition(430, 70);
+#endif
     
     //---serial
     hands_object.setup(serialSendBuffer);
@@ -154,37 +156,59 @@ void ofApp::setup(){
 void ofApp::exit(){
     
     if(lightViaDmx){
-    for(int i=1; i<=512; i++){
-        dmx.setLevel(i,0);
-    }
-    
-    dmx.update();
+        for(int i=1; i<=512; i++){
+            dmx.setLevel(i,0);
+        }
+        
+        dmx.update();
     }
 
+#ifdef USE_OSC
     osc_object.exit();
+#endif
+    #ifdef USE_WEB
+     web_object.exit();
+#endif
     
     hands_object.exit();
     //    hands_object.gui_sensor.saveToFile("GUIs/gui-sensor.xml");
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofSetWindowTitle(myIP+" | BPM-sender");
+    ofSetWindowTitle(myIP+" | BPM-sender | " + web_object.getComputerID()+"|");
     
     checkGui();
     
     if(ofGetElapsedTimef() - logTimer > 2){
         logTimer = ofGetElapsedTimef() ;
         
+        bool connectionOK = true; //false;
+#ifdef USE_OSC
         osc_object.addAliveMessage(osc_object.sendToIP,runtime_str, hands_object.aliveCounter);
         
-        if(ofIsStringInString(myIP, osc_object.sendToIP.get().substr (0,6)) == true){
+        connectionOK = ofIsStringInString(myIP, osc_object.sendToIP.get().substr (0,6));
+#endif
+        
+#ifdef USE_WEB
+        //TODO: addAliveMessage
+        connectionOK = true;
+#endif
+        
+        if(connectionOK == true){
             
             ofBuffer buf;
             buf.set(ofGetTimestampString());
             ofBufferToFile("runLogs/heartbeat.txt", buf);
             
         }else{
-            if(bDebug)  ofLog()<<"wrong IP range. is"<<myIP<<" should be someting around "<<osc_object.sendToIP;
+            if(bDebug){
+                 #ifdef USE_OSC
+                ofLog()<<"wrong IP range. is"<<myIP<<" should be someting around "<<osc_object.sendToIP;
+#endif
+                #ifdef USE_WEB
+                
+#endif
+            }
         }
         
     }
@@ -252,6 +276,7 @@ void ofApp::update(){
         
         
         //Mark:--pass on OSC received BPM and touch
+#ifdef USE_OSC
         if(osc_object.gotBPM == true){
             //        allHearts[1].bpm = osc_object.rxBPM;
             allHearts[1].setBPM(osc_object.rxBPM);
@@ -261,7 +286,11 @@ void ofApp::update(){
             allHearts[1].setTouch(osc_object.rxTouch);
             osc_object.gotTouch = false;
         }
-        
+#endif
+
+#ifdef USE_WEB
+    //TODO: pass on web BPM to heart obebject
+#endif
         //-----
         if(bFadeTest == false){
         allHearts[0].update(); //, firstPause);
@@ -274,7 +303,12 @@ void ofApp::update(){
         
         if(hands_object.gotBPM == true){
             allHearts[0].setBPM(hands_object.bpm);
+            #ifdef USE_OSC
             osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
+#endif
+            #ifdef USE_WEB
+            //TODO:add web message      
+#endif
             hands_object.gotBPM = false;
            if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
         }
@@ -284,19 +318,33 @@ void ofApp::update(){
             bpmChangeTimer = ofGetElapsedTimef();
             
             allHearts[0].setTouch(false);
+            #ifdef USE_OSC
             osc_object.addTouchMessage(osc_object.sendToIP, false);
-            
+#endif
+#ifdef USE_WEB
+            //TODO:add web message      
+#endif
         }
         
         if(hands_object.gotTouch == true){
             ofLog()<<" hands_object.gotTouch == true ";
             allHearts[0].setTouch(hands_object.touch);
+            #ifdef USE_OSC
             osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
+#endif
+#ifdef USE_WEB
+            //TODO:add web message      
+#endif
             hands_object.gotTouch = false;
         }
         
+        #ifdef USE_OSC
         if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
-        
+#endif
+#ifdef USE_WEB
+        //TODO:add web message   
+        web_object.update();
+#endif
     }//end else if initDone
     
     //--------------
@@ -307,12 +355,22 @@ void ofApp::update(){
     if(old_meTestTouched != meTestTouched){
         old_meTestTouched = meTestTouched;
         allHearts[0].setTouch(meTestTouched);
+        #ifdef USE_OSC
         osc_object.addTouchMessage(osc_object.sendToIP, meTestTouched);
+#endif
+#ifdef USE_WEB
+        //TODO:add web message      
+#endif
     }
     if(triggerFakeMe == true && meTestTouched == true){
         triggerFakeMe = false;
         allHearts[0].setBPM(meTestBPM); //allHearts[0].bpm = meTestBPM;
+        #ifdef USE_OSC
         osc_object.addBPMMessage(osc_object.sendToIP, meTestBPM);
+#endif
+#ifdef USE_WEB
+        //TODO:add web message      
+#endif
     }
     
     if(old_otherTestTouched != otherTestTouched){
@@ -334,8 +392,13 @@ void ofApp::update(){
 void ofApp::draw(){
     
     drawRuntime(ofGetWidth()/2, 10);
+    #ifdef USE_OSC
     osc_object.drawAliveMsg(ofGetWidth()/2, 10+30);
-    
+#endif
+#ifdef USE_WEB
+    web_object.draw(ofGetWidth()/3, ofGetHeight()/3);
+    web_object.drawAliveMsg(ofGetWidth()/2, 10+30);    
+#endif
     ofPushMatrix();
     ofTranslate(50, ofGetHeight() - 350);
     allHearts[0].draw(0, 0);
@@ -352,7 +415,12 @@ void ofApp::draw(){
     
     if(bShowGui == true){
         gui_main.draw();
-        gui_osc.draw();
+        #ifdef USE_OSC
+        osc_object.gui_osc.draw();
+#endif
+        #ifdef USE_WEB
+        web_object.gui_web.draw();
+#endif
         hands_object.gui_sensor.draw();
     }
 }
@@ -375,14 +443,23 @@ void ofApp::drawRuntime(int _x, int _y){
 void ofApp::saveGui(){
     gui_main.saveToFile("GUIs/gui_main.xml");
     hands_object.gui_sensor.saveToFile("GUIs/gui_sensor.xml");
-    gui_osc.saveToFile("GUIs/gui_osc.xml");
+     #ifdef USE_OSC
+    osc_object.gui_osc.saveToFile("GUIs/gui_osc.xml");
+#endif
+        #ifdef USE_WEB
+     web_object.gui_web.saveToFile("GUIs/gui_web.xml");
+#endif
 }
 
 void ofApp::checkGui(){
     
     hands_object.bDebug = bDebug;
+     #ifdef USE_OSC
     osc_object.bDebug = bDebug;
-    
+#endif
+      #ifdef USE_WEB
+     web_object.bDebug = bDebug;
+#endif;
     /*
      if(old_systemVolume != systemVolume){
      old_systemVolume = systemVolume;

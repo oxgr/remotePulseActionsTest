@@ -12,7 +12,9 @@
 
 class oneHeart {
 private:
+
     ofxDmx * dmx;
+
 public:
     
     string myLabel;
@@ -299,7 +301,7 @@ public:
     void setLevel(int _channel, int _value){
         
        
-        if(lightViaDmx){
+        if(lightViaDmx == true){
             dmx->setLevel(_channel,_value);
         }
         if(lightViaSerial){

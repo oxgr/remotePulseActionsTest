@@ -8,16 +8,20 @@
 
 #include "customDefines.h"
 
+#ifdef USE_OSC
 #include "oscNetwork.h"
+#endif
+
+#ifdef USE_WEB
+#include "webNetwork.h"
+#endif
 
 #include "ofxTiming.h"
 
 #include "sensorHandler.h"
 
 //#ifdef USE_DMX
-
 #include "ofxDmx.h"
-
 //#endif
 
 #include "oneHeart.h"
@@ -25,7 +29,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "17 20200108 8e89649"
+#define APP_VERSION "18 20200117 b2fd79e"
 
 class ofApp : public ofBaseApp{
 public:
@@ -85,8 +89,12 @@ public:
     
     
     //---OSC 
-    ofxPanel gui_osc;
+#ifdef USE_OSC
     oscNetwork osc_object;
+#endif
+#ifdef USE_WEB
+    webNetwork web_object;
+#endif
     
     //runtime
     void drawRuntime(int _x, int _y);

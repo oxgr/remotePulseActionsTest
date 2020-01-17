@@ -383,9 +383,9 @@ public:
         ofDrawBitmapString("other runtime:"+other_runtimeStr,0, 0);
         
         ofSetColor(0,other_runtime_fade);
-        ofDrawBitmapString("other serial:"+other_serialStr,0, 20);
+        ofDrawBitmapString("other alive:"+other_serialStr,0, 20);
         ofSetColor(0);
-        ofDrawBitmapString("other serial:"+other_serialStr,0, 20);
+        ofDrawBitmapString("other alive:"+other_serialStr,0, 20);
         
         ofPopMatrix();
         

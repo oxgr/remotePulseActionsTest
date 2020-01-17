@@ -25,7 +25,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "16 20200106 3a54b29"
+#define APP_VERSION "17 20200108 8e89649"
 
 class ofApp : public ofBaseApp{
 public:

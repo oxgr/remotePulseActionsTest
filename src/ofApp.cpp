@@ -116,7 +116,16 @@ void ofApp::setup(){
     
     //MARK: -------DMX setup-----------
 #ifdef USE_DMX
-    dmx.connect("serial-EN", MAX_DMX_CHANNELS ); // use the name
+    
+#ifdef TARGET_LINUX_ARM
+    // stuff for the raspi
+     dmx.connect("ttyUSB0", MAX_DMX_CHANNELS ); // use the name
+#else if defined(TARGET_OSX)
+    // code for osx
+     dmx.connect("serial-EN", MAX_DMX_CHANNELS ); // use the name
+#endif
+    
+   
 #endif
     dmxDeviceString = dmx.getDeviceString();
     

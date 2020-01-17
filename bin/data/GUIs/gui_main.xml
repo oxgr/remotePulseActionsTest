@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>16 20200106 3a54b29</ver>
+	<ver>17 20200108 8e89649</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -40,9 +40,9 @@
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>1</minBpmCount>
-	<firstMinBright>17</firstMinBright>
+	<firstMinBright>8</firstMinBright>
 	<firstMaxBright>81</firstMaxBright>
-	<secondMinBright>14</secondMinBright>
+	<secondMinBright>10</secondMinBright>
 	<secondMaxBright>81</secondMaxBright>
 	<firstBeatOnDur>0.175</firstBeatOnDur>
 	<firstPause>0.3</firstPause>

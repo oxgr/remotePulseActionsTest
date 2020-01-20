@@ -41,6 +41,8 @@ public:
         gui_web.add(bEnableWeb.set("enableWeb", false));
         gui_web.add(socket_object.gui_socket);
         gui_web.loadFromFile("GUIs/gui_web.xml");
+        
+        socket_object.init();
     }
     
     void exit(){

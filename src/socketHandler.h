@@ -58,6 +58,7 @@ ofParameterGroup gui_socket;
     bool isLastCall;
     
     void setup();
+    void init();
     void update();
     void draw(int _x, int _y);
     string convertTime(string num);

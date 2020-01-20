@@ -6,7 +6,7 @@
 		<textPosX>50</textPosX>
 		<textPosY>50</textPosY>
 		<checkDatabase>2</checkDatabase>
-		<UnknownName></UnknownName>
+		<UnknownName>app started</UnknownName>
 		<Send>0</Send>
 	</socket>
 </internet>

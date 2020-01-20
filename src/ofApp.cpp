@@ -143,6 +143,7 @@ void ofApp::setup(){
 #ifdef USE_WEB
     web_object.setup(); //myIP, broadCastIP);
     web_object.gui_web.setPosition(430, 70);
+//    web_object.init();
 #endif
     
     //---serial
@@ -175,7 +176,7 @@ void ofApp::exit(){
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofSetWindowTitle(myIP+" | BPM-sender | " + web_object.getComputerID()+"|");
+    ofSetWindowTitle(myIP+" | BPM-sender | " + web_object.getComputerID());
     
     checkGui();
     

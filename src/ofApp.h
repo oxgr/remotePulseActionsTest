@@ -9,11 +9,15 @@
 #include "customDefines.h"
 
 #ifdef USE_OSC
+
 #include "oscNetwork.h"
+
 #endif
 
 #ifdef USE_WEB
+
 #include "webNetwork.h"
+
 #endif
 
 #include "ofxTiming.h"
@@ -21,7 +25,9 @@
 #include "sensorHandler.h"
 
 //#ifdef USE_DMX
+
 #include "ofxDmx.h"
+
 //#endif
 
 #include "oneHeart.h"
@@ -29,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "18 20200117 b2fd79e"
+#define APP_VERSION "19 20200117 d06ca73"
 
 class ofApp : public ofBaseApp{
 public:

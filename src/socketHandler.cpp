@@ -61,7 +61,7 @@ void socketHandler::setup(){
     
     //parameters_socket.add(<#ofAbstractParameter &p#>, <#Args &parameters...#>)
     //ofLog()<<"setting up";
-    textField = "app started";
+//    textField = "app started";
     isConn = false;
     autoTimerWeb = 0;
     autoTimerSoc  = 0;
@@ -78,7 +78,10 @@ void socketHandler::setup(){
 
 }
 
-
+void socketHandler::init(){
+ textField = "app started";   
+    triggerSend = true;
+}
 int socketHandler::findID(){
     return 0;
 }
@@ -116,7 +119,7 @@ void socketHandler::draw(int _x, int _y){
         int h = 15;
     int temp_y = 0;
     string mes;
-     mes += " computerID " +computerID+"|";
+     mes += " computerID " +computerID;
     ofDrawBitmapString(mes, 0, temp_y+=h);
         for(int i=0; i<tempMessage.size(); i++){
             //tempMessage[i]
@@ -164,7 +167,7 @@ string socketHandler::convertTime(string num){
 }
 
 void socketHandler::triggerSendPressed(bool & triggerSend){
-    //ofLog()<< "sending";
+    ofLog()<< "sending "<<textField;
     //sendToSocket(textField);
     //client.send(textField);
     //sendToDBPut(textField);
@@ -221,6 +224,7 @@ void socketHandler::checkDeque(){
 void socketHandler::sendToDBPost(string messages){
     string command2 = "curl -X POST -H 'Content-Type: application/json' -d '{ \"title\": \"Pizza\", \"price\": 10.5 }' http://localhost:3001/";
     string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+    command += " 2>&1 >/dev/null";
     ofLog()<< command;
     ofLog()<< command2;
     string capture = ofSystem(command);
@@ -231,6 +235,7 @@ void socketHandler::sendToDBPut(string messages){
     //dbId =
     string command = "curl -X PUT -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\":\""+messages+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+"}' "+theHttpAddress+computerID;
     //string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"comp-id\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+    command += " 2>&1 >/dev/null";
     ofLog()<< command;
     string capture = ofSystem(command);
     ofLog()<< capture;
@@ -240,6 +245,7 @@ void socketHandler::sendToDBPut(string messages){
 ofxJSONElement socketHandler::getDatabase(){
     ofxJSONElement temp;
     string command = "curl '" + theHttpAddress + "'";
+    command += " 2>&1 >/dev/null";
     ofLog()<< command;
     string capture = ofSystem(command);
     ofLog()<< capture;

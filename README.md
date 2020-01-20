@@ -1,30 +1,37 @@
-# About emptyExample
+# about remotePulse
+
+## raspberry pi 4 setup
+
+### scheduled reboot 
+Create a file named "mycron" (or whatever your like) in the `/etc/cron.d/` folder.
+```
+sudo nano /etc/cron.d/mycron
+
+# past in to this file:
+# m h dom mon dow user command
+9 21 * * * root /sbin/shutdown -r now
+```
+
+### auto start app after desktop appears
+```
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+
+
+#this line makes this app start 
+sudo $HOME/Desktop/cardinal_pi
+
+sudo /home/pi/openFrameworks/apps/remotePulse/remotePulse/bin/remotePulse
+```
+
+sudo apt-get install realvnc-vnc-server
+
+
+## troubleshooting
+
+### File Manager/Desktop folders instantly closes when opened. 
+Reinstalling pcmanfm worked for me:
+```
+sudo apt-get install --reinstall pcmanfm
+```
 
 ![Screenshot of emptyExample](emptyExample.png)
-
-### Learning Objectives
-
-This example is the simplest possible openFrameworks app! It does nothing. 
-
-...Well, *almost* nothing. Although it may not be apparent, the emptyExample activates all of the default system states. (For example, it sets the default fill color to white; it just doesn't happen to draw anything with it.)
-
-The emptyExample is great for making sure that your openFrameworks development environment is compiling properly. It can also be useful as a "starter template" for making simple programs. 
-
-The emptyExample will help you understand what are the bare necessities of an openFrameworks program. In this regard, you can think of it as a "Hello World" for OF. 
-
-
-### Expected Behavior
-
-When launching this app, you should see a light-gray screen. 
-
-* There's no interaction. 
-* There's nothing to see. 
-* That's it. 
-
-Instructions for using the app:
-
-* There's nothing to do. Move along.
-
-### Other classes used in this file
-
-This example uses no other classes.

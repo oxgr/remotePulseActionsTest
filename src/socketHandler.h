@@ -7,6 +7,7 @@
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxGui.h"
+#include "threadedCurl.h"
 
 class socketHandler{
 
@@ -76,9 +77,10 @@ ofParameterGroup gui_socket;
     
     // http
     
-    void sendToDBPost(string messages);
-    void sendToDBPut(string messages);
-    ofxJSONElement getDatabase();
+//    void sendToDBPost(string messages);
+//    void sendToDBPut(string messages);
+      void processDatabase(ofxJSONElement elem);
+//    ofxJSONElement getDatabase();
     ofxJSONElement oldDb; 
     string theHttpAddress;
     int findID();
@@ -86,7 +88,7 @@ ofParameterGroup gui_socket;
     
     string dbId;
     
-    
+        threadedCurl threadGet;
 
 private:
 

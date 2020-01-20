@@ -75,7 +75,7 @@ void socketHandler::setup(){
     theHttpAddress = "http://pulseapi.nfshost.com/";
     //pulseapi.nfshost.com
     
-
+ threadGet.setup(computerID, theHttpAddress);
 }
 
 void socketHandler::init(){
@@ -97,8 +97,8 @@ void socketHandler::update(){
        
         autoTimerWeb = ofGetElapsedTimeMillis();
         //checkInternet();
-        tempMessage = getDatabase();
-        
+//        tempMessage = getDatabase();
+           threadGet.start();
     }
     
     if(bNewitemSent && (ofGetElapsedTimeMillis()-startItemWait > 5000)){
@@ -107,6 +107,11 @@ void socketHandler::update(){
         //terminateConnection();
     }
     
+    if((threadGet.isThreadRunning() == false) && threadGet.bIsNewCurl){
+        threadGet.bIsNewCurl = false;
+        processDatabase(threadGet.jsonResult);
+        
+    }
 }
 
 
@@ -171,7 +176,9 @@ void socketHandler::triggerSendPressed(bool & triggerSend){
     //sendToSocket(textField);
     //client.send(textField);
     //sendToDBPut(textField);
-    sendToDBPost(textField);
+//    sendToDBPost(textField);
+    
+    threadGet.startPost(textField); 
     
     triggerSend = false;
     /*
@@ -220,78 +227,121 @@ void socketHandler::checkDeque(){
 }
 
 
-
-void socketHandler::sendToDBPost(string messages){
-    string command2 = "curl -X POST -H 'Content-Type: application/json' -d '{ \"title\": \"Pizza\", \"price\": 10.5 }' http://localhost:3001/";
-    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
-    command += " 2>&1 >/dev/null";
-    ofLog()<< command;
-    ofLog()<< command2;
-    string capture = ofSystem(command);
-    ofLog()<< capture;
-}
-
-void socketHandler::sendToDBPut(string messages){
-    //dbId =
-    string command = "curl -X PUT -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\":\""+messages+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+"}' "+theHttpAddress+computerID;
-    //string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"comp-id\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
-    command += " 2>&1 >/dev/null";
-    ofLog()<< command;
-    string capture = ofSystem(command);
-    ofLog()<< capture;
-}
-
-
-ofxJSONElement socketHandler::getDatabase(){
-    ofxJSONElement temp;
-    string command = "curl '" + theHttpAddress + "'";
-    command += " 2>&1 >/dev/null";
-    ofLog()<< command;
-    string capture = ofSystem(command);
-    ofLog()<< capture;
-    temp.parse(capture);
+void socketHandler::processDatabase(ofxJSONElement elem){
+    
     // if init should set temp to old right away
     
     
     dbId = "na";
     // check if the computer ID is already represented
-    for(int i=0; i<temp.size(); i++){
-        if(temp[i]["comp-id"].asString() == computerID){
-            dbId = temp[i]["_id"].asString();
+    for(int i=0; i<elem.size(); i++){
+        if(elem[i]["comp-id"].asString() == computerID){
+            dbId = elem[i]["_id"].asString();
             break;
         }
     }
     // compare past and present database and fire an event if there was a change in one of them and say which ones.
     // check if old and new DB are still the same size.
     
-    if(temp.size() == oldDb.size()){
+    if(elem.size() == oldDb.size()){
         
-        for(int i=0; i<temp.size(); i++){
-            if(temp[i]["comp-id"].asString() == computerID){
+        for(int i=0; i<elem.size(); i++){
+            if(elem[i]["comp-id"].asString() == computerID){
                 // don't bother comparing bc came from home computer
                 
             }else{
                 //if()temp[i]
                 /*
-                if (temp[i].asString() != oldDb[i].asString()){
-                    // something has changed send it to the event.
-                    ofxJSONElement toSend = temp[i];
-                    ofNotifyEvent(messageReceived, toSend);
-                }
+                 if (temp[i].asString() != oldDb[i].asString()){
+                 // something has changed send it to the event.
+                 ofxJSONElement toSend = temp[i];
+                 ofNotifyEvent(messageReceived, toSend);
+                 }
                  */
-            
+                
             }
         }
         
         //ofNotifyEvent(messageReceived, tempToSend);
     }else{
-    // a computer was added or deleted or this init.
+        // a computer was added or deleted or this init.
     }
-    tempMessage = temp;
     
-    oldDb = temp;
-    return temp;
+    tempMessage = elem;
+    oldDb = elem;
 }
+
+//void socketHandler::sendToDBPost(string messages){
+//    string command2 = "curl -X POST -H 'Content-Type: application/json' -d '{ \"title\": \"Pizza\", \"price\": 10.5 }' http://localhost:3001/";
+//    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+//    command += " 2>&1 >/dev/null";
+//    ofLog()<< command;
+//    ofLog()<< command2;
+//    string capture = ofSystem(command);
+//    ofLog()<< capture;
+//}
+
+//void socketHandler::sendToDBPut(string messages){
+//    //dbId =
+//    string command = "curl -X PUT -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\":\""+messages+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+"}' "+theHttpAddress+computerID;
+//    //string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"comp-id\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+//    command += " 2>&1 >/dev/null";
+//    ofLog()<< command;
+//    string capture = ofSystem(command);
+//    ofLog()<< capture;
+//}
+
+
+//ofxJSONElement socketHandler::getDatabase(){
+//    ofxJSONElement temp;
+//    string command = "curl '" + theHttpAddress + "'";
+//    command += " 2>&1 >/dev/null";
+//    ofLog()<< command;
+//    string capture = ofSystem(command);
+//    ofLog()<< capture;
+//    temp.parse(capture);
+//    // if init should set temp to old right away
+//    
+//    
+//    dbId = "na";
+//    // check if the computer ID is already represented
+//    for(int i=0; i<temp.size(); i++){
+//        if(temp[i]["comp-id"].asString() == computerID){
+//            dbId = temp[i]["_id"].asString();
+//            break;
+//        }
+//    }
+//    // compare past and present database and fire an event if there was a change in one of them and say which ones.
+//    // check if old and new DB are still the same size.
+//    
+//    if(temp.size() == oldDb.size()){
+//        
+//        for(int i=0; i<temp.size(); i++){
+//            if(temp[i]["comp-id"].asString() == computerID){
+//                // don't bother comparing bc came from home computer
+//                
+//            }else{
+//                //if()temp[i]
+//                /*
+//                if (temp[i].asString() != oldDb[i].asString()){
+//                    // something has changed send it to the event.
+//                    ofxJSONElement toSend = temp[i];
+//                    ofNotifyEvent(messageReceived, toSend);
+//                }
+//                 */
+//            
+//            }
+//        }
+//        
+//        //ofNotifyEvent(messageReceived, tempToSend);
+//    }else{
+//    // a computer was added or deleted or this init.
+//    }
+//    tempMessage = temp;
+//    
+//    oldDb = temp;
+//    return temp;
+//}
 
 void socketHandler::checkDatabase(){
     // compare past and present database and fire an event if there was a change in one of them and say which ones.

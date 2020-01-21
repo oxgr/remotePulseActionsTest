@@ -48,7 +48,8 @@ ofParameterGroup gui_socket;
     
     deque<ofxJSONElement> messages;
     ofxJSONElement tempMessage;
-    string computerID;
+    string me_computerID;
+    string other_computerID;
     //threadedPing pingTest;
     string roger = "roger";
     
@@ -77,18 +78,27 @@ ofParameterGroup gui_socket;
     
     // http
     
-//    void sendToDBPost(string messages);
-//    void sendToDBPut(string messages);
-      void processDatabase(ofxJSONElement elem);
-//    ofxJSONElement getDatabase();
-    ofxJSONElement oldDb; 
+    void sendToDBPost(string messages);
+    void sendToDBPut(string messages);
+    void processDatabase(ofxJSONElement elem);
+    ofxJSONElement oldDb;
+    vector<string> olDB;
     string theHttpAddress;
     int findID();
     void checkDatabase();
     
     string dbId;
     
-        threadedCurl threadGet;
+    threadedCurl threadGet;
+    //threadedPost threadPost;
+    
+    
+    void sendValues(int bpm, bool touch, string status);
+    int bpmT;
+    bool touchT;
+    string statusT;
+    
+    bool initListener; 
 
 private:
 

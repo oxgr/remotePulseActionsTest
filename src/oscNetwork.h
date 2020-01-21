@@ -58,15 +58,15 @@ public:
     int rxTouch;
     ofParameter<string> rxTouch_str;
     ofParameter<string> txTouch_str;
-    bool initDone;
-    float initTimer;
+//    bool initDone;
+//    float initTimer;
     
     
     float lastOscTimer;
     
     string myIP;
     string broadCastIP;
-    int inputType;
+//    int inputType;
     
     bool gotBPM = false;
     bool gotTouch = false;
@@ -112,7 +112,7 @@ public:
         
         gui_osc.loadFromFile("GUIs/gui_osc.xml");
         
-        inputType = -1;
+//        inputType = -1;
     }
     
     void init(){
@@ -128,8 +128,8 @@ public:
         
         receiver.setup(oscReceivePort);
         
-        initDone = false;
-        initTimer = ofGetElapsedTimef();
+//        initDone = false;
+//        initTimer = ofGetElapsedTimef();
     }
     
     void exit(){
@@ -199,6 +199,7 @@ public:
         
         if(bEnableOSC){
             
+            //TODO: if messageBuffer.size() == 0   sendTimer = ofGetElapsedTimeMillis();
             if(ofGetElapsedTimeMillis() - sendTimer > oscSendInterval){
                 sendTimer = ofGetElapsedTimeMillis();
                 
@@ -237,6 +238,7 @@ public:
                 //                }
             }
             
+            // let's make sure we send the touch state, since it is responsible for stopping action
             if(lastTouchIP != "" && ofGetElapsedTimef() - resendTimer > 10){
                 resendTimer = ofGetElapsedTimef();
                 addTouchMessage(lastTouchIP,lastTouchValue);
@@ -264,7 +266,7 @@ public:
                 if(bDebug) ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
-                    rxBPM = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
+                    rxBPM = m.getArgAsInt(1);
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
                 }       
@@ -275,7 +277,7 @@ public:
                     ofLog()<<"myIP "<<myIP<<" osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 }
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
-                    rxTouch = m.getArgAsInt(1); // 0 stop, 1 start, -1 nothing new
+                    rxTouch = m.getArgAsInt(1);
                     rxTouch_str = ofToString(rxTouch);
                     gotTouch= true;
                 }    

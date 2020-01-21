@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>20 20200120 8e66076</ver>
+	<ver>22 20200121 32ab55e</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
-		<meTestBPM>89</meTestBPM>
+		<meTestBPM>101</meTestBPM>
 		<otherTouched>0</otherTouched>
 		<otherTestBPM>102</otherTestBPM>
 		<triggerMeFake>0</triggerMeFake>

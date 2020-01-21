@@ -17,6 +17,10 @@ public:
     string messages;
     ofxJSONElement jsonResult;
     
+    int bpmThread;
+    bool touchThread;
+    string statusThread;
+    
     // threaded fucntions that share data need to use lock (mutex)
     // and unlock in order to write to that data
     // otherwise it's possible to get crashes.
@@ -36,7 +40,10 @@ public:
         startThread();   // blocking, verbose
     }
     
-    void startPost(string mes){
+    void startPost(int bpm, bool touch, string status, string mes){
+        bpmThread = bpm;
+        touchThread = touch;
+        statusThread = status;
         messages = mes;
         bIsGet = false;
         startThread();   // blocking, verbose
@@ -53,20 +60,20 @@ public:
             if( lock() ){
                 if (bIsGet){
                     string command = "curl '" + theHttpAddress + "'";
-                    ofLog()<< command;
+                    //ofLog()<< command;
                     string capture = ofSystem(command);
-                    ofLog()<< capture;
+                    //ofLog()<< capture;
                     jsonResult.parse(capture);
                     bIsNewCurl = true;
                 }else{
                     // do post
-                    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+                    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\", \"bpm\":"+ ofToString(bpmThread) +", \"touch\":\""+ ofToString(touchThread)+"\",\"status\":\""+statusThread+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
                     string capture = ofSystem(command);
-                    ofLog()<< capture;
+                    //ofLog()<< capture;
                 }
                 unlock();
                 stop();
-                    
+                
             }
         }
     }

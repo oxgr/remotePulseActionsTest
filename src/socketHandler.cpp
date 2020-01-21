@@ -20,15 +20,22 @@ void socketHandler::setup(){
         for (ofBuffer::Line it = buff.getLines().begin(), end = buff.getLines().end(); it != end; ++it) {
             string line = *it;
             
+            
             if(line.empty() == false) {
-                computerID = line;
-                break;
+                vector<string> split_str = ofSplitString(line, ":");
+                
+                if(split_str[0] == "me") me_computerID = split_str[1];
+                else  if(split_str[0] == "other") other_computerID = split_str[1];
+                
             }
         }
     } else{
-        computerID = "x";
+        ofLog()<<"!!! no good info in id.txt !!!";
+        me_computerID = "x";
+        other_computerID = "y";
     }
-    ofLog()<< "load: "+ computerID;
+    ofLog()<< "me_computerID: "+ me_computerID;
+    ofLog()<< "other_computerID: "+ other_computerID;
     
     // ofSetLogLevel(OF_LOG_VERBOSE);
     stateChangedExternal = false;
@@ -37,6 +44,7 @@ void socketHandler::setup(){
     //isAliveInit = false;
     //isAlive.addListener(this, &socketHandler::isAliveChanged);
 //    triggerSend.addListener(this,&socketHandler::triggerSendPressed);
+    
     
 //    gui_socket.setup();
     gui_socket.setName("socket");
@@ -75,7 +83,7 @@ void socketHandler::setup(){
     theHttpAddress = "http://pulseapi.nfshost.com/";
     //pulseapi.nfshost.com
     
- threadGet.setup(computerID, theHttpAddress);
+ threadGet.setup(me_computerID, theHttpAddress);
 }
 
 void socketHandler::init(){
@@ -124,40 +132,24 @@ void socketHandler::draw(int _x, int _y){
         int h = 15;
     int temp_y = 0;
     string mes;
-     mes += " computerID " +computerID;
-    ofDrawBitmapString(mes, 0, temp_y+=h);
+    mes += " me_ID: " +me_computerID + " other_ID: " +other_computerID;
+    ofDrawBitmapString(mes, 0, temp_y);
+    temp_y+=h;
+    temp_y+=h;
+      int spaceing = 15*5;
         for(int i=0; i<tempMessage.size(); i++){
             //tempMessage[i]
             mes = tempMessage[i]["compid"].asString() ;
             //mes += tempMessage[i]["_id"].asString();
             mes += " @ " + convertTime(tempMessage[i]["time"].asString());
-            mes += " - " +tempMessage[i]["message"].asString();
-            ofDrawBitmapString(mes, 0, temp_y+=h);
+            mes += "\n mess - " +tempMessage[i]["message"].asString();
+            mes += "\n bpm - " +tempMessage[i]["bpm"].asString();
+            mes += "\n touch - " +tempMessage[i]["touch"].asString();
+            mes += "\n status - " +tempMessage[i]["status"].asString();
+//            ofDrawBitmapString(mes, 0, temp_y+=h);
+              ofDrawBitmapString(mes, 0, temp_y + i*spaceing);
         }
-        
-        /*
-        for(int i=0; i<messages.size(); i++){
-            string mes = messages.at(i)["author"].asString() + " : ";
-            mes += " @ " + convertTime(messages.at(i)["time"].asString());
-            mes += " - " +messages.at(i)["text"].asString();
-            //ofDrawString(mes, x, );
-            //ofDrawBitmapStringHighlight(<#std::string text#>, <#int x#>, <#int y#>)
-            //ofColor c = ofColor::fromHex(0xFF0000);
-            string hexTemp = messages.at(i)["color"].asString();
-            hexTemp.erase(0,1);
-            hexTemp = "0x" + hexTemp;
-            //int hexVal = ofToInt();
-            ofColor c = ofColor::fromHex(ofHexToInt(hexTemp));
-            
-            //ofDrawBitmapStringHighlight(mes, textPosX, textPosY+i*15);
-            
-            ofSetColor(c);
-            ofDrawBitmapString(mes, textPosX, textPosY+i*spaceing);
-            
-            //ofDrawRectangle( textPosX-spaceing, (textPosY+i*spaceing)-spaceing, spaceing, spaceing);
-        }
-         */
-//    }
+
     
     ofPopMatrix();
 }
@@ -171,53 +163,18 @@ string socketHandler::convertTime(string num){
     return date;
 }
 
+void socketHandler::sendValues(int bpm, bool touch, string status){
+    threadGet.startPost(bpm,touch,status, textField);
+    bpmT = bpm;
+    touchT = touch;
+    statusT =status;
+}
+
 void socketHandler::triggerSendPressed(bool & triggerSend){
-    ofLog()<< "sending "<<textField;
-    //sendToSocket(textField);
-    //client.send(textField);
-    //sendToDBPut(textField);
-//    sendToDBPost(textField);
-    
-    threadGet.startPost(textField); 
-    
+//    ofLog()<< "sending "<<textField;
+   threadGet.startPost(bpmT,touchT,statusT, textField);
     triggerSend = false;
-    /*
-    if( dbId == "na"){
-        sendToDBPost(textField);
-    }else{
-        sendToDBPut(textField);
-    }*/
-    
-   //sendToDB2(textField);
-    
 }
-
-
-//--------------------------------------------------------------
-
-/*
- void isAliveChanged(bool & isAlive){
- //ofLog()<<"changed";
- //if(isAliveInit & !stateChangedExternal){
- if(isAlive != isAliveOld){
- client.send("ofisAlive_"+ ofToString(isAlive));
- isAliveOld = isAlive;
- }
- 
- }
- */
-
-//--------------------------------------------------------------
-
-
-/*
-void socketHandler::sendToSocket(string mess){
-    client.send(mess);
-    bNewitemSent = true;
-    startItemWait = ofGetElapsedTimeMillis();
-    lastItem = mess;
-}
-*/
 
 
 void socketHandler::checkDeque(){
@@ -231,34 +188,40 @@ void socketHandler::processDatabase(ofxJSONElement elem){
     
     // if init should set temp to old right away
     
-    
-    dbId = "na";
-    // check if the computer ID is already represented
-    for(int i=0; i<elem.size(); i++){
-        if(elem[i]["comp-id"].asString() == computerID){
-            dbId = elem[i]["_id"].asString();
-            break;
+    if (initListener){
+        //olDB = elem;
+        olDB.clear();
+        for(int i=0; i<elem.size(); i++){
+            olDB.push_back(ofToString(elem[i]));
         }
+        initListener = false;
     }
+    
+    
     // compare past and present database and fire an event if there was a change in one of them and say which ones.
     // check if old and new DB are still the same size.
     
-    if(elem.size() == oldDb.size()){
+    if(elem.size() == olDB.size()){
         
         for(int i=0; i<elem.size(); i++){
-            if(elem[i]["comp-id"].asString() == computerID){
+            //ofLog()<<"pintID";
+            //ofLog()<<elem[i]["compid"].asString();
+            //ofLog()<<computerID;
+            if(elem[i]["compid"].asString() == me_computerID){
+                
                 // don't bother comparing bc came from home computer
                 
             }else{
-                //if()temp[i]
-                /*
-                 if (temp[i].asString() != oldDb[i].asString()){
-                 // something has changed send it to the event.
-                 ofxJSONElement toSend = temp[i];
-                 ofNotifyEvent(messageReceived, toSend);
-                 }
-                 */
-                
+                //TODO: filter for other computerID to avoid getting info from other computers
+                //like in oscNetwork.h if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
+                string tempNow = ofToString(elem[i]);
+                string tempOld = olDB.at(i);
+                if (tempNow != tempOld){
+                    //ofLog()<<elem[i]["message"];
+                    ofxJSONElement temp = elem[i];
+                    //ofLog()<<temp["message"];
+                    ofNotifyEvent(messageReceived, temp);
+                }
             }
         }
         
@@ -267,141 +230,13 @@ void socketHandler::processDatabase(ofxJSONElement elem){
         // a computer was added or deleted or this init.
     }
     
+    olDB.clear();
+    for(int i=0; i<elem.size(); i++){
+        olDB.push_back(ofToString(elem[i]));
+    }
+    
     tempMessage = elem;
-    oldDb = elem;
 }
-
-//void socketHandler::sendToDBPost(string messages){
-//    string command2 = "curl -X POST -H 'Content-Type: application/json' -d '{ \"title\": \"Pizza\", \"price\": 10.5 }' http://localhost:3001/";
-//    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
-//    command += " 2>&1 >/dev/null";
-//    ofLog()<< command;
-//    ofLog()<< command2;
-//    string capture = ofSystem(command);
-//    ofLog()<< capture;
-//}
-
-//void socketHandler::sendToDBPut(string messages){
-//    //dbId =
-//    string command = "curl -X PUT -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\":\""+messages+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+"}' "+theHttpAddress+computerID;
-//    //string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"comp-id\":\"" + computerID+"\",\"message\" :\""+messages+"\","+ +"\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
-//    command += " 2>&1 >/dev/null";
-//    ofLog()<< command;
-//    string capture = ofSystem(command);
-//    ofLog()<< capture;
-//}
-
-
-//ofxJSONElement socketHandler::getDatabase(){
-//    ofxJSONElement temp;
-//    string command = "curl '" + theHttpAddress + "'";
-//    command += " 2>&1 >/dev/null";
-//    ofLog()<< command;
-//    string capture = ofSystem(command);
-//    ofLog()<< capture;
-//    temp.parse(capture);
-//    // if init should set temp to old right away
-//    
-//    
-//    dbId = "na";
-//    // check if the computer ID is already represented
-//    for(int i=0; i<temp.size(); i++){
-//        if(temp[i]["comp-id"].asString() == computerID){
-//            dbId = temp[i]["_id"].asString();
-//            break;
-//        }
-//    }
-//    // compare past and present database and fire an event if there was a change in one of them and say which ones.
-//    // check if old and new DB are still the same size.
-//    
-//    if(temp.size() == oldDb.size()){
-//        
-//        for(int i=0; i<temp.size(); i++){
-//            if(temp[i]["comp-id"].asString() == computerID){
-//                // don't bother comparing bc came from home computer
-//                
-//            }else{
-//                //if()temp[i]
-//                /*
-//                if (temp[i].asString() != oldDb[i].asString()){
-//                    // something has changed send it to the event.
-//                    ofxJSONElement toSend = temp[i];
-//                    ofNotifyEvent(messageReceived, toSend);
-//                }
-//                 */
-//            
-//            }
-//        }
-//        
-//        //ofNotifyEvent(messageReceived, tempToSend);
-//    }else{
-//    // a computer was added or deleted or this init.
-//    }
-//    tempMessage = temp;
-//    
-//    oldDb = temp;
-//    return temp;
-//}
-
-void socketHandler::checkDatabase(){
-    // compare past and present database and fire an event if there was a change in one of them and say which ones.
-    // check if old and new DB are still the same size.
-    
-    
-    
-    
-    
-}
-
-/*
-//--------------------------------------------------------------
-void socketHandler::onMessage( ofxLibwebsockets::Event& args ){
-    //cout<<"got message "<<args.message<<endl;
-    
-    tempMessage.parse(args.message);
-    bool isPing= false;
-    //{"type":"message","data":{"time":1575577264125,"text":"ofisOn_true","author":"Computer-B","color":"#50514f"}}
-    if ((tempMessage["type"].asString() == "message") && !isLastCall ){
-        //messages.insert(const_iterator __position, <#const_reference __x#>)
-        
-        if(tempMessage["data"]["text"].asString().find("ping") != std::string::npos){
-            isPing = true;
-        }
-        
-        if((tempMessage["data"]["text"].asString() == lastItem) && (computerID == tempMessage["data"]["author"].asString() )){
-            // it is from myself so ignore it
-            // using it as a confirmation that the last message was received
-            bNewitemSent = false;
-        }else if(tempMessage["data"]["text"].asString().find(roger) != std::string::npos){
-            // it is a roger do not have it trigger event.
-        }else{
-            // it is a new message that isn't just a roger.
-            tempToSend.clear();
-            tempToSend.push_back(tempMessage["data"]["author"].asString());
-            tempToSend.push_back(tempMessage["data"]["text"].asString());
-            ofNotifyEvent(messageReceived, tempToSend);
-            // send out a roger to confirm message is received
-            sendToSocket("roger - " + tempMessage["data"]["text"].asString());
-        }
-        if(isPing && hidePing){
-            
-        }else{
-            messages.push_front(tempMessage["data"]);
-        }
-        
-        checkDeque();
-    }
-    else if(tempMessage["type"].asString() == "history" ){
-        for (int i=0; i<tempMessage["data"].size(); i++){
-            messages.push_front(tempMessage["data"][i]);
-            checkDeque();
-        }
-    }
-    
-    //ofLog()<< args.message;
-}
-*/
-
 
 
 void socketHandler::appExit(){

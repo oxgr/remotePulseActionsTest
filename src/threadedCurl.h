@@ -56,10 +56,21 @@ public:
     //--------------------------
     void threadedFunction(){
         
+        /*
+         //https://stackoverflow.com/questions/6935006/making-curl-send-errors-to-stderr-and-everything-else-to-stdout
+         curl -s -S
+         
+         From the man page:
+         
+         -s Silent or quiet mode. Don't show progress meter or error messages. Makes Curl mute.
+         
+         -S When used with -s it makes curl show an error message if it fails.
+         */
+        
         while(isThreadRunning()){
             if( lock() ){
                 if (bIsGet){
-                    string command = "curl '" + theHttpAddress + "'";
+                    string command = "curl -s -S '" + theHttpAddress + "'";
                     //ofLog()<< command;
                     string capture = ofSystem(command);
                     //ofLog()<< capture;
@@ -67,7 +78,7 @@ public:
                     bIsNewCurl = true;
                 }else{
                     // do post
-                    string command = "curl -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\", \"bpm\":"+ ofToString(bpmThread) +", \"touch\":\""+ ofToString(touchThread)+"\",\"status\":\""+statusThread+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
+                    string command = "curl -s -S -X POST -H 'Content-Type: application/json' -d '{ \"compid\":\"" + computerID+"\",\"message\" :\""+messages+"\", \"bpm\":"+ ofToString(bpmThread) +", \"touch\":\""+ ofToString(touchThread)+"\",\"status\":\""+statusThread+"\",\"time-stamp\":\"" + ofGetTimestampString() +"\", \"time\":"+ofToString(ofGetUnixTime())+" }' " + theHttpAddress;
                     string capture = ofSystem(command);
                     //ofLog()<< capture;
                 }

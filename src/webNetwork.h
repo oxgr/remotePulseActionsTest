@@ -68,9 +68,9 @@ public:
         gui_web.setName("internet");
         gui_web.setHeaderBackgroundColor(ofColor(255,0,0));
         
-        gui_web.add(bEnableWeb.set("enableWeb", false));
+        gui_web.add(bEnableWeb.set("enableWeb", true));
         
-        gui_web.add(webSendInterval.set("webSendInterval", 10,0,100));
+        gui_web.add(webSendInterval.set("webSendIntervalMil", 10,0,100));
         
         gui_web.add(rxTouch_str.set("other touch received", ""));
         gui_web.add(rxBPM_str.set("other bpm received", ""));

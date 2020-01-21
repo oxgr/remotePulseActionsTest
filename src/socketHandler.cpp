@@ -101,13 +101,10 @@ void socketHandler::update(){
     
     if(((ofGetElapsedTimeMillis()-autoTimerWeb) > itvlSecCheckWeb*1000) ){
        // tempMessage = getDatabase();
-        
-       
         autoTimerWeb = ofGetElapsedTimeMillis();
-        //checkInternet();
-//        tempMessage = getDatabase();
-           threadGet.start();
+        threadGet.start();
     }
+    // if(threadGet.isThreadRunning()) threadGet.start();
     
     if(bNewitemSent && (ofGetElapsedTimeMillis()-startItemWait > 5000)){
         bNewitemSent = false;

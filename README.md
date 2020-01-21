@@ -23,6 +23,25 @@ sudo $HOME/Desktop/cardinal_pi
 sudo /home/pi/openFrameworks/apps/remotePulse/remotePulse/bin/remotePulse
 ```
 
+###  Adding A New Desktop Shortcut
+
+Create a new text file called yourname.desktop in the /home/pi/Desktop/ directory, e.g. /home/pi/Desktop/yourname.desktop
+
+It should contain the following:
+
+```
+[Desktop Entry]
+Name=remotePulse
+Comment=My application which does this
+Icon=/home/pi/openFrameworks/apps/remotePulse/remotePulse/bin/icon.xpm
+Exec=sudo /home/pi/openFrameworks/apps/remotePulse/remotePulse/bin/remotePulse
+Type=Application
+Encoding=UTF-8
+Terminal=false
+Categories=None;
+```
+
+### updating realVNC
 sudo apt-get install realvnc-vnc-server
 
 

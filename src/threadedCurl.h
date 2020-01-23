@@ -8,7 +8,6 @@ class threadedCurl : public ofThread{
     
 public:
     
-    // stay warm and cozy
     
     bool bIsNewCurl;
     bool bIsGet;
@@ -55,15 +54,10 @@ public:
     
     //--------------------------
     void threadedFunction(){
-        
         /*
-         //https://stackoverflow.com/questions/6935006/making-curl-send-errors-to-stderr-and-everything-else-to-stdout
          curl -s -S
-         
          From the man page:
-         
          -s Silent or quiet mode. Don't show progress meter or error messages. Makes Curl mute.
-         
          -S When used with -s it makes curl show an error message if it fails.
          */
         

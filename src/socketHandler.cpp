@@ -99,19 +99,32 @@ void socketHandler::update(){
     //getDatabase()
     
     
-    if(((ofGetElapsedTimeMillis()-autoTimerWeb) > itvlSecCheckWeb*1000) ){
-       // tempMessage = getDatabase();
+    // only poll if thread is available
+    if(((ofGetElapsedTimeMillis()-autoTimerWeb) > itvlSecCheckWeb*1000) && (!threadGet.isThreadRunning()) ){
+        // tempMessage = getDatabase();
+        
         autoTimerWeb = ofGetElapsedTimeMillis();
+        
+        // check if the database has changed
         threadGet.start();
-    }
-    // if(threadGet.isThreadRunning()) threadGet.start();
-    
-    if(bNewitemSent && (ofGetElapsedTimeMillis()-startItemWait > 5000)){
-        bNewitemSent = false;
-        // word wasn't echoed back so connection is bad
-        //terminateConnection();
+        
     }
     
+    // send message if there are items in the deque
+    if((threadGet.isThreadRunning() == false) && deqToSend.size()> 0 ){
+        threadGet.startPost(deqToSend.at(0).bpm, deqToSend.at(0).touch, deqToSend.at(0).status, deqToSend.at(0).message);
+        deqToSend.pop_front();
+    }
+    
+    
+    /*
+     if(bNewitemSent && (ofGetElapsedTimeMillis()-startItemWait > 5000)){
+     bNewitemSent = false;
+     // word wasn't echoed back so connection is bad
+     //terminateConnection();
+     }*/
+    
+    // if there is a
     if((threadGet.isThreadRunning() == false) && threadGet.bIsNewCurl){
         threadGet.bIsNewCurl = false;
         processDatabase(threadGet.jsonResult);
@@ -161,16 +174,30 @@ string socketHandler::convertTime(string num){
 }
 
 void socketHandler::sendValues(int bpm, bool touch, string status){
-    threadGet.startPost(bpm,touch,status, textField);
-    bpmT = bpm;
-    touchT = touch;
-    statusT =status;
+    mostRecentVals.bpm = bpm;
+    mostRecentVals.touch = touch;
+    mostRecentVals.status = status;
+    mostRecentVals.isSent = false;
+    deqToSend.push_back(mostRecentVals);
+    
+    /*
+     threadGet.startPost(bpm,touch,status, textField);
+     bpmT = bpm;
+     touchT = touch;
+     statusT =status;
+     */
 }
 
 void socketHandler::triggerSendPressed(bool & triggerSend){
-//    ofLog()<< "sending "<<textField;
-   threadGet.startPost(bpmT,touchT,statusT, textField);
+    mostRecentVals.message = textField;
+    mostRecentVals.isSent = false;
+    deqToSend.push_back(mostRecentVals);
     triggerSend = false;
+    
+    /*
+     threadGet.startPost(bpmT,touchT,statusT, textField);
+     triggerSend = false;
+     */ 
 }
 
 
@@ -209,8 +236,6 @@ void socketHandler::processDatabase(ofxJSONElement elem){
                 // don't bother comparing bc came from home computer
                 
             }else{
-                //TODO: filter for other computerID to avoid getting info from other computers
-                //like in oscNetwork.h if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                 string tempNow = ofToString(elem[i]);
                 string tempOld = olDB.at(i);
                 if (tempNow != tempOld){
@@ -234,6 +259,8 @@ void socketHandler::processDatabase(ofxJSONElement elem){
     
     tempMessage = elem;
 }
+
+
 
 
 void socketHandler::appExit(){

@@ -195,6 +195,7 @@ public:
         }
         
     }
+    
     void update(){
         
         
@@ -452,7 +453,14 @@ public:
         ofLog()<<args.buffer().toString();
         ofLog()<<args.exception().displayText();
         
-        if(ofIsStringInString(args.exception().displayText(), "Device not configured")){
+        //on USB disconnecting:
+        //macos has this error message: ofIsStringInString(args.exception().displayText(), "Device not configured")
+        //RPI has this error message: Input/output error
+        
+//        [notice ] Exception: IO Exception (5): Input/output error, file /home/pi/openFrameworks/addons/ofxSerial/libs/serial/src/impl/unix.cc, line 488.
+
+        if(ofIsStringInString(args.exception().displayText(), "Device not configured") ||
+           ofIsStringInString(args.exception().displayText(), "Input/output error")){
             bDeviceConnected = false;
         }
     }

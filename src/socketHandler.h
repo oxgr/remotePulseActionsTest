@@ -93,10 +93,25 @@ ofParameterGroup gui_socket;
     //threadedPost threadPost;
     
     
+    struct valsToSend {
+        int bpm = 0;
+        bool touch = false;
+        string status ="";
+        string message = "";
+        bool isSent = false;
+    };
+    
+    valsToSend mostRecentVals;
+    deque<valsToSend> deqToSend;
+    
     void sendValues(int bpm, bool touch, string status);
-    int bpmT;
-    bool touchT;
-    string statusT;
+    
+    /*
+     int bpmT;
+     bool touchT;
+     string statusT;
+     */
+    
     
     bool initListener; 
 

@@ -15,4 +15,5 @@
 	<me_touch_sent>1</me_touch_sent>
 	<me_bpm_sent>101</me_bpm_sent>
 	<periodicResend>0</periodicResend>
+	<webSendIntervalMil>10</webSendIntervalMil>
 </internet>

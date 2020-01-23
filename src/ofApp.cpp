@@ -7,6 +7,10 @@ void ofApp::setup(){
     
     ofBackground(127);
     
+//   ofLog()<<"my PID "<< getpid();
+//    //I had to replace getpid() with GetCurrentProcessId() and include windows.h
+//    ofSystem("'/bin/systemd-notify' --pid= "+ofToString(getpid()) +" WATCHDOG=1");
+    
     //IP
     //    MX_IP = "188.188.188.154";
     //    US_IP = "188.188.188.153";

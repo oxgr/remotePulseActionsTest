@@ -76,6 +76,8 @@ public:
     string old_other_runtimeStr;
     string other_serialStr;
     
+    float lastMsgTimer = 0;
+    
     void setup(string _myIP, string _broadCastIP){
         
         myIP =_myIP;
@@ -243,6 +245,13 @@ public:
                 resendTimer = ofGetElapsedTimef();
                 addTouchMessage(lastTouchIP,lastTouchValue);
             }
+            
+            if(ofGetElapsedTimef() - lastMsgTimer > 30){
+                lastMsgTimer = ofGetElapsedTimef();
+                gotTouch = true;
+                rxTouch = 0;
+                 ofLog()<<" lastMsgTimer > 30. have not received anything for a long time via OSC! force unTouch";
+            }
         }//end if(bEnableOSC)
         
         
@@ -269,6 +278,7 @@ public:
                     rxBPM = m.getArgAsInt(1);
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
+                    lastMsgTimer = ofGetElapsedTimef();
                 }       
                 
             }else if(m.getAddress() == "/Touch"){
@@ -280,6 +290,7 @@ public:
                     rxTouch = m.getArgAsInt(1);
                     rxTouch_str = ofToString(rxTouch);
                     gotTouch= true;
+                    lastMsgTimer = ofGetElapsedTimef();
                 }    
                 
             }else if(m.getAddress() == "/appAlive"){
@@ -290,6 +301,7 @@ public:
                     other_runtimeStr = m.getArgAsString(1);
                     other_serialStr = ofToString(m.getArgAsInt(2));
                     other_runtime_fade = 255;
+                    lastMsgTimer = ofGetElapsedTimef();
                 }         
                 
             }else{

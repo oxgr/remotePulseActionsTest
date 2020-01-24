@@ -57,6 +57,8 @@ public:
     
     string sendToID;
     
+    float lastMsgTimer = 0;
+    
     void setup(){
         
         socket_object.setup();
@@ -116,6 +118,12 @@ public:
 //                addTouchMessage(lastTouchID,lastTouchValue);
 //            }
 
+            if(ofGetElapsedTimef() - lastMsgTimer > 30){
+                lastMsgTimer = ofGetElapsedTimef();
+                gotTouch = true;
+                rxTouch = 0;
+                ofLog()<<" lastMsgTimer > 30. have not received anything for a long time via web! force unTouch";
+            }
         }
     }
     
@@ -233,12 +241,14 @@ public:
             rxBPM = temp_bpm;
             rxBPM_str = ofToString(rxBPM);
             gotBPM = true;
+             lastMsgTimer = ofGetElapsedTimef();
         }
         
         if(rxTouch != temp_touch){
             rxTouch = temp_touch; 
             rxTouch_str = ofToString(rxTouch);
             gotTouch= true;
+             lastMsgTimer = ofGetElapsedTimef();
         }
         
         vector<string> split_str = ofSplitString(temp_status, "*");
@@ -247,6 +257,7 @@ public:
                 other_runtimeStr = split_str[0];
                 other_serialStr = split_str[1];
                 other_runtime_fade = 255;
+                 lastMsgTimer = ofGetElapsedTimef();
             }
         }
         //time

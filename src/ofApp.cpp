@@ -284,6 +284,7 @@ void ofApp::update(){
         
         //Mark:--pass on OSC received BPM and touch
 #ifdef USE_OSC
+        if()
         if(osc_object.gotBPM == true){
             allHearts[1].setBPM(osc_object.rxBPM);
             osc_object.gotBPM = false;
@@ -305,6 +306,8 @@ void ofApp::update(){
             web_object.gotTouch = false;
         }
 #endif
+        
+        
         //-----
         if(bFadeTest == false){
             allHearts[0].update(); //, firstPause);
@@ -327,7 +330,7 @@ void ofApp::update(){
             if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
         }
         
-        if(forceUnTouchDuration > 0 && ofGetElapsedTimef() - bpmChangeTimer >= forceUnTouchDuration){
+        if(forceUnTouchDuration > 0 && (ofGetElapsedTimef() - bpmChangeTimer) >= forceUnTouchDuration){
             ofLog()<<" force unTouch after "<<forceUnTouchDuration<<" seconds";
             bpmChangeTimer = ofGetElapsedTimef();
             
@@ -399,6 +402,7 @@ void ofApp::update(){
     hands_object.update();
     if(lightViaDmx == true) dmx.update();
     
+    
 }
 
 //--------------------------------------------------------------
@@ -412,6 +416,7 @@ void ofApp::draw(){
     web_object.draw(ofGetWidth()/3, ofGetHeight()/4);
     web_object.drawAliveMsg(ofGetWidth()/2, 10+30);    
 #endif
+    
     ofPushMatrix();
     ofTranslate(50, ofGetHeight() - 350);
     allHearts[0].draw(0, 0);

@@ -71,6 +71,7 @@ void ofApp::setup(){
     
     
     gui_main.add(minBpmCounter.set("minBpmCount",2,0,4));
+    gui_main.add(minBpm.set("minBpm",25,2,50)); //if below it will be ignored
     //    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
     
     gui_main.add(firstBeatOnDur.set("firstBeatOnDur",0.2,0,1));
@@ -280,11 +281,10 @@ void ofApp::update(){
             ofLog()<<"end init";
         }
     } else {
-        
-        
+     
         //Mark:--pass on OSC received BPM and touch
 #ifdef USE_OSC
-        if()
+        
         if(osc_object.gotBPM == true){
             allHearts[1].setBPM(osc_object.rxBPM);
             osc_object.gotBPM = false;
@@ -296,7 +296,7 @@ void ofApp::update(){
 #endif
         
 #ifdef USE_WEB
-        //TODO: pass on web BPM to heart object
+
         if(web_object.gotBPM == true){
             allHearts[1].setBPM(web_object.rxBPM);
             web_object.gotBPM = false;
@@ -317,6 +317,24 @@ void ofApp::update(){
         //send out to OSC my BPM        
         //MARK:-----check serial and set local and remote
         //        hands_object.update();
+        
+        
+        //TODO: if smaller than minBpm then ignor BPM but also unTouch
+        if(hands_object.gotBPM == true && hands_object.bpm < minBpm){
+            hands_object.gotBPM = false;
+            hands_object.gotTouch = false;
+            allHearts[0].setTouch(false);
+            
+#ifdef USE_OSC
+            osc_object.addTouchMessage(osc_object.sendToIP, false);
+#endif
+#ifdef USE_WEB
+            web_object.addTouchMessage(web_object.sendToID, false);
+#endif
+            
+            ofLog()<<"bpm < minBPM so ignore it and unTouch";
+        }
+        
         
         if(hands_object.gotBPM == true){
             allHearts[0].setBPM(hands_object.bpm);
@@ -339,7 +357,7 @@ void ofApp::update(){
             osc_object.addTouchMessage(osc_object.sendToIP, false);
 #endif
 #ifdef USE_WEB
-           web_object.addTouchMessage(web_object.sendToID, false);
+            web_object.addTouchMessage(web_object.sendToID, false);
 #endif
         }
         
@@ -350,7 +368,7 @@ void ofApp::update(){
             osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
 #endif
 #ifdef USE_WEB
-              web_object.addTouchMessage(web_object.sendToID, hands_object.touch);
+            web_object.addTouchMessage(web_object.sendToID, hands_object.touch);
 #endif
             hands_object.gotTouch = false;
         }

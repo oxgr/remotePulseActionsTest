@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "25 20200123 d8ba63d"
+#define APP_VERSION "26 20200124 8583f16"
 
 class ofApp : public ofBaseApp{
 public:
@@ -155,7 +155,7 @@ public:
     int old_systemVolume;
     
     ofParameter<int> minBpmCounter;
-    
+    ofParameter<int> minBpm;
     ofParameter<float> forceUnTouchDuration;
     float bpmChangeTimer;
     

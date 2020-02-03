@@ -296,39 +296,41 @@ void ofApp::update(){
         
 #ifdef USE_OSC
         if(osc_object.gotBPM == true){
-            remoteInActiveDuration = ofGetElapsedTimef();
+            remoteInActiveTimer = ofGetElapsedTimef();
             allHearts[1].setBPM(osc_object.rxBPM);
             osc_object.gotBPM = false;
         }
         if(osc_object.gotTouch == true){
-            remoteInActiveDuration = ofGetElapsedTimef();
+            remoteInActiveTimer = ofGetElapsedTimef();
             allHearts[1].setTouch(osc_object.rxTouch);
             osc_object.gotTouch = false;
             
             otherFakeTouched = false;
             old_otherFakeTouched = false;
-        }else{
-            localActiveTimer = ofGetElapsedTimef();
         }
+        
 #endif
         
 #ifdef USE_WEB
         if(web_object.gotBPM == true){
-            remoteInActiveDuration = ofGetElapsedTimef();
+            remoteInActiveTimer = ofGetElapsedTimef();
             allHearts[1].setBPM(web_object.rxBPM);
             web_object.gotBPM = false;
         }
         if(web_object.gotTouch == true){
-            remoteInActiveDuration = ofGetElapsedTimef();
+            remoteInActiveTimer = ofGetElapsedTimef();
             allHearts[1].setTouch(web_object.rxTouch);
             web_object.gotTouch = false;
             
             otherFakeTouched = false;
             old_otherFakeTouched = false;
-        } else {
+        }        
+#endif
+        
+        if( allHearts[1].isTouched == false){
             localActiveTimer = ofGetElapsedTimef();
         }
-#endif
+        
         //MARK:fake other BPM
         //if local is active for long enough but noone is on other end
         //then pick a fake other BPM

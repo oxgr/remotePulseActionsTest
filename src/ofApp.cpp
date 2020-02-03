@@ -58,6 +58,9 @@ void ofApp::setup(){
      group_autoFake.setName("autoFake");
     group_autoFake.add(minLocalActiveDuration.set("minLocalActiveDur",60,0,180));
     group_autoFake.add(maxLocalActiveDuration.set("maxLocalActiveDur",90,0,180));
+    group_autoFake.add(minLocalInActiveDuration.set("minLocalInActiveDur",5,0,60));
+    group_autoFake.add(maxLocalInActiveDuration.set("maxLocalInActiveDur",15,0,60));
+
     group_autoFake.add(remoteInActiveDuration.set("remoteInActiveDur",300,0,600));
     
     //TODO: do not save debug states
@@ -146,8 +149,8 @@ void ofApp::setup(){
 #endif //dmx
     dmxDeviceString = dmx.getDeviceString();
     
-    localActiveDuration = 5; //ofRandom(int(minLocalActiveDuration),int(maxLocalActiveDuration));
-    
+    localActiveDuration = 5; //int(ofRandom(minLocalActiveDuration,maxLocalActiveDuration));
+    localInActiveDuration = int(ofRandom(minLocalInActiveDuration,maxLocalInActiveDuration));
 #ifdef USE_OSC
     //--osc
     osc_object.setup(myIP, broadCastIP);
@@ -327,8 +330,10 @@ void ofApp::update(){
         }        
 #endif
         
-        if( allHearts[1].isTouched == false){
+        if( allHearts[0].isTouched == false){
             localActiveTimer = ofGetElapsedTimef();
+        } else{
+            localInActiveTimer = ofGetElapsedTimef();
         }
         
         //MARK:fake other BPM
@@ -344,10 +349,17 @@ void ofApp::update(){
                 allHearts[1].setTouch(otherFakeTouched);
                 
                 otherFakeBPM = ofRandom(60,120);
+                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
                 allHearts[1].setBPM(otherFakeBPM);
                 allHearts[1].setBPM(otherFakeBPM);
+                //                allHearts[1].setBPM(otherFakeBPM);
                 
-                localActiveDuration = ofRandom(int(minLocalActiveDuration),int(maxLocalActiveDuration));
+                localActiveDuration = int(ofRandom(minLocalActiveDuration,maxLocalActiveDuration));
+                localInActiveDuration = int(ofRandom(minLocalInActiveDuration,maxLocalInActiveDuration)); 
+            } else {
+                if(ofGetElapsedTimef() - localInActiveTimer > localInActiveDuration){
+                    otherFakeTouched = false;
+                }
             }
         }
         //-----
@@ -497,10 +509,13 @@ void ofApp::draw(){
     
     
     float temp_dur0 = ofGetElapsedTimef() - localActiveTimer;
-     float temp_dur1 = ofGetElapsedTimef() - remoteInActiveTimer;
+    float temp_dur1 = ofGetElapsedTimef() - localInActiveTimer;
+     float temp_dur2 = ofGetElapsedTimef() - remoteInActiveTimer;
     
-    ofDrawBitmapString("localActive "+ofToString(temp_dur0,2) + " / " +ofToString(localActiveDuration) , 10, ofGetHeight() - 100);
-    ofDrawBitmapString("remoteInActive "+ofToString(temp_dur1,2) + " / " +ofToString(remoteInActiveDuration) , 10, ofGetHeight() - 80);
+    ofSetColor(255);
+    ofDrawBitmapString("localActive "+ofToString(temp_dur0,1) + " / " +ofToString(localActiveDuration,1) , 10, ofGetHeight() - 100);
+    ofDrawBitmapString("localInActive "+ofToString(temp_dur1,1) + " / " +ofToString(localInActiveDuration,1) , 10, ofGetHeight() - 80);
+    ofDrawBitmapString("remoteInActive "+ofToString(temp_dur2,1) + " / " +ofToString(remoteInActiveDuration,1) , 10, ofGetHeight() - 60);
 
     
     if(bShowGui == true){

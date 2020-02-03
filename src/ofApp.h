@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "27 20200129 0106414"
+#define APP_VERSION "29 20200203 d6c2f5e"
 
 class ofApp : public ofBaseApp{
 public:
@@ -165,6 +165,12 @@ public:
     ofParameter<int> maxLocalActiveDuration;
     float localActiveTimer;
     float localActiveDuration;
+    
+    ofParameter<int> minLocalInActiveDuration;
+    ofParameter<int> maxLocalInActiveDuration;
+    float localInActiveTimer;
+     float localInActiveDuration;
+    
     float localFakeChangeTimer;
     
     ofParameter<int> remoteInActiveDuration;

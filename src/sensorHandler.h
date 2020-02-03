@@ -390,17 +390,17 @@ public:
             //            
             //            accum_deg+= temp_diff;
             
-//            vector<string> splitStr2 = ofSplitString(splitStr[1], " ");
-           if(bDebug) ofLog()<<"splitStr.size "<<splitStr.size();
-           if(bDebug) ofLog()<<"splitStr[3] "<<splitStr[3]<<" splitStr[4] "<<splitStr[4];
-           
-                old_bpm = bpm;
-                bpm = ofToInt(splitStr[4]);
-                gotBPM = true;
+            //            vector<string> splitStr2 = ofSplitString(splitStr[1], " ");
+            if(bDebug) ofLog()<<"splitStr.size "<<splitStr.size();
+            if(bDebug) ofLog()<<"splitStr[3] "<<splitStr[3]<<" splitStr[4] "<<splitStr[4];
+            
+            old_bpm = bpm;
+            bpm = ofToInt(splitStr[4]);
+            gotBPM = true;
             if(bpmColor.r > 250) bpmColor = ofColor(0);
             else bpmColor = ofColor(255);
-//                bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
-//            }
+            //                bpmColor = ofColor(ofRandom(255),ofRandom(255),ofRandom(255));
+            //            }
         } else if(splitStr[0] == "a"){
             //alive
             aliveTimer = ofGetElapsedTimef();

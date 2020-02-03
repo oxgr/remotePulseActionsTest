@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "26 20200124 8583f16"
+#define APP_VERSION "27 20200129 0106414"
 
 class ofApp : public ofBaseApp{
 public:
@@ -143,13 +143,13 @@ public:
     ofParameter<bool> triggerFakeMe;
     ofParameter<bool> triggerFakeOther;
     
-    ofParameter<int> meTestBPM;
-    ofParameter<int> otherTestBPM;
+    ofParameter<int> meFakeBPM;
+    ofParameter<int> otherFakeBPM;
     
-    ofParameter<bool> meTestTouched;
-    bool old_meTestTouched;
-    ofParameter<bool> otherTestTouched;
-    bool old_otherTestTouched;
+    ofParameter<bool> meFakeTouched;
+    bool old_meFakeTouched;
+    ofParameter<bool> otherFakeTouched;
+    bool old_otherFakeTouched;
     
     ofParameter<int> systemVolume;
     int old_systemVolume;
@@ -159,4 +159,16 @@ public:
     ofParameter<float> forceUnTouchDuration;
     float bpmChangeTimer;
     
+    ofParameterGroup group_autoFake;
+    ofParameter<bool> bEnableAutoFake;
+    ofParameter<int> minLocalActiveDuration;
+    ofParameter<int> maxLocalActiveDuration;
+    float localActiveTimer;
+    float localActiveDuration;
+    float localFakeChangeTimer;
+    
+    ofParameter<int> remoteInActiveDuration;
+    float remoteInActiveTimer;
+    
+        ofTrueTypeFont    arial;
 };

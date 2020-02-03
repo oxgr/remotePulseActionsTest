@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>26 20200124 8583f16</ver>
+	<ver>27 20200129 0106414</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -13,6 +13,8 @@
 		<testDmxValues>0</testDmxValues>
 		<fadeTest>0</fadeTest>
 		<testDmxChan>4</testDmxChan>
+		<meFakeBPM>60</meFakeBPM>
+		<otherFakeBPM>112</otherFakeBPM>
 	</debug>
 	<enableDMX>1</enableDMX>
 	<useAudio_for_me>0</useAudio_for_me>
@@ -50,4 +52,21 @@
 	<forceUnTouch>0</forceUnTouch>
 	<lightViaDmx>0</lightViaDmx>
 	<lightViaSerial>1</lightViaSerial>
+	<minBpm>25</minBpm>
+	<group>
+		<enableAutoFake>0</enableAutoFake>
+		<minLocalActiveT>60</minLocalActiveT>
+		<maxLocalActiveT>90</maxLocalActiveT>
+		<remoteInActiveT>300</remoteInActiveT>
+	</group>
+	<autoFake>
+		<enableAutoFake>1</enableAutoFake>
+		<minLocalActiveT>60</minLocalActiveT>
+		<maxLocalActiveT>90</maxLocalActiveT>
+		<remoteInActiveT>300</remoteInActiveT>
+		<minLocalActiveDur>40</minLocalActiveDur>
+		<maxLocalActiveDur>65</maxLocalActiveDur>
+		<remoteInActiveDur>300</remoteInActiveDur>
+	</autoFake>
+	<enableAutoFake>0</enableAutoFake>
 </remotePulse>

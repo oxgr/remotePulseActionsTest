@@ -28,10 +28,13 @@ void ofApp::setup(){
         ofLog()<<ip_list[i];
     }
     
+    
 #ifdef TARGET_OSX
     ofLog()<<"set system volume";
     system("osascript -e \"set Volume 100\"");
 #endif
+    
+      arial.load("Arial.ttf", 24, true, true);
     
     allHearts.resize(2);
     
@@ -45,12 +48,17 @@ void ofApp::setup(){
     group_debug.add(testDmxValues.set("testDmxValues",0,0,255));
     
     group_debug.add(triggerFakeMe.set("triggerMeFake",false));
-    group_debug.add(meTestTouched.set("meTouched",false));
-    group_debug.add(meTestBPM.set("meTestBPM",60,0,200));
+    group_debug.add(meFakeTouched.set("meTouched",false));
+    group_debug.add(meFakeBPM.set("meFakeBPM",60,0,200));
     
     group_debug.add(triggerFakeOther.set("triggerOtherFake",false));
-    group_debug.add(otherTestTouched.set("otherTouched",false));
-    group_debug.add(otherTestBPM.set("otherTestBPM",60,0,200));
+    group_debug.add(otherFakeTouched.set("otherTouched",false));
+    group_debug.add(otherFakeBPM.set("otherFakeBPM",60,0,200));
+    
+     group_autoFake.setName("autoFake");
+    group_autoFake.add(minLocalActiveDuration.set("minLocalActiveDur",60,0,180));
+    group_autoFake.add(maxLocalActiveDuration.set("maxLocalActiveDur",90,0,180));
+    group_autoFake.add(remoteInActiveDuration.set("remoteInActiveDur",300,0,600));
     
     //TODO: do not save debug states
     
@@ -63,8 +71,10 @@ void ofApp::setup(){
     gui_main.add(lightViaSerial.set("lightViaSerial",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
+    gui_main.add(bEnableAutoFake.set("enableAutoFake",false));
     //    gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
+    gui_main.add(group_autoFake);
     
     gui_main.add(allHearts[0].group_heart);
     gui_main.add(allHearts[1].group_heart);
@@ -92,10 +102,10 @@ void ofApp::setup(){
     gui_main.minimizeAll();
     
     triggerFakeMe = false;
-    meTestTouched = false;
+    meFakeTouched = false;
     
     triggerFakeOther = false;
-    otherTestTouched = false;
+    otherFakeTouched = false;
     
     allHearts[0].bUseSound = false;
     allHearts[1].bUseSound = true;
@@ -136,7 +146,7 @@ void ofApp::setup(){
 #endif //dmx
     dmxDeviceString = dmx.getDeviceString();
     
-    
+    localActiveDuration = 5; //ofRandom(int(minLocalActiveDuration),int(maxLocalActiveDuration));
     
 #ifdef USE_OSC
     //--osc
@@ -283,31 +293,61 @@ void ofApp::update(){
     } else {
      
         //Mark:--pass on OSC received BPM and touch
-#ifdef USE_OSC
         
+#ifdef USE_OSC
         if(osc_object.gotBPM == true){
+            remoteInActiveDuration = ofGetElapsedTimef();
             allHearts[1].setBPM(osc_object.rxBPM);
             osc_object.gotBPM = false;
         }
         if(osc_object.gotTouch == true){
+            remoteInActiveDuration = ofGetElapsedTimef();
             allHearts[1].setTouch(osc_object.rxTouch);
             osc_object.gotTouch = false;
+            
+            otherFakeTouched = false;
+            old_otherFakeTouched = false;
+        }else{
+            localActiveTimer = ofGetElapsedTimef();
         }
 #endif
         
 #ifdef USE_WEB
-
         if(web_object.gotBPM == true){
+            remoteInActiveDuration = ofGetElapsedTimef();
             allHearts[1].setBPM(web_object.rxBPM);
             web_object.gotBPM = false;
         }
         if(web_object.gotTouch == true){
+            remoteInActiveDuration = ofGetElapsedTimef();
             allHearts[1].setTouch(web_object.rxTouch);
             web_object.gotTouch = false;
+            
+            otherFakeTouched = false;
+            old_otherFakeTouched = false;
+        } else {
+            localActiveTimer = ofGetElapsedTimef();
         }
 #endif
-        
-        
+        //MARK:fake other BPM
+        //if local is active for long enough but noone is on other end
+        //then pick a fake other BPM
+        if(bEnableAutoFake == true){
+            if(ofGetElapsedTimef() - localActiveTimer > localActiveDuration && ofGetElapsedTimef() - remoteInActiveTimer > remoteInActiveDuration){
+                
+                localActiveTimer = ofGetElapsedTimef();
+                ofLog()<<"set fake BPM for other, due to long non-interaction";
+                otherFakeTouched = true;
+                old_otherFakeTouched = true;
+                allHearts[1].setTouch(otherFakeTouched);
+                
+                otherFakeBPM = ofRandom(60,120);
+                allHearts[1].setBPM(otherFakeBPM);
+                allHearts[1].setBPM(otherFakeBPM);
+                
+                localActiveDuration = ofRandom(int(minLocalActiveDuration),int(maxLocalActiveDuration));
+            }
+        }
         //-----
         if(bFadeTest == false){
             allHearts[0].update(); //, firstPause);
@@ -321,6 +361,7 @@ void ofApp::update(){
         
         //TODO: if smaller than minBpm then ignor BPM but also unTouch
         if(hands_object.gotBPM == true && hands_object.bpm < minBpm){
+      
             hands_object.gotBPM = false;
             hands_object.gotTouch = false;
             allHearts[0].setTouch(false);
@@ -386,34 +427,34 @@ void ofApp::update(){
     
     
     //----debugging
-    if(old_meTestTouched != meTestTouched){
-        old_meTestTouched = meTestTouched;
-        allHearts[0].setTouch(meTestTouched);
+    if(old_meFakeTouched != meFakeTouched){
+        old_meFakeTouched = meFakeTouched;
+        allHearts[0].setTouch(meFakeTouched);
 #ifdef USE_OSC
-        osc_object.addTouchMessage(osc_object.sendToIP, meTestTouched);
+        osc_object.addTouchMessage(osc_object.sendToIP, meFakeTouched);
 #endif
 #ifdef USE_WEB
-         web_object.addTouchMessage(web_object.sendToID, meTestTouched);    
+         web_object.addTouchMessage(web_object.sendToID, meFakeTouched);    
 #endif
     }
-    if(triggerFakeMe == true && meTestTouched == true){
+    if(triggerFakeMe == true && meFakeTouched == true){
         triggerFakeMe = false;
-        allHearts[0].setBPM(meTestBPM); //allHearts[0].bpm = meTestBPM;
+        allHearts[0].setBPM(meFakeBPM); //allHearts[0].bpm = meFakeBPM;
 #ifdef USE_OSC
-        osc_object.addBPMMessage(osc_object.sendToIP, meTestBPM);
+        osc_object.addBPMMessage(osc_object.sendToIP, meFakeBPM);
 #endif
 #ifdef USE_WEB
-        web_object.addBPMMessage(web_object.sendToID, meTestBPM);
+        web_object.addBPMMessage(web_object.sendToID, meFakeBPM);
 #endif
     }
     
-    if(old_otherTestTouched != otherTestTouched){
-        old_otherTestTouched = otherTestTouched;
-        allHearts[1].setTouch(otherTestTouched);
+    if(old_otherFakeTouched != otherFakeTouched){
+        old_otherFakeTouched = otherFakeTouched;
+        allHearts[1].setTouch(otherFakeTouched);
     }
-    if(triggerFakeOther == true  && otherTestTouched == true ){
+    if(triggerFakeOther == true  && otherFakeTouched == true ){
         triggerFakeOther = false;
-        allHearts[1].setBPM(otherTestBPM); //allHearts[0].bpm = meTestBPM;
+        allHearts[1].setBPM(otherFakeBPM); //allHearts[0].bpm = meFakeBPM;
     }
     
     hands_object.updateSerial(bFadeTest);
@@ -439,6 +480,9 @@ void ofApp::draw(){
     ofTranslate(50, ofGetHeight() - 350);
     allHearts[0].draw(0, 0);
     allHearts[1].draw(300, 0); 
+    if(otherFakeTouched == true){
+         arial.drawString("F", 405, 50);
+    }
     ofPopMatrix();
     
     hands_object.draw(10,10);
@@ -448,6 +492,14 @@ void ofApp::draw(){
 #endif
     
     ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetWidth()-100, ofGetHeight() - 30);
+    
+    
+    float temp_dur0 = ofGetElapsedTimef() - localActiveTimer;
+     float temp_dur1 = ofGetElapsedTimef() - remoteInActiveTimer;
+    
+    ofDrawBitmapString("localActive "+ofToString(temp_dur0,2) + " / " +ofToString(localActiveDuration) , 10, ofGetHeight() - 100);
+    ofDrawBitmapString("remoteInActive "+ofToString(temp_dur1,2) + " / " +ofToString(remoteInActiveDuration) , 10, ofGetHeight() - 80);
+
     
     if(bShowGui == true){
         gui_main.draw();

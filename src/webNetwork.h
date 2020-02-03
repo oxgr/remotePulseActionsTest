@@ -118,11 +118,11 @@ public:
 //                addTouchMessage(lastTouchID,lastTouchValue);
 //            }
 
-            if(ofGetElapsedTimef() - lastMsgTimer > 30){
+            if(rxTouch == 1 && ofGetElapsedTimef() - lastMsgTimer > 30){
                 lastMsgTimer = ofGetElapsedTimef();
                 gotTouch = true;
                 rxTouch = 0;
-                ofLog()<<" lastMsgTimer > 30. have not received anything for a long time via web! force unTouch";
+                ofLog()<<" lastMsgTimer > 30 && last rxTouch == 1. have not received anything for a long time via web! force unTouch";
             }
         }
     }

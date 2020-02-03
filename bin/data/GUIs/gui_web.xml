@@ -13,7 +13,7 @@
 	<other_touch_received>1</other_touch_received>
 	<other_bpm_received>89</other_bpm_received>
 	<me_touch_sent>1</me_touch_sent>
-	<me_bpm_sent>101</me_bpm_sent>
+	<me_bpm_sent>60</me_bpm_sent>
 	<periodicResend>0</periodicResend>
 	<webSendIntervalMil>10</webSendIntervalMil>
 </internet>

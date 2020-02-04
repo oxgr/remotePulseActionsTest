@@ -55,13 +55,15 @@ void ofApp::setup(){
     group_debug.add(otherFakeTouched.set("otherTouched",false));
     group_debug.add(otherFakeBPM.set("otherFakeBPM",60,0,200));
     
-     group_autoFake.setName("autoFake");
+    group_autoFake.setName("autoFake");
     group_autoFake.add(minLocalActiveDuration.set("minLocalActiveDur",60,0,180));
     group_autoFake.add(maxLocalActiveDuration.set("maxLocalActiveDur",90,0,180));
     group_autoFake.add(minLocalInActiveDuration.set("minLocalInActiveDur",5,0,60));
     group_autoFake.add(maxLocalInActiveDuration.set("maxLocalInActiveDur",15,0,60));
 
     group_autoFake.add(remoteInActiveDuration.set("remoteInActiveDur",300,0,600));
+    group_autoFake.add(fakeTouchDuration.set("fakeTouchDur",5,0,20));
+    
     
     //TODO: do not save debug states
     
@@ -347,15 +349,21 @@ void ofApp::update(){
                 otherFakeTouched = true;
                 old_otherFakeTouched = true;
                 allHearts[1].setTouch(otherFakeTouched);
-                
+//                allHearts[1].update();
                 otherFakeBPM = ofRandom(60,120);
-                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
-                allHearts[1].setBPM(otherFakeBPM);
-                allHearts[1].setBPM(otherFakeBPM);
+//                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
+//                allHearts[1].setBPM(otherFakeBPM);
+                
                 //                allHearts[1].setBPM(otherFakeBPM);
                 
-                localActiveDuration = int(ofRandom(minLocalActiveDuration,maxLocalActiveDuration));
+                if(allHearts[1].bpmCounter < allHearts[1].minBpmCounter){
+                    localActiveDuration = fakeTouchDuration;
+                }else{
+                    localActiveDuration = int(ofRandom(minLocalActiveDuration,maxLocalActiveDuration));
+                }
                 localInActiveDuration = int(ofRandom(minLocalInActiveDuration,maxLocalInActiveDuration)); 
+                
+                allHearts[1].setBPM(otherFakeBPM);
             } else {
                 if(ofGetElapsedTimef() - localInActiveTimer > localInActiveDuration){
                     otherFakeTouched = false;
@@ -374,6 +382,7 @@ void ofApp::update(){
         
         
         //TODO: if smaller than minBpm then ignor BPM but also unTouch
+        /*
         if(hands_object.gotBPM == true && hands_object.bpm < minBpm){
       
             hands_object.gotBPM = false;
@@ -389,7 +398,7 @@ void ofApp::update(){
             
             ofLog()<<"bpm < minBPM so ignore it and unTouch";
         }
-        
+        */
         
         if(hands_object.gotBPM == true){
             allHearts[0].setBPM(hands_object.bpm);

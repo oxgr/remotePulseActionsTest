@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "29 20200203 d6c2f5e"
+#define APP_VERSION "30 20200203 3385c8f"
 
 class ofApp : public ofBaseApp{
 public:
@@ -175,6 +175,8 @@ public:
     
     ofParameter<int> remoteInActiveDuration;
     float remoteInActiveTimer;
+    
+    ofParameter<int> fakeTouchDuration;
     
         ofTrueTypeFont    arial;
 };

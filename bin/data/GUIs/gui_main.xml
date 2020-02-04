@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>29 20200203 d6c2f5e</ver>
+	<ver>30 20200203 3385c8f</ver>
 	<showGui>0</showGui>
 	<debug>0<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -69,6 +69,7 @@
 		<remoteInActiveDur>300</remoteInActiveDur>
 		<minLocalInActiveDur>5</minLocalInActiveDur>
 		<maxLocalInActiveDur>15</maxLocalInActiveDur>
+		<fakeTouchDur>5</fakeTouchDur>
 	</autoFake>
 	<enableAutoFake>0</enableAutoFake>
 </remotePulse>

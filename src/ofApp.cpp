@@ -350,7 +350,7 @@ void ofApp::update(){
                 old_otherFakeTouched = true;
                 allHearts[1].setTouch(otherFakeTouched);
 //                allHearts[1].update();
-                otherFakeBPM = ofRandom(60,120);
+                otherFakeBPM = ofRandom(60,80);
 //                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
 //                allHearts[1].setBPM(otherFakeBPM);
                 

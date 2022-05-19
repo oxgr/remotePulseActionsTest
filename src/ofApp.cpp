@@ -11,22 +11,7 @@ void ofApp::setup(){
 //    //I had to replace getpid() with GetCurrentProcessId() and include windows.h
 //    ofSystem("'/bin/systemd-notify' --pid= "+ofToString(getpid()) +" WATCHDOG=1");
     
-    //IP
-    //    MX_IP = "188.188.188.154";
-    //    US_IP = "188.188.188.153";
-    
-    broadCastIP = "188.188.188.255"; //not really broadcast. just an indicator if i should be listen to this message
-    
-    vector<string> ip_list = getLocalIPs();
-    if(ip_list.empty()){
-        myIP = "offline";
-    }else{
-        myIP = ip_list[0];
-    }
-    
-    for(int i=0; i<ip_list.size(); i++){
-        ofLog()<<ip_list[i];
-    }
+  
     
     
 #ifdef TARGET_OSX
@@ -77,6 +62,7 @@ void ofApp::setup(){
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
     gui_main.add(bEnableAutoFake.set("enableAutoFake",false));
+    gui_main.add(ip_index.set("IP index",0,0,4));
     //    gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
     gui_main.add(group_autoFake);
@@ -118,6 +104,25 @@ void ofApp::setup(){
     bFadeTest = false;
     testDmxValues = 0;
     old_testDmxValues = 0;
+    
+    //IP
+    //    MX_IP = "188.188.188.154";
+    //    US_IP = "188.188.188.153";
+    
+    broadCastIP = "188.188.188.255"; //not really broadcast. just an indicator if i should be listen to this message
+    
+    vector<string> ip_list = getLocalIPs();
+    for(int i=0; i<ip_list.size(); i++){
+        ofLog()<<ip_list[i];
+    }
+    
+    if(ip_list.empty()){
+        myIP = "offline";
+    }else{
+        myIP = ip_list[ip_index];
+    }
+    
+
     
     string temp_versionString = version_object.getVersionString("ofApp.h");
     if(temp_versionString != ""){

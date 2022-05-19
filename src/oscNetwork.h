@@ -294,6 +294,7 @@ public:
                 }    
                 
             }else if(m.getAddress() == "/appAlive"){
+                //MARK: /appAlive
                 string temp_forWhom = m.getArgAsString(0);
                 if(bDebug) ofLog()<<"temp_forWhom "<<temp_forWhom<<" runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
                 

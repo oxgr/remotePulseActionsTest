@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "32 20200204 9557ad8"
+#define APP_VERSION "33 20220519 aae2c97"
 
 class ofApp : public ofBaseApp{
 public:
@@ -89,6 +89,7 @@ public:
     int myID;
     vector<string> getLocalIPs();
     
+    ofParameter<int> ip_index;
     //----serial button
     sensorHandler hands_object;
     vector<string> serialSendBuffer;

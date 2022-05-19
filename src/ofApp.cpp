@@ -196,7 +196,12 @@ void ofApp::exit(){
 }
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+#ifdef USE_WEB
     ofSetWindowTitle(myIP+" | BPM-sender | " + web_object.getComputerID());
+#else
+    ofSetWindowTitle(myIP+" | BPM-sender | ");
+#endif
     
     checkGui();
     

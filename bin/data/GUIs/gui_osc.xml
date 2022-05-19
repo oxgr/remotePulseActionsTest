@@ -15,3 +15,15 @@
 		<periodicResend>0</periodicResend>
 	</osc_speakers>
 </OSC>
+<osc>
+	<enableOSC>1</enableOSC>
+	<oscOutPort>9924</oscOutPort>
+	<oscInPort>9923</oscInPort>
+	<sendToIP>10.0.0.52</sendToIP>
+	<oscSendInterval>10</oscSendInterval>
+	<other_touch_received></other_touch_received>
+	<other_bpm_received></other_bpm_received>
+	<me_touch_sent></me_touch_sent>
+	<me_bpm_sent></me_bpm_sent>
+	<periodicResend>0</periodicResend>
+</osc>

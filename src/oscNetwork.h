@@ -72,9 +72,9 @@ public:
     bool gotTouch = false;
     
     float other_runtime_fade = 255;
-    string other_runtimeStr;
-    string old_other_runtimeStr;
-    string other_serialStr;
+    string other_runtimeStr = "hi";
+//    string old_other_runtimeStr = "hi";
+    string other_serialStr = "hi";
     
     float lastMsgTimer = 0;
     
@@ -186,7 +186,12 @@ public:
         
         messageBuffer.push_back(myMessage);
     }
-    
+    void printStringAsInts(string str){
+        for(size_t i = 0; i < str.size(); i++){
+            cout << (int)str[i] << " , ";
+        }
+        cout << endl;
+    }
     void update(string _myIP){
         
         checkGui();
@@ -275,6 +280,7 @@ public:
                 if(bDebug) ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
+//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
                     rxBPM = m.getArgAsInt(1);
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
@@ -287,6 +293,7 @@ public:
                     ofLog()<<"myIP "<<myIP<<" osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 }
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
+//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
                     rxTouch = m.getArgAsInt(1);
                     rxTouch_str = ofToString(rxTouch);
                     gotTouch= true;
@@ -296,13 +303,33 @@ public:
             }else if(m.getAddress() == "/appAlive"){
                 //MARK: /appAlive
                 string temp_forWhom = m.getArgAsString(0);
-                if(bDebug) ofLog()<<"temp_forWhom "<<temp_forWhom<<" runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
+                if(bDebug){
+                    ofLog()<<"temp_forWhom "<<temp_forWhom<<" myIP "<<myIP;
+                    ofLog()<<"temp_forWhom:" <<endl;
+                    printStringAsInts(temp_forWhom);
+                    
+                    ofLog()<<"myIP:" <<endl;
+                    printStringAsInts(myIP);
+                    
+//                    ofLog()<<"|"<<temp_forWhom<<"|";
+//                    ofLog()<<"|"<<myIP<<"|";
+//                    ofLog()<<_myIP<<"|";
+                    ofLog()<<"runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
+                    ofLog()<<"compare "<<(temp_forWhom == myIP ? "same" : "NOT");
+                    ofLog()<<"ofIsStringInString "<<(ofIsStringInString(myIP,temp_forWhom) ? "same" : "NOT");
+                    
+                }
+                //strcmp(param, "test") == 0
+                //temp_forWhom == myIP
                 
+//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
+//                if(ofIsStringInString(myIP, temp_forWhom)){
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     other_runtimeStr = m.getArgAsString(1);
                     other_serialStr = ofToString(m.getArgAsInt(2));
                     other_runtime_fade = 255;
                     lastMsgTimer = ofGetElapsedTimef();
+                    if(bDebug)  ofLog()<<"in appAlive set other_runtimeStr to "<<other_runtimeStr;
                 }         
                 
             }else{
@@ -337,8 +364,8 @@ public:
                 msg_strings[current_msg_string] = "";
             }
             
-        }
-        
+        }//end while(receiver.hasWaitingMessages()){
+//        if(bDebug)  ofLog()<<"oscNetwork update other_runtimeStr "<<other_runtimeStr;
     }
     
     void addSenderMsg(string _handle, int _valueA){

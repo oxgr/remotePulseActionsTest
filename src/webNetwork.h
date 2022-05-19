@@ -26,7 +26,7 @@ public:
     
     float other_runtime_fade = 255;
     string other_runtimeStr;
-    string old_other_runtimeStr;
+//    string old_other_runtimeStr;
     string other_serialStr;
     
      ofParameter<int> webSendInterval;

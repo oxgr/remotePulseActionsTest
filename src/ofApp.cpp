@@ -120,6 +120,7 @@ void ofApp::setup(){
         myIP = "offline";
     }else{
         myIP = ip_list[ip_index];
+        myIP = ofTrim(myIP);
     }
     
 
@@ -558,7 +559,6 @@ void ofApp::drawRuntime(int _x, int _y){
     myMin = myMin % 60;
     int mySec = fmod(myTime,60);
     
-    int temp_y = 10;
     runtime_str = ofToString(myHours)+":"+ofToString(myMin)+":"+ofToString(mySec);
     ofSetColor(0);
     ofDrawBitmapString("my runtime: "+runtime_str, _x, _y);

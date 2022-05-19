@@ -289,9 +289,9 @@ public:
         tempY = 30;
         //----------serial alive info
         if(ofGetElapsedTimef() - aliveTimer <= 10){
-            ofDrawBitmapString("local sensor alive "+ofToString(aliveCounter), ofVec2f(0, tempY+=15));
+            ofDrawBitmapString("local serial alive "+ofToString(aliveCounter), ofVec2f(0, tempY+=15));
         }else{
-            ofDrawBitmapString("local sensor NOT alive ", ofVec2f(0, tempY+=15));
+            ofDrawBitmapString("local serial NOT alive ", ofVec2f(0, tempY+=15));
         }
         
         ofSetColor(bpmColor);

@@ -80,7 +80,8 @@ void socketHandler::setup(){
     isLastCall = false;
     
     //theHttpAddress = "http://localhost:3001/";
-    theHttpAddress = "http://pulseapi.nfshost.com/";
+//    theHttpAddress = "http://pulseapi.nfshost.com/";
+    theHttpAddress = "https://remote-pulse-server.glitch.me";
     //pulseapi.nfshost.com
     
  threadGet.setup(me_computerID, theHttpAddress);

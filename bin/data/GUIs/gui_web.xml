@@ -12,8 +12,8 @@
 	<webSendInterval>10</webSendInterval>
 	<other_touch_received>1</other_touch_received>
 	<other_bpm_received>89</other_bpm_received>
-	<me_touch_sent>1</me_touch_sent>
+	<me_touch_sent>0</me_touch_sent>
 	<me_bpm_sent>60</me_bpm_sent>
 	<periodicResend>0</periodicResend>
-	<webSendIntervalMil>10</webSendIntervalMil>
+	<webSendIntervalMil>100</webSendIntervalMil>
 </internet>

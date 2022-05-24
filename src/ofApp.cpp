@@ -119,6 +119,8 @@ void ofApp::setup(){
     if(ip_list.empty()){
         myIP = "offline";
     }else{
+        ofLog()<<"ip_index "<<ip_index;
+        ip_index = MIN(ip_index.get(),ip_list.size());
         myIP = ip_list[ip_index];
         myIP = ofTrim(myIP);
     }
@@ -211,7 +213,7 @@ void ofApp::update(){
     
     checkGui();
     
-    if(ofGetElapsedTimef() - logTimer > 2){
+    if(ofGetElapsedTimef() - logTimer > 5){
         logTimer = ofGetElapsedTimef() ;
         
         bool connectionOK = true; //false;
@@ -223,7 +225,7 @@ void ofApp::update(){
         
 #ifdef USE_WEB
         
-        web_object.addAliveMessage(web_object.sendToID,runtime_str, hands_object.aliveCounter);
+        web_object.addAliveMessage(web_object.other_computerID,runtime_str, hands_object.aliveCounter);
         //TODO: see if there is any reason for web interface needing a app restart
         connectionOK = true;
 #endif
@@ -404,7 +406,7 @@ void ofApp::update(){
             osc_object.addTouchMessage(osc_object.sendToIP, false);
 #endif
 #ifdef USE_WEB
-            web_object.addTouchMessage(web_object.sendToID, false);
+            web_object.addTouchMessage(web_object.other_computerID, false);
 #endif
             
             ofLog()<<"bpm < minBPM so ignore it and unTouch";
@@ -417,7 +419,7 @@ void ofApp::update(){
             osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
 #endif
 #ifdef USE_WEB
-             web_object.addBPMMessage(web_object.sendToID, hands_object.bpm);
+             web_object.addBPMMessage(web_object.other_computerID, hands_object.bpm);
 #endif
             hands_object.gotBPM = false;
             if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
@@ -432,7 +434,7 @@ void ofApp::update(){
             osc_object.addTouchMessage(osc_object.sendToIP, false);
 #endif
 #ifdef USE_WEB
-            web_object.addTouchMessage(web_object.sendToID, false);
+            web_object.addTouchMessage(web_object.other_computerID, false);
 #endif
         }
         
@@ -443,7 +445,7 @@ void ofApp::update(){
             osc_object.addTouchMessage(osc_object.sendToIP, hands_object.touch);
 #endif
 #ifdef USE_WEB
-            web_object.addTouchMessage(web_object.sendToID, hands_object.touch);
+            web_object.addTouchMessage(web_object.other_computerID, hands_object.touch);
 #endif
             hands_object.gotTouch = false;
         }
@@ -468,7 +470,7 @@ void ofApp::update(){
         osc_object.addTouchMessage(osc_object.sendToIP, meFakeTouched);
 #endif
 #ifdef USE_WEB
-         web_object.addTouchMessage(web_object.sendToID, meFakeTouched);    
+         web_object.addTouchMessage(web_object.other_computerID, meFakeTouched);    
 #endif
     }
     if(triggerFakeMe == true && meFakeTouched == true){
@@ -478,7 +480,7 @@ void ofApp::update(){
         osc_object.addBPMMessage(osc_object.sendToIP, meFakeBPM);
 #endif
 #ifdef USE_WEB
-        web_object.addBPMMessage(web_object.sendToID, meFakeBPM);
+        web_object.addBPMMessage(web_object.other_computerID, meFakeBPM);
 #endif
     }
     
@@ -732,7 +734,7 @@ vector<string> ofApp::getLocalIPs(){
             
             if (ip.substr(0, 3) != "127"){ // let's skip loopback addresses
                 result.push_back(ip);
-                //ofLogVerbose() << ip;
+                ofLog() <<"add to ip list: "<< ip;
             }
         }
     }
@@ -754,6 +756,7 @@ vector<string> ofApp::getLocalIPs(){
             if(ip.substr(0, 3) != "127"){ // let's skip loopback addresses
                 result.push_back(ip);
                 //ofLogVerbose() << ip;
+                ofLog() <<"add to ip list: "<< ip;
             }
         }
     }

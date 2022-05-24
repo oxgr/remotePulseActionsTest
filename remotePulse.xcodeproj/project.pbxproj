@@ -19,7 +19,6 @@
 		11B4926947498FC107CB9ECA /* packet_datatypes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BEC51D6DB939190ADC1E28D /* packet_datatypes.c */; };
 		1298066D39CE7EC3DA60256A /* snappy-stubs-internal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2FB74FF42B08FC378F74B2B7 /* snappy-stubs-internal.cc */; };
 		199E20C3CE29DBDA5F9DA16C /* BufferedSerialDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB137BD0187E28CD8B59874 /* BufferedSerialDevice.cpp */; };
-		1A8BF45094C0BF0E9A8E0C7D /* socketHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01C91E5163D08BEFA1B69573 /* socketHandler.cpp */; };
 		1B78C660BAF6306EBD8C0C7F /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 996E15704F599A45214DE78C /* callbacks.c */; };
 		1C36947250DCB09A8A375C0C /* ofxXmlPoco.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9998694E5001F9CF0B13BF0 /* ofxXmlPoco.cpp */; };
 		1CC07C1A616F29EB8EEC3D21 /* SearchPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D76B424A6DF4D70AACCDBAE /* SearchPath.cpp */; };
@@ -171,7 +170,6 @@
 /* Begin PBXFileReference section */
 		00D6D32B84B099226431108C /* ofxOsc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOsc.h; path = ../../../addons/ofxOsc/src/ofxOsc.h; sourceTree = SOURCE_ROOT; };
 		00F3330A5DEBD082CEE0C12C /* DeviceFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DeviceFilter.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/DeviceFilter.cpp; sourceTree = SOURCE_ROOT; };
-		01C91E5163D08BEFA1B69573 /* socketHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = socketHandler.cpp; path = src/socketHandler.cpp; sourceTree = SOURCE_ROOT; };
 		021CAF811F031FFBDFB18797 /* ByteBufferReader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ByteBufferReader.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/ByteBufferReader.cpp; sourceTree = SOURCE_ROOT; };
 		028F3C01A2177A9992488B76 /* packet_mosq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = packet_mosq.c; path = ../../../addons/ofxMQTT/libs/mosquitto/src/packet_mosq.c; sourceTree = SOURCE_ROOT; };
 		029684CF678F70F6D3537A29 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OscOutboundPacketStream.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h; sourceTree = SOURCE_ROOT; };
@@ -206,7 +204,6 @@
 		1645F56257269CD0356320BD /* ofxJSON.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxJSON.h; path = ../../../addons/ofxJSON/src/ofxJSON.h; sourceTree = SOURCE_ROOT; };
 		16D8E1844A44453A0C287E72 /* ssl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ssl.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/ssl.h; sourceTree = SOURCE_ROOT; };
 		17006150745E007FA32014F5 /* modes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = modes.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/modes.h; sourceTree = SOURCE_ROOT; };
-		17755CE52C190E2277DC9FBC /* socketHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = socketHandler.h; path = src/socketHandler.h; sourceTree = SOURCE_ROOT; };
 		17B4AF7CA05D9D95245C9FB7 /* mosquitto.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mosquitto.h; path = ../../../addons/ofxMQTT/libs/mosquitto/src/mosquitto.h; sourceTree = SOURCE_ROOT; };
 		17E65988300FBD9AAA2CD0CA /* ofxGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGui.h; path = ../../../addons/ofxGui/src/ofxGui.h; sourceTree = SOURCE_ROOT; };
 		181D363B6DD54D1FA6309C43 /* ofxColorPicker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxColorPicker.cpp; path = ../../../addons/ofxGui/src/ofxColorPicker.cpp; sourceTree = SOURCE_ROOT; };
@@ -2000,8 +1997,6 @@
 				92976D6A436E31D4CB80E5BA /* oscNetwork.h */,
 				11B786E66EE44442C5CE24F2 /* webNetwork.h */,
 				5C8FC86C9CABB43159718C20 /* versionNumbering.h */,
-				17755CE52C190E2277DC9FBC /* socketHandler.h */,
-				01C91E5163D08BEFA1B69573 /* socketHandler.cpp */,
 				E253102C84548EB7CF1748E8 /* customDefines.h */,
 			);
 			path = src;
@@ -2164,7 +2159,6 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				1A8BF45094C0BF0E9A8E0C7D /* socketHandler.cpp in Sources */,
 				D820615CFDD5F497033D7C5A /* ofxBiquadFilter.cpp in Sources */,
 				A7CF97A6E1DAE4A002CA6F82 /* ofxBiquadFilterInstance.cpp in Sources */,
 				8BCF02B826253856D7DCF4D1 /* ofxDmx.cpp in Sources */,

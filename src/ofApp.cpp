@@ -119,12 +119,13 @@ void ofApp::setup(){
     if(ip_list.empty()){
         myIP = "offline";
     }else{
-        ofLog()<<"ip_index "<<ip_index;
-        ip_index = MIN(ip_index.get(),ip_list.size());
+        ofLog()<<"ip_index "<<ip_index<<" ip_list.size() "<<ip_list.size();
+        ip_index = MIN(ip_index.get(),ip_list.size()-1);
         myIP = ip_list[ip_index];
         myIP = ofTrim(myIP);
     }
     
+    ofLog()<<"myIP "<<myIP;
 
     
     string temp_versionString = version_object.getVersionString("ofApp.h");

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>37 20220523 fc96f5a</ver>
+	<ver>38 20220523 70bdf32</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -72,5 +72,5 @@
 		<fakeTouchDur>5</fakeTouchDur>
 	</autoFake>
 	<enableAutoFake>0</enableAutoFake>
-	<IP_index>1</IP_index>
+	<IP_index>0</IP_index>
 </remotePulse>

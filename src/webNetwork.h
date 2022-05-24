@@ -60,8 +60,8 @@ public:
     string txAppAlive;
     
     //    string sendToID;
-    string other_computerID;
-    string me_computerID;
+    string other_computerID = "?";
+    string me_computerID = "?";
     
     float lastMsgTimer = 0;
     
@@ -109,6 +109,9 @@ public:
         gui_web.loadFromFile("GUIs/gui_web.xml");
         
         txTouch_str = "0";
+        txBPM_str = "0";
+        rxTouch_str = "0";
+        rxBPM_str = "0";
         //        socket_object.init();
     }
     

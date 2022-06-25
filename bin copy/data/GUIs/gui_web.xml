@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<internet>
+	<enableWeb>1</enableWeb>
+	<socket>
+		<showText>1</showText>
+		<textPosX>50</textPosX>
+		<textPosY>50</textPosY>
+		<checkDatabase>2</checkDatabase>
+		<UnknownName>app started</UnknownName>
+		<Send>0</Send>
+	</socket>
+	<webSendInterval>10</webSendInterval>
+	<other_touch_received>1</other_touch_received>
+	<other_bpm_received>89</other_bpm_received>
+	<me_touch_sent>1</me_touch_sent>
+	<me_bpm_sent>77</me_bpm_sent>
+	<periodicResend>0</periodicResend>
+	<webSendIntervalMil>100</webSendIntervalMil>
+</internet>

@@ -1,0 +1,5 @@
+
+
+--------------------------------------- 2020-01-17-11-38-53-882
+[notice ] curl 'http://pulseapi.nfshost.com/'
+[notice ] [{"comp-id":"computerf","message":"hihi","time-stamp":"2020-01-16-15-52-29-186","time":1579207949},{"compid":"computerc","message”:”LIF”,”time-stamp":"2020-01-16-10-34-17-779","time":1579188857},{"compid":"computerf","message":"hello world","time-stamp":"2020-01-16-16-32-40-132","time":1579210360},{"compid":"","message":"test","time-stamp":"2020-01-17-10-26-21-724","time":1579274781},{"compid":"computer-a","message":"olololo","time-stamp":"2020-01-17-15-50-44-560","time":1579276244}]

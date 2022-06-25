@@ -61,7 +61,8 @@ void ofApp::setup(){
     gui_main.add(lightViaSerial.set("lightViaSerial",false));
     gui_main.add(bShowGui.set("showGui",true));
     gui_main.add(bDebug.set("debug",false));
-    gui_main.add(bEnableAutoFake.set("enableAutoFake",false));
+    gui_main.add(bEnableAutoFake.set("enableAutoFake",false));  //if local is active for long enough but noone is on other end
+    gui_main.add(bFakeMe.set("at Athens",false));  //if local sensor only report touch but no BPM then fake one
     gui_main.add(ip_index.set("IP index",0,0,4));
     //    gui_main.add(systemVolume.set("systemVolume",100,0,100));
     gui_main.add(group_debug);
@@ -181,6 +182,9 @@ void ofApp::setup(){
     bShowGui = true;
     test_delayTimer.setPeriod(10);
     
+    fakeMe_startTimer = 0;
+    fakeMe_minDuration = 5;
+    fakeMe_running = false;
 }
 
 void ofApp::exit(){
@@ -351,7 +355,8 @@ void ofApp::update(){
         } else{
             localInActiveTimer = ofGetElapsedTimef();
         }
-        
+     
+       
         //MARK:fake other BPM
         //if local is active for long enough but noone is on other end
         //then pick a fake other BPM
@@ -437,6 +442,31 @@ void ofApp::update(){
 #ifdef USE_WEB
             web_object.addTouchMessage(web_object.other_computerID, false);
 #endif
+        }
+        //MARK:fake my BPM
+        //as soon as sensor detects touch fake a BPM, because in Athens Nikos did not produce a BPM but a touch 
+        if(bFakeMe == true){
+            if(hands_object.gotTouch == true){
+                if(hands_object.touch == 1){
+                    //detected touch
+//                    hands_object.bpm = 71; //ofRandom(66,69);
+//                    allHearts[0].setBPM(hands_object.bpm);
+//                    allHearts[0].bpmCounter = minBpmCounter;
+                    meFakeBPM = ofRandom(50,100);
+                    triggerFakeMe = true;
+                    meFakeTouched = true;
+                    fakeMe_startTimer = ofGetElapsedTimef();
+                    fakeMe_running = true;
+                } else {
+                    //detected un-touch
+                    if(fakeMe_running == true && ofGetElapsedTimef() - fakeMe_startTimer > fakeMe_minDuration){
+                        fakeMe_running = false;
+                        triggerFakeMe = false;
+                        meFakeTouched = false;
+                    }
+                }
+            }
+           
         }
         
         if(hands_object.gotTouch == true){
@@ -665,6 +695,15 @@ void ofApp::keyReleased(int key){
         if(bShowGui == false){
             saveGui();
         }
+    }
+    
+    if(key == 't'){
+        if(hands_object.touch == 1){
+            hands_object.touch = 0;
+        }else{
+            hands_object.touch = 1;
+        }
+        hands_object.gotTouch = true;
     }
 }
 

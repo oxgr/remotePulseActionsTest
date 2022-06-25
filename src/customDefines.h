@@ -7,8 +7,8 @@
 #ifndef customDefines_h
 #define customDefines_h
 
-#define USE_WEB // or use OSC to communicate between both remote pulse stations
-//#define USE_OSC 
+//#define USE_WEB // or use OSC to communicate between both remote pulse stations
+#define USE_OSC 
 
 #define USE_SERIAL
 

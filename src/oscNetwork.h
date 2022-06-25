@@ -72,9 +72,9 @@ public:
     bool gotTouch = false;
     
     float other_runtime_fade = 255;
-    string other_runtimeStr = "hi";
-//    string old_other_runtimeStr = "hi";
-    string other_serialStr = "hi";
+    string other_runtimeStr = "Anfang";
+//    string old_other_runtimeStr = "Anfang";
+    string other_serialStr = "Anfang";
     
     float lastMsgTimer = 0;
     

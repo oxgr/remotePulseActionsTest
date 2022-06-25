@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "38 20220523 70bdf32"
+#define APP_VERSION "40 20220625 b387d95"
 
 class ofApp : public ofBaseApp{
 public:
@@ -162,6 +162,11 @@ public:
     
     ofParameterGroup group_autoFake;
     ofParameter<bool> bEnableAutoFake;
+    ofParameter<bool> bFakeMe;
+    float fakeMe_startTimer;
+    ofParameter<float> fakeMe_minDuration;
+    bool fakeMe_running;
+    
     ofParameter<int> minLocalActiveDuration;
     ofParameter<int> maxLocalActiveDuration;
     float localActiveTimer;
@@ -180,4 +185,6 @@ public:
     ofParameter<int> fakeTouchDuration;
     
         ofTrueTypeFont    arial;
+    
+   
 };

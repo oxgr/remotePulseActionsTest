@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>38 20220523 70bdf32</ver>
+	<ver>40 20220625 b387d95</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
-		<meTouched>0</meTouched>
+		<meTouched>1</meTouched>
 		<meTestBPM>101</meTestBPM>
 		<otherTouched>0</otherTouched>
 		<otherTestBPM>102</otherTestBPM>
@@ -13,7 +13,7 @@
 		<testDmxValues>0</testDmxValues>
 		<fadeTest>0</fadeTest>
 		<testDmxChan>4</testDmxChan>
-		<meFakeBPM>60</meFakeBPM>
+		<meFakeBPM>68</meFakeBPM>
 		<otherFakeBPM>112</otherFakeBPM>
 	</debug>
 	<enableDMX>1</enableDMX>
@@ -41,7 +41,7 @@
 		<useAudio>1</useAudio>
 	</heart_other>
 	<systemVolume>100</systemVolume>
-	<minBpmCount>1</minBpmCount>
+	<minBpmCount>0</minBpmCount>
 	<firstMinBright>8</firstMinBright>
 	<firstMaxBright>81</firstMaxBright>
 	<secondMinBright>10</secondMinBright>
@@ -73,4 +73,5 @@
 	</autoFake>
 	<enableAutoFake>0</enableAutoFake>
 	<IP_index>0</IP_index>
+	<at_Athens>1</at_Athens>
 </remotePulse>

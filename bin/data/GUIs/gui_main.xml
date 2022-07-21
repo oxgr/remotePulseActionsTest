@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>42 20220721 b40ea3d</ver>
+	<ver>43 20220721 e914a85</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>

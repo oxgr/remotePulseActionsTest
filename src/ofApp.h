@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "42 20220721 b40ea3d"
+#define APP_VERSION "43 20220721 e914a85"
 
 class ofApp : public ofBaseApp{
 public:
@@ -191,15 +191,23 @@ public:
     ofParameterGroup group_dmx_channel;
     ofParameterGroup group_dmx_values;
     
+    ofParameter<int> dmx_start_channels[2];
     
     ofParameter<int> pan_channel, pan_fine_channel;
-    ofParameter<float> pan_angle_value;
+    ofParameter<float> pan_angle_value[2];
     ofParameter<int> tilt_channel, tilt_fine_channel;
-    ofParameter<float> tilt_angle_value; 
+    ofParameter<float> tilt_angle_value[2]; 
     
     ofParameter<int> zoom_channel, zoom_fine_channel;
-    ofParameter<float> zoom_value;
+    ofParameter<float> zoom_value[2];
     
     ofParameter<int> gobo_channel;
-    ofParameter<int> gobo_value;
+    ofParameter<int> gobo_value[2];
+    
+    string GetLetter(int value)
+    {
+        value += 1; //so that int 0 gives us first letter i.e. A
+        char letter = (char) ('A' - 1 + value);
+        return ofToString(letter);
+    }
 };

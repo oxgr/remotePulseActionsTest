@@ -105,20 +105,26 @@ void ofApp::setup(){
     gui_movingHead.setHeaderBackgroundColor(ofColor(255,0,0));
     
     gui_movingHead.add(bUseMovingHead.set("use movingHead",true));
-    
-    group_dmx_values.setName("dmx values");
-    group_dmx_values.add(pan_angle_value.set("pan angle",0,-270,270));
-    group_dmx_values.add(tilt_angle_value.set("tilt angle",0,-135,135));
-    group_dmx_values.add(zoom_value.set("zoom",0,0,1));
-    group_dmx_values.add(gobo_value.set("gobo",0,0,255));
+    for(int i=0; i<2; i++){
+        group_dmx_values.setName("dmx values");
+        string letter = GetLetter(i);
+        group_dmx_values.add(pan_angle_value[i].set("pan angle "+letter,0,-270,270));
+        group_dmx_values.add(tilt_angle_value[i].set("tilt angle "+letter,0,-135,135));
+        group_dmx_values.add(zoom_value[i].set("zoom "+letter,0,0,1));
+        group_dmx_values.add(gobo_value[i].set("gobo "+letter,0,0,255));
+    }
     
     group_dmx_channel.setName("dmx channels");
+    group_dmx_channel.add(dmx_start_channels[0].set("A start addr",1,1,512));
+    group_dmx_channel.add(dmx_start_channels[1].set("B start addr",30,1,512));
+    
     group_dmx_channel.add(pan_channel.set("pan",1,1,512));
     group_dmx_channel.add(pan_fine_channel.set("pan fine",1,1,512));
     group_dmx_channel.add(tilt_channel.set("tilt",1,1,512));
     group_dmx_channel.add(tilt_fine_channel.set("tilt fine",1,1,512));
     group_dmx_channel.add(zoom_channel.set("zoom",1,1,512));
     group_dmx_channel.add(gobo_channel.set("gobo",1,1,512));
+    
     
     gui_movingHead.add(group_dmx_values);
     gui_movingHead.add(group_dmx_channel);
@@ -556,20 +562,28 @@ void ofApp::update(){
     //dmx brightness get's updated in oneHeart objects
     if(lightViaDmx == true){
         if(bUseMovingHead == true){
-            int angleInt = ofMap(pan_angle_value,pan_angle_value.getMin(),pan_angle_value.getMax(),0,65536);
-            int lowerBit = angleInt % 256;
-            int higherBit = angleInt >> 8;
-            dmx.setLevel(pan_channel,lowerBit);
-            dmx.setLevel(pan_fine_channel,higherBit);
             
-            angleInt = ofMap(tilt_angle_value,tilt_angle_value.getMin(),tilt_angle_value.getMax(),0,65536);
-            lowerBit = angleInt % 256;
-            higherBit = angleInt >> 8;
-            dmx.setLevel(tilt_channel,lowerBit);
-            dmx.setLevel(tilt_fine_channel,higherBit);
+            //            int start_1 = dmx_start_channle[0]-1; //upper mounted movinghead fixture
+            //            int start_2 = dmx_start_channle[1]-1; //lower mounted
             
-            dmx.setLevel(zoom_channel,ofMap(zoom_value, zoom_value.getMin(), zoom_value.getMax(), 0, 255));
-            dmx.setLevel(gobo_channel,gobo_value);
+            for(int i =0; i<2; i++){
+                int offset = dmx_start_channels[i]-1;
+                
+                int angleInt = ofMap(pan_angle_value[i],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
+                int lowerBit = angleInt % 256;
+                int higherBit = angleInt >> 8;
+                dmx.setLevel(offset+pan_channel,lowerBit);
+                dmx.setLevel(offset+pan_fine_channel,higherBit);
+                
+                angleInt = ofMap(tilt_angle_value[i],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                lowerBit = angleInt % 256;
+                higherBit = angleInt >> 8;
+                dmx.setLevel(offset+tilt_channel,lowerBit);
+                dmx.setLevel(offset+tilt_fine_channel,higherBit);
+                
+                dmx.setLevel(offset+zoom_channel,ofMap(zoom_value[i], zoom_value[i].getMin(), zoom_value[i].getMax(), 0, 255));
+                dmx.setLevel(offset+gobo_channel,gobo_value[i]);
+            }
         }
         dmx.update();
         

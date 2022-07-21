@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>40 20220625 b387d95</ver>
+	<ver>41 20220625 2ab40f8</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>1</meTouched>
@@ -11,8 +11,8 @@
 		<triggerMeFake>0</triggerMeFake>
 		<triggerOtherFake>0</triggerOtherFake>
 		<testDmxValues>0</testDmxValues>
-		<fadeTest>0</fadeTest>
-		<testDmxChan>4</testDmxChan>
+		<fadeTest>1</fadeTest>
+		<testDmxChan>1</testDmxChan>
 		<meFakeBPM>68</meFakeBPM>
 		<otherFakeBPM>112</otherFakeBPM>
 	</debug>
@@ -50,8 +50,8 @@
 	<firstPause>0.3</firstPause>
 	<secondBeatOnDur>0.485</secondBeatOnDur>
 	<forceUnTouch>0</forceUnTouch>
-	<lightViaDmx>0</lightViaDmx>
-	<lightViaSerial>1</lightViaSerial>
+	<lightViaDmx>1</lightViaDmx>
+	<lightViaSerial>0</lightViaSerial>
 	<minBpm>25</minBpm>
 	<group>
 		<enableAutoFake>0</enableAutoFake>

@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "41 20220625 2ab40f8"
+#define APP_VERSION "42 20220721 b40ea3d"
 
 class ofApp : public ofBaseApp{
 public:
@@ -185,6 +185,21 @@ public:
     ofParameter<int> fakeTouchDuration;
     
         ofTrueTypeFont    arial;
+    ofxPanel gui_movingHead;
+    ofParameter<bool> bUseMovingHead;
     
-   
+    ofParameterGroup group_dmx_channel;
+    ofParameterGroup group_dmx_values;
+    
+    
+    ofParameter<int> pan_channel, pan_fine_channel;
+    ofParameter<float> pan_angle_value;
+    ofParameter<int> tilt_channel, tilt_fine_channel;
+    ofParameter<float> tilt_angle_value; 
+    
+    ofParameter<int> zoom_channel, zoom_fine_channel;
+    ofParameter<float> zoom_value;
+    
+    ofParameter<int> gobo_channel;
+    ofParameter<int> gobo_value;
 };

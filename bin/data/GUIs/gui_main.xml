@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>41 20220625 2ab40f8</ver>
+	<ver>42 20220721 b40ea3d</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
-		<meTouched>1</meTouched>
+		<meTouched>0</meTouched>
 		<meTestBPM>101</meTestBPM>
 		<otherTouched>0</otherTouched>
 		<otherTestBPM>102</otherTestBPM>
 		<triggerMeFake>0</triggerMeFake>
 		<triggerOtherFake>0</triggerOtherFake>
 		<testDmxValues>0</testDmxValues>
-		<fadeTest>1</fadeTest>
+		<fadeTest>0</fadeTest>
 		<testDmxChan>1</testDmxChan>
 		<meFakeBPM>68</meFakeBPM>
 		<otherFakeBPM>112</otherFakeBPM>

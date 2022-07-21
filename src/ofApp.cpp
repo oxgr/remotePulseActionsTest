@@ -99,6 +99,32 @@ void ofApp::setup(){
     triggerFakeOther = false;
     otherFakeTouched = false;
     
+    gui_movingHead.setup();
+    gui_movingHead.setName("moving head");
+    gui_movingHead.setPosition(gui_main.getShape().getRight()+5,10);
+    gui_movingHead.setHeaderBackgroundColor(ofColor(255,0,0));
+    
+    gui_movingHead.add(bUseMovingHead.set("use movingHead",true));
+    
+    group_dmx_values.setName("dmx values");
+    group_dmx_values.add(pan_angle_value.set("pan angle",0,-270,270));
+    group_dmx_values.add(tilt_angle_value.set("tilt angle",0,-135,135));
+    group_dmx_values.add(zoom_value.set("zoom",0,0,1));
+    group_dmx_values.add(gobo_value.set("gobo",0,0,255));
+    
+    group_dmx_channel.setName("dmx channels");
+    group_dmx_channel.add(pan_channel.set("pan",1,1,512));
+    group_dmx_channel.add(pan_fine_channel.set("pan fine",1,1,512));
+    group_dmx_channel.add(tilt_channel.set("tilt",1,1,512));
+    group_dmx_channel.add(tilt_fine_channel.set("tilt fine",1,1,512));
+    group_dmx_channel.add(zoom_channel.set("zoom",1,1,512));
+    group_dmx_channel.add(gobo_channel.set("gobo",1,1,512));
+    
+    gui_movingHead.add(group_dmx_values);
+    gui_movingHead.add(group_dmx_channel);
+    gui_movingHead.loadFromFile("GUIs/gui_movingHead.xml");
+    gui_movingHead.minimizeAll();
+    
     allHearts[0].bUseSound = false;
     allHearts[1].bUseSound = true;
     
@@ -526,7 +552,28 @@ void ofApp::update(){
     
     hands_object.updateSerial(bFadeTest);
     hands_object.update();
-    if(lightViaDmx == true) dmx.update();
+    
+    //dmx brightness get's updated in oneHeart objects
+    if(lightViaDmx == true){
+        if(bUseMovingHead == true){
+            int angleInt = ofMap(pan_angle_value,pan_angle_value.getMin(),pan_angle_value.getMax(),0,65536);
+            int lowerBit = angleInt % 256;
+            int higherBit = angleInt >> 8;
+            dmx.setLevel(pan_channel,lowerBit);
+            dmx.setLevel(pan_fine_channel,higherBit);
+            
+            angleInt = ofMap(tilt_angle_value,tilt_angle_value.getMin(),tilt_angle_value.getMax(),0,65536);
+            lowerBit = angleInt % 256;
+            higherBit = angleInt >> 8;
+            dmx.setLevel(tilt_channel,lowerBit);
+            dmx.setLevel(tilt_fine_channel,higherBit);
+            
+            dmx.setLevel(zoom_channel,ofMap(zoom_value, zoom_value.getMin(), zoom_value.getMax(), 0, 255));
+            dmx.setLevel(gobo_channel,gobo_value);
+        }
+        dmx.update();
+        
+    }
     
     
 }
@@ -555,7 +602,7 @@ void ofApp::draw(){
     hands_object.draw(10,10);
     
 #ifdef USE_DMX
-    drawDmxBar(5,ofGetHeight() - 50, 2 ,24); 
+    drawDmxBar(5,ofGetHeight() - 50, 30 ,2); 
 #endif
     
     ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetWidth()-100, ofGetHeight() - 30);
@@ -573,6 +620,7 @@ void ofApp::draw(){
     
     if(bShowGui == true){
         gui_main.draw();
+        gui_movingHead.draw();
 #ifdef USE_OSC
         osc_object.gui_osc.draw();
 #endif
@@ -600,6 +648,7 @@ void ofApp::drawRuntime(int _x, int _y){
 
 void ofApp::saveGui(){
     gui_main.saveToFile("GUIs/gui_main.xml");
+    gui_movingHead.saveToFile("GUIs/gui_movingHead.xml");
     hands_object.gui_sensor.saveToFile("GUIs/gui_sensor.xml");
 #ifdef USE_OSC
     osc_object.gui_osc.saveToFile("GUIs/gui_osc.xml");
@@ -824,11 +873,11 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
         ofDrawBitmapStringHighlight("dmx device = "+dmxDeviceString,0,yy+=15);
     }
     
-    int _w = 50; //11;
+    float _w = (ofGetWidth()-_x) / (_groupSize*_devices); //11;
     int groupCnt = 0;
     int temp_group = 0;
-    int temp_x = 0;
-    int temp_y = 0;
+    float temp_x = 0;
+    float temp_y = 0;
     
     //        ofLog()<<"_groupSize*_devices "<<(_groupSize*_devices);
     for(int i=1; i<=(_groupSize*_devices); i++){

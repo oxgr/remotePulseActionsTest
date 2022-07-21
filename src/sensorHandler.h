@@ -104,7 +104,7 @@ public:
         
         gui_sensor.setup();
         gui_sensor.setName("serialSensor");
-        gui_sensor.setPosition(220,70);
+        gui_sensor.setPosition(220,400);
         gui_sensor.setHeaderBackgroundColor(ofColor(255,0,0));
         gui_sensor.add(smoothing.set("smoothing",0.1,0.0001,1));
         gui_sensor.add(accumAmount.set("accumAmount",10,1,100));

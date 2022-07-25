@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<moving_head>
+	<use_movingHead>1</use_movingHead>
+	<dmx_values>
+		<pan_angle>0</pan_angle>
+		<tilt_angle>0</tilt_angle>
+		<zoom>0</zoom>
+		<gobo>0</gobo>
+	</dmx_values>
+	<dmx_channels>
+		<pan>1</pan>
+		<pan_fine>2</pan_fine>
+		<tilt>3</tilt>
+		<tilt_fine>4</tilt_fine>
+		<zoom>10</zoom>
+		<gobo>16</gobo>
+	</dmx_channels>
+</moving_head>

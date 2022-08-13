@@ -35,7 +35,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "43 20220721 e914a85"
+#define APP_VERSION "45 20220725 81dd5c2"
 
 class ofApp : public ofBaseApp{
 public:

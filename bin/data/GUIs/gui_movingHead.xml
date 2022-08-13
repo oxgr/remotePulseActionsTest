@@ -6,6 +6,14 @@
 		<tilt_angle>0</tilt_angle>
 		<zoom>0</zoom>
 		<gobo>0</gobo>
+		<pan_angle_A>0</pan_angle_A>
+		<tilt_angle_A>0</tilt_angle_A>
+		<zoom_A>0</zoom_A>
+		<gobo_A>0</gobo_A>
+		<pan_angle_B>0</pan_angle_B>
+		<tilt_angle_B>0</tilt_angle_B>
+		<zoom_B>0</zoom_B>
+		<gobo_B>0</gobo_B>
 	</dmx_values>
 	<dmx_channels>
 		<pan>1</pan>
@@ -14,5 +22,7 @@
 		<tilt_fine>4</tilt_fine>
 		<zoom>10</zoom>
 		<gobo>16</gobo>
+		<A_start_addr>1</A_start_addr>
+		<B_start_addr>30</B_start_addr>
 	</dmx_channels>
 </moving_head>

@@ -24,6 +24,6 @@
 	<other_touch_received>0</other_touch_received>
 	<other_bpm_received>-1</other_bpm_received>
 	<me_touch_sent>1</me_touch_sent>
-	<me_bpm_sent>68</me_bpm_sent>
+	<me_bpm_sent>79</me_bpm_sent>
 	<periodicResend>0</periodicResend>
 </osc>

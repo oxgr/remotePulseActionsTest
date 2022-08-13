@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>43 20220721 e914a85</ver>
+	<ver>45 20220725 81dd5c2</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -13,7 +13,7 @@
 		<testDmxValues>0</testDmxValues>
 		<fadeTest>0</fadeTest>
 		<testDmxChan>1</testDmxChan>
-		<meFakeBPM>68</meFakeBPM>
+		<meFakeBPM>57</meFakeBPM>
 		<otherFakeBPM>112</otherFakeBPM>
 	</debug>
 	<enableDMX>1</enableDMX>
@@ -31,14 +31,16 @@
 	<firstVol>0.525</firstVol>
 	<secondVol>0.355</secondVol>
 	<heart_me>
-		<dmxChan_beat1>4</dmxChan_beat1>
-		<dmxChan_beat2>4</dmxChan_beat2>
+		<dmxChan_beat1>22</dmxChan_beat1>
+		<dmxChan_beat2>20</dmxChan_beat2>
 		<useAudio>0</useAudio>
+		<useLights>1</useLights>
 	</heart_me>
 	<heart_other>
 		<dmxChan_beat1>3</dmxChan_beat1>
 		<dmxChan_beat2>3</dmxChan_beat2>
 		<useAudio>1</useAudio>
+		<useLights>0</useLights>
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>0</minBpmCount>
@@ -73,5 +75,5 @@
 	</autoFake>
 	<enableAutoFake>0</enableAutoFake>
 	<IP_index>0</IP_index>
-	<at_Athens>1</at_Athens>
+	<at_Athens>0</at_Athens>
 </remotePulse>

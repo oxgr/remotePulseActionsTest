@@ -29,7 +29,7 @@ void ofApp::setup(){
     group_debug.setName("debug");
     
     group_debug.add(bFadeTest.set("fadeTest",false));
-    group_debug.add(testDmxChannel.set("testDmxChan",1,1,4));
+    group_debug.add(testDmxChannel.set("testDmxChan",1,1,512));
     group_debug.add(testDmxValues.set("testDmxValues",0,0,255));
     
     group_debug.add(triggerFakeMe.set("triggerMeFake",false));
@@ -131,8 +131,8 @@ void ofApp::setup(){
     gui_movingHead.loadFromFile("GUIs/gui_movingHead.xml");
     gui_movingHead.minimizeAll();
     
-    allHearts[0].bUseSound = false;
-    allHearts[1].bUseSound = true;
+//    allHearts[0].bUseSound = false;
+//    allHearts[1].bUseSound = true;
     
     bFadeTest = false;
     testDmxValues = 0;

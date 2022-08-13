@@ -71,7 +71,8 @@ public:
     
     float firstVolume;
     float seconVolume;
-    
+   
+    ofParameter<bool> bUseLights;
     ofParameter<int> beat1Channel;
     ofParameter<int> beat2Channel;
     
@@ -112,8 +113,9 @@ public:
         beatPlayer2.setMultiPlay(false);
         
         group_heart.setName("heart "+myLabel);
-        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,4));
-        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,4));
+        group_heart.add(bUseLights.set("useLights",false));
+        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,40));
+        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,40));
         group_heart.add(bUseSound.set("useAudio",false));
         
     }
@@ -220,15 +222,16 @@ public:
             if(lightViaDmx || lightViaSerial){
                 
                 if(bpmCounter < minBpmCounter){
-
-                    if(beat1Channel != beat2Channel){
-                        setLevel(beat1Channel,0);
-                        setLevel(beat2Channel,touchBrightness);
-                    }else{
-                        setLevel(beat1Channel,touchBrightness);
-                        setLevel(beat2Channel,touchBrightness);
-                    }
-
+                    
+                   
+                        if(beat1Channel != beat2Channel){
+                            setLevel(beat1Channel,0);
+                            setLevel(beat2Channel,touchBrightness);
+                        }else{
+                            setLevel(beat1Channel,touchBrightness);
+                            setLevel(beat2Channel,touchBrightness);
+                        }
+                    
                 }else{
                     
                     //first beat
@@ -300,7 +303,7 @@ public:
     
     void setLevel(int _channel, int _value){
         
-       
+        if(bUseLights == false) return;
         if(lightViaDmx == true){
             dmx->setLevel(_channel,_value);
         }

@@ -10,7 +10,7 @@
 //#define USE_WEB // or use OSC to communicate between both remote pulse stations
 #define USE_OSC 
 
-//#define USE_SERIAL
+//#define USE_SERIAL_SENDING
 
 #define USE_DMX
 #define DMX_UNIVERSES 1

@@ -64,6 +64,7 @@ public:
     int secondMinBrightness;
     int secondMaxBrightness;
     int touchBrightness;
+    int unTouchBrightness;
     
     float firstBeatOnDur;
     float firstPause;
@@ -75,11 +76,25 @@ public:
     ofParameter<bool> bUseLights;
     ofParameter<int> beat1Channel;
     ofParameter<int> beat2Channel;
+    ofParameter<float> dimmerEasing;
+    int curDimmer[2];
     
     bool lightViaDmx;
     bool lightViaSerial;
     
     int channelValues[513];
+//    int dimmersValue[2];
+    
+    float dst_tilt_1;
+    float dst_tilt_2;
+    
+    float cur_tilt[2] = {45,45};
+    
+    ofParameter<float> unTouch_tilt_value1;
+    ofParameter<float> unTouch_tilt_value2;
+    ofParameter<float> touch_tilt_value1;
+    ofParameter<float> touch_tilt_value2;
+    ofParameter<float> tiltEasing;
     
     void setup(string _label, int _index, int _dmxStart, ofxDmx & dmx, std::vector<string> & _serialTxBuffer){
         
@@ -98,7 +113,8 @@ public:
         bpm = 50;
         bpmInSeconds = 60.0 / bpm;
         //        bpm_delayTimer.setPeriod(1); // to get it started
-        
+//        dimmersValue[0] = 0;
+//        dimmersValue[1] = 0;  
         
         
         //        beatPlayer1.load("sounds/oneBeat.wav");
@@ -114,14 +130,23 @@ public:
         
         group_heart.setName("heart "+myLabel);
         group_heart.add(bUseLights.set("useLights",false));
-        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,40));
-        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,40));
+        group_heart.add(beat1Channel.set("dmxChan beat1",1,1,512));
+        group_heart.add(beat2Channel.set("dmxChan beat2",2,1,512));
         group_heart.add(bUseSound.set("useAudio",false));
         
+        group_heart.add(unTouch_tilt_value1.set("untouch tilt 1",45,-135,135));
+        group_heart.add(unTouch_tilt_value2.set("untouch tilt 2",45,-135,135));
+        group_heart.add(touch_tilt_value1.set("touch tilt 1",55,-135,135));
+        group_heart.add(touch_tilt_value2.set("touch tilt 2",55,-135,135));
+        group_heart.add(tiltEasing.set("tiltEasing",0.1,0.001,1));
+        group_heart.add(dimmerEasing.set("dimmerEasing",0.1,0.001,1));
+        
+        curDimmer[0] = 0;
+        curDimmer[1] = 0;
     }
     
     void setVolume(float _vol0, float _vol1){
-        ofLog()<<"setVolume "<<_vol0<<" , "<<_vol1;
+//        ofLog()<<"setVolume "<<_vol0<<" , "<<_vol1;
         firstVolume = _vol0;
         seconVolume = _vol1;
         beatPlayer1.setVolume(_vol0);
@@ -156,6 +181,9 @@ public:
                 old_isTouched = isTouched;
                 stage = 0;
                 bpmCounter = 0;
+                
+                dst_tilt_1 = touch_tilt_value1;
+                dst_tilt_2 = touch_tilt_value2;
                 //                beatPlayer1.stop();
                 //                beatPlayer2.stop();
                 
@@ -223,14 +251,16 @@ public:
                 
                 if(bpmCounter < minBpmCounter){
                     
-                   
-                        if(beat1Channel != beat2Channel){
-                            setLevel(beat1Channel,0);
-                            setLevel(beat2Channel,touchBrightness);
-                        }else{
-                            setLevel(beat1Channel,touchBrightness);
-                            setLevel(beat2Channel,touchBrightness);
-                        }
+                    setLevel(0, beat1Channel,touchBrightness);
+                    setLevel(1, beat2Channel,touchBrightness);
+                    
+//                        if(beat1Channel != beat2Channel){
+//                            setLevel(beat1Channel,0);
+//                            setLevel(beat2Channel,touchBrightness);
+//                        }else{
+//                            setLevel(beat1Channel,touchBrightness);
+//                            setLevel(beat2Channel,touchBrightness);
+//                        }
                     
                 }else{
                     
@@ -240,20 +270,20 @@ public:
                         //firstBeatOnDur = 0.6
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
-                            setLevel(beat1Channel,dmx_level_0);
+                            setLevel(0,beat1Channel,dmx_level_0);
                         }else{
-                            setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(0,beat1Channel,firstMinBrightness);
                         }
                         
                         //second beat
                         dmx_level_1 = 0;
                         if(bpm_lerpTimer.getProgress() >= firstPause){ //} && bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
-                            setLevel(beat2Channel,dmx_level_1);
+                            setLevel(1,beat2Channel,dmx_level_1);
                             
                             //                ofLog()<<myLabel<<" temp_level_0 "<<temp_level_0<<" temp_level_1 "<<temp_level_1<<" bpm_lerpTimer.getProgress() "<<bpm_lerpTimer.getProgress();
                         }else{
-                            setLevel(beat2Channel,secondMinBrightness);
+                            setLevel(1,beat2Channel,secondMinBrightness);
                         }
                         
                     }else{
@@ -266,19 +296,19 @@ public:
                         if(bpm_lerpTimer.getProgress() < firstBeatOnDur){
                             
                             dmx_level_0 = ofMap(bpm_lerpTimer.getProgress(), 0, firstBeatOnDur, firstMaxBrightness, firstMinBrightness,true);
-                            setLevel(beat1Channel,dmx_level_0);
+                            setLevel(0,beat1Channel,dmx_level_0);
                             
                         }else if(bpm_lerpTimer.getProgress() >= firstBeatOnDur && bpm_lerpTimer.getProgress() < firstPause) {
                             
-                            setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(0,beat1Channel,firstMinBrightness);
                             
                         }else if(bpm_lerpTimer.getProgress() >= firstPause && bpm_lerpTimer.getProgress() < secondBeatOnDur){
                             
                             dmx_level_1 = ofMap(bpm_lerpTimer.getProgress(), firstPause, secondBeatOnDur, secondMaxBrightness, secondMinBrightness,true);
-                            setLevel(beat1Channel,dmx_level_1);
+                            setLevel(0,beat1Channel,dmx_level_1);
                             
                         }else{
-                            setLevel(beat1Channel,firstMinBrightness);
+                            setLevel(0,beat1Channel,firstMinBrightness);
                         }
                         
                     }//end else  if(beat1Channel != beat2Channel)
@@ -294,18 +324,32 @@ public:
             }
             bpmCounter = 0;
 
-            setLevel(beat1Channel,0);
-            setLevel(beat2Channel,0);
+            setLevel(0,beat1Channel,unTouchBrightness);
+            setLevel(1,beat2Channel,unTouchBrightness);
+            dst_tilt_1 = unTouch_tilt_value1;
+            dst_tilt_2 = unTouch_tilt_value2;
 
         }
         
+        cur_tilt[0] = cur_tilt[0] + ((dst_tilt_1 - cur_tilt[0]) * tiltEasing);
+        cur_tilt[1] = cur_tilt[1] + ((dst_tilt_2 - cur_tilt[1]) * tiltEasing);
+        cur_tilt[0] = int(cur_tilt[0]*100 + 0.5) / 100.0;
+        cur_tilt[1] = int(cur_tilt[1]*100 + 0.5) / 100.0;
+        
+//        ofLog()<<"dst_tilt "<<dst_tilt_1<<" , "<<dst_tilt_2;
+//        ofLog()<<"cur_tilt "<<cur_tilt[0]<<" , "<<cur_tilt[1];
     }
     
-    void setLevel(int _channel, int _value){
+    
+    void setLevel(int _index, int _channel, int _value){
         
         if(bUseLights == false) return;
         if(lightViaDmx == true){
-            dmx->setLevel(_channel,_value);
+            float curLevel = curDimmer[_index];
+            float newLevel = curLevel + ((_value - curLevel) * dimmerEasing);
+//            dmx->setLevel(_channel,int(newLevel));
+            curDimmer[_index] = newLevel;
+//            dimmersValue[_channel] = _value;
         }
         if(lightViaSerial){
 //             ofLog()<<"setLevel via serial chan "<<_channel<<" value "<<_value;
@@ -367,17 +411,17 @@ public:
         tempY+=60;
         
         ofSetColor(255);
+       
         //        ofDrawBitmapString("meBPM "+ofToString(meBPM),0,tempY+=15);
         arial.drawString(myLabel+": "+ofToString(bpm), 0, tempY+=30);
-        ofDrawBitmapString("touch "+ofToString(isTouched),0,tempY+=15);
-        ofDrawBitmapString("bpm "+ofToString(bpm),0,tempY+=15);
-        ofDrawBitmapString("bpmSec "+ofToString(bpmInSeconds),0,tempY+=15);
-        ofDrawBitmapString("bpmCounter "+ofToString(bpmCounter),0,tempY+=15);
-        ofDrawBitmapString("last time "+ofToString(lastDuration,1),0,tempY+=15);
-        
-        
         
         stringstream msg;
+        
+        msg << "touch "<<isTouched<<endl;
+        msg << "bpm "<<bpm<<endl;
+        msg << "bpmSec "<<bpmInSeconds<<endl;
+        msg << "bpmCounter "<<bpmCounter<<endl;
+        msg << "last time "<<ofToString(lastDuration,1)<<endl;
         msg << "beat1: " << beatPlayer1.isPlaying();
         msg << " beat2: " << beatPlayer2.isPlaying() << endl;
         
@@ -386,6 +430,8 @@ public:
         << " to " << bpm_lerpTimer.getTargetValue()
         << " : " << int(bpm_lerpTimer.getValue())
         << " (" << int(100*bpm_lerpTimer.getProgress()) << "%)" << endl;
+        msg << "tilt 1 " << cur_tilt[0] << "->" << dst_tilt_1<<endl;
+        msg << "tilt 2 " << cur_tilt[1] << "->" << dst_tilt_2<<endl;
         ofDrawBitmapString(msg.str(),0,tempY+=15);
         
         

@@ -2,6 +2,36 @@
 
 #include "ofMain.h"
 
+enum SHOWSTATES{
+
+    SHOW_NEUTRAL = 0,
+
+    SHOW_START = 1,
+
+    SHOW_STOP = 2,
+
+    SHOW_RELAXED = 3,
+
+    SHOW_EMERGENCY = 4
+
+};
+
+//
+
+//enum SHOWSTATES_NAMES{
+
+//    SHOW_NEURAL = "neutral",
+
+//    SHOW_START = "start",
+
+//    SHOW_STOP = "stop,
+
+//    SHOW_RELAXED = "relaxed",
+
+//    SHOW_EMERGENCY = "emergency"
+
+//};
+
 #include "ofxGui.h"
 
 #include "ofxBiquadFilter.h"
@@ -35,7 +65,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "45 20220725 81dd5c2"
+#define APP_VERSION "46 20220813 481b88d"
 
 class ofApp : public ofBaseApp{
 public:
@@ -129,6 +159,7 @@ public:
      ofParameter<int> secondMinBrightness;
     ofParameter<int> secondMaxBrightness;
     ofParameter<int> touchBrightness;
+    ofParameter<int> unTouchBrightness;
 //    ofParameter<float> beat2Offset;
     
     ofParameter<float> firstBeatOnDur;
@@ -204,6 +235,37 @@ public:
     ofParameter<int> gobo_channel;
     ofParameter<int> gobo_value[2];
     
+    ofParameter<int> shutter_channel;
+    ofParameter<bool> shutter_onOff[2];
+    bool old_shutter_onOff[2];
+    
+    ofParameter<int> shutter_openValue;
+    ofParameter<int> shutter_closedValue;
+    int shutter_curValue[2];
+    
+    ofParameter<int> lamp_channel;
+    ofParameter<bool> lamp_onOff[2];
+    bool old_lamp_onOff[2];
+    ofParameter<int> lamp_offValue;
+    ofParameter<int> lamp_onValue;
+    int lamp_curValue[2];
+    
+    ofParameter<int> dimmer_channel;
+    ofParameter<int> dimmer_value[2];
+    
+    ofParameter<int> cyan_channel;
+    ofParameter<int> cyan_value[2];
+    ofParameter<int> magenta_channel;
+    ofParameter<int> magenta_value[2];
+    ofParameter<int> yellow_channel;
+    ofParameter<int> yellow_value[2];
+    ofParameter<int> colorWheel_channel;
+    ofParameter<int> colorWheel_value[2];
+    
+    ofParameter<int> focus_channel;
+    ofParameter<int> focus_value[2];
+    
+    ofParameter<bool> bTakeFromHearts;
     string GetLetter(int value)
     {
         value += 1; //so that int 0 gives us first letter i.e. A

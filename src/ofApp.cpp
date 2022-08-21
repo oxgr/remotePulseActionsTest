@@ -1,17 +1,17 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
+//--------------------------------------------------------------as
 void ofApp::setup(){
     
     ofSetFrameRate(30);
     
     ofBackground(127);
     
-//   ofLog()<<"my PID "<< getpid();
-//    //I had to replace getpid() with GetCurrentProcessId() and include windows.h
-//    ofSystem("'/bin/systemd-notify' --pid= "+ofToString(getpid()) +" WATCHDOG=1");
+    //   ofLog()<<"my PID "<< getpid();
+    //    //I had to replace getpid() with GetCurrentProcessId() and include windows.h
+    //    ofSystem("'/bin/systemd-notify' --pid= "+ofToString(getpid()) +" WATCHDOG=1");
     
-  
+    
     
     
 #ifdef TARGET_OSX
@@ -19,7 +19,7 @@ void ofApp::setup(){
     system("osascript -e \"set Volume 100\"");
 #endif
     
-      arial.load("Arial.ttf", 24, true, true);
+    arial.load("Arial.ttf", 24, true, true);
     
     allHearts.resize(2);
     
@@ -45,7 +45,7 @@ void ofApp::setup(){
     group_autoFake.add(maxLocalActiveDuration.set("maxLocalActiveDur",90,0,180));
     group_autoFake.add(minLocalInActiveDuration.set("minLocalInActiveDur",5,0,60));
     group_autoFake.add(maxLocalInActiveDuration.set("maxLocalInActiveDur",15,0,60));
-
+    
     group_autoFake.add(remoteInActiveDuration.set("remoteInActiveDur",300,0,600));
     group_autoFake.add(fakeTouchDuration.set("fakeTouchDur",5,0,20));
     
@@ -81,6 +81,7 @@ void ofApp::setup(){
     gui_main.add(secondBeatOnDur.set("secondBeatOnDur",0.2,0,1));
     
     gui_main.add(touchBrightness.set("touchBright",100,0,255));
+    gui_main.add(unTouchBrightness.set("unTouchBright",100,0,255));
     gui_main.add(firstMinBrightness.set("firstMinBright",0,0,255));
     gui_main.add(firstMaxBrightness.set("firstMaxBright",127,0,255));
     gui_main.add(secondMinBrightness.set("secondMinBright",0,0,255));
@@ -99,31 +100,62 @@ void ofApp::setup(){
     triggerFakeOther = false;
     otherFakeTouched = false;
     
+    allHearts[0].cur_tilt[0] = allHearts[0].unTouch_tilt_value1;
+    allHearts[0].cur_tilt[1] = allHearts[0].unTouch_tilt_value2;
+    allHearts[1].cur_tilt[0] = allHearts[1].unTouch_tilt_value1;
+    allHearts[1].cur_tilt[1] = allHearts[1].unTouch_tilt_value2;    
+    
+    
     gui_movingHead.setup();
     gui_movingHead.setName("moving head");
     gui_movingHead.setPosition(gui_main.getShape().getRight()+5,10);
     gui_movingHead.setHeaderBackgroundColor(ofColor(255,0,0));
     
     gui_movingHead.add(bUseMovingHead.set("use movingHead",true));
+    gui_movingHead.add(bTakeFromHearts.set("use hearts",true));
+    
     for(int i=0; i<2; i++){
         group_dmx_values.setName("dmx values");
         string letter = GetLetter(i);
-        group_dmx_values.add(pan_angle_value[i].set("pan angle "+letter,0,-270,270));
-        group_dmx_values.add(tilt_angle_value[i].set("tilt angle "+letter,0,-135,135));
-        group_dmx_values.add(zoom_value[i].set("zoom "+letter,0,0,1));
+        group_dmx_values.add(pan_angle_value[i].set("pan angle "+letter,0,-250,250));
+        group_dmx_values.add(tilt_angle_value[i].set("tilt angle "+letter,0,-130,130));
+        group_dmx_values.add(dimmer_value[i].set("dimmer "+letter,0,0,255));
+        group_dmx_values.add(cyan_value[i].set("cyan "+letter,0,0,255));
+        group_dmx_values.add(magenta_value[i].set("magenta "+letter,0,0,255));
+        group_dmx_values.add(yellow_value[i].set("yellow "+letter,0,0,255));
+        group_dmx_values.add(colorWheel_value[i].set("colorWheel "+letter,0,0,255));
+        
+        group_dmx_values.add(zoom_value[i].set("zoom "+letter,0,0,255));
+        group_dmx_values.add(focus_value[i].set("focus "+letter,0,0,255));
+        group_dmx_values.add(shutter_onOff[i].set("shutter onOff "+letter,false));
+        group_dmx_values.add(lamp_onOff[i].set("lamp onOff "+letter,false));
         group_dmx_values.add(gobo_value[i].set("gobo "+letter,0,0,255));
     }
     
     group_dmx_channel.setName("dmx channels");
     group_dmx_channel.add(dmx_start_channels[0].set("A start addr",1,1,512));
-    group_dmx_channel.add(dmx_start_channels[1].set("B start addr",30,1,512));
+    group_dmx_channel.add(dmx_start_channels[1].set("B start addr",41,1,512));
     
     group_dmx_channel.add(pan_channel.set("pan",1,1,512));
-    group_dmx_channel.add(pan_fine_channel.set("pan fine",1,1,512));
-    group_dmx_channel.add(tilt_channel.set("tilt",1,1,512));
-    group_dmx_channel.add(tilt_fine_channel.set("tilt fine",1,1,512));
-    group_dmx_channel.add(zoom_channel.set("zoom",1,1,512));
-    group_dmx_channel.add(gobo_channel.set("gobo",1,1,512));
+    group_dmx_channel.add(pan_fine_channel.set("pan fine",2,1,512));
+    group_dmx_channel.add(tilt_channel.set("tilt",3,1,512));
+    group_dmx_channel.add(tilt_fine_channel.set("tilt fine",4,1,512));
+    group_dmx_channel.add(dimmer_channel.set("dimmer",21,1,512));
+    group_dmx_channel.add(cyan_channel.set("cyan",5,1,512));
+    group_dmx_channel.add(magenta_channel.set("magnets",6,1,512));
+    group_dmx_channel.add(yellow_channel.set("yellow",7,1,512));
+    group_dmx_channel.add(colorWheel_channel.set("cto",8,1,512));
+    group_dmx_channel.add(zoom_channel.set("zoom",18,1,512));
+    group_dmx_channel.add(focus_channel.set("focus",16,1,512));
+    group_dmx_channel.add(gobo_channel.set("gobo",13,1,512));
+    
+    group_dmx_channel.add(shutter_channel.set("shutter",20,1,512));
+    group_dmx_channel.add(shutter_closedValue.set("shutter closed",0,0,0));
+    group_dmx_channel.add(shutter_openValue.set("shutter open",255,255,255));
+    
+    group_dmx_channel.add(lamp_channel.set("lamp",26,1,512));
+    group_dmx_channel.add(lamp_onValue.set("lamp on",40,40,40));
+    group_dmx_channel.add(lamp_offValue.set("lamp off",50,50,50));
     
     
     gui_movingHead.add(group_dmx_values);
@@ -131,12 +163,19 @@ void ofApp::setup(){
     gui_movingHead.loadFromFile("GUIs/gui_movingHead.xml");
     gui_movingHead.minimizeAll();
     
-//    allHearts[0].bUseSound = false;
-//    allHearts[1].bUseSound = true;
+    //    allHearts[0].bUseSound = false;
+    //    allHearts[1].bUseSound = true;
     
     bFadeTest = false;
     testDmxValues = 0;
     old_testDmxValues = 0;
+    
+    shutter_curValue[0] = shutter_closedValue;
+    shutter_curValue[1] = shutter_closedValue;
+    
+    lamp_curValue[0] = lamp_offValue;
+    lamp_curValue[1] = lamp_offValue;
+    
     
     //IP
     //    MX_IP = "188.188.188.154";
@@ -159,7 +198,7 @@ void ofApp::setup(){
     }
     
     ofLog()<<"myIP "<<myIP;
-
+    
     
     string temp_versionString = version_object.getVersionString("ofApp.h");
     if(temp_versionString != ""){
@@ -217,6 +256,8 @@ void ofApp::setup(){
     fakeMe_startTimer = 0;
     fakeMe_minDuration = 5;
     fakeMe_running = false;
+    
+    
 }
 
 void ofApp::exit(){
@@ -276,10 +317,10 @@ void ofApp::update(){
         }else{
             if(bDebug){
 #ifdef USE_OSC
-           ofLog()<<"wrong IP range. is"<<myIP<<" should be someting around "<<osc_object.sendToIP;
+                ofLog()<<"wrong IP range. is "<<myIP<<" should be someting around "<<osc_object.sendToIP;
 #endif
 #ifdef USE_WEB
-                    
+                
 #endif
             }
         }
@@ -293,7 +334,7 @@ void ofApp::update(){
             
             
             //            if(lightViaDmx){
-            allHearts[0].setLevel(allHearts[0].beat1Channel,firstMaxBrightness);
+            allHearts[0].setLevel(0,allHearts[0].beat1Channel,firstMaxBrightness);
             //            }
             allHearts[0].beatPlayer1.play();
             
@@ -303,8 +344,8 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             //              if(lightViaDmx){
-            allHearts[0].setLevel(allHearts[0].beat1Channel,0);
-            allHearts[1].setLevel(allHearts[1].beat1Channel,firstMaxBrightness);
+            allHearts[0].setLevel(0,allHearts[0].beat1Channel,0);
+            allHearts[1].setLevel(0,allHearts[1].beat1Channel,firstMaxBrightness);
             //              }
             allHearts[1].beatPlayer1.play();
             
@@ -314,8 +355,8 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             //   if(lightViaDmx){
-            allHearts[1].setLevel(allHearts[1].beat1Channel,0);
-            allHearts[0].setLevel(allHearts[0].beat2Channel,secondMaxBrightness);
+            allHearts[1].setLevel(0,allHearts[1].beat1Channel,0);
+            allHearts[0].setLevel(1,allHearts[0].beat2Channel,secondMaxBrightness);
             //  }
             allHearts[0].beatPlayer2.play();
             
@@ -325,10 +366,15 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             //  if(lightViaDmx){
-            allHearts[0].setLevel(allHearts[0].beat2Channel,0);
-            allHearts[1].setLevel(allHearts[1].beat2Channel,secondMaxBrightness);
+            allHearts[0].setLevel(1,allHearts[0].beat2Channel,0);
+            allHearts[1].setLevel(1,allHearts[1].beat2Channel,secondMaxBrightness);
             //   }
-            allHearts[1].beatPlayer2.play();
+            if(allHearts[0].bUseSound){
+                allHearts[0].beatPlayer2.play();
+            }else{
+                allHearts[1].beatPlayer2.play();
+            }
+            
             
             initDuration = 2;
             initStage++;
@@ -336,18 +382,19 @@ void ofApp::update(){
             initTimer = ofGetElapsedTimef();
             
             //  if(lightViaDmx){
-            allHearts[0].setLevel(allHearts[0].beat1Channel,0);
-            allHearts[0].setLevel(allHearts[0].beat2Channel,0);
-            allHearts[1].setLevel(allHearts[1].beat1Channel,0);
-            allHearts[1].setLevel(allHearts[1].beat2Channel,0);
+            allHearts[0].setLevel(0,allHearts[0].beat1Channel,0);
+            allHearts[0].setLevel(1,allHearts[0].beat2Channel,0);
+            allHearts[1].setLevel(0,allHearts[1].beat1Channel,0);
+            allHearts[1].setLevel(1,allHearts[1].beat2Channel,0);
             // }
             initDuration = 2;
             initDone = true;
             ofLog()<<"end init";
         }
     } else {
-     
+        
         //Mark:--pass on OSC received BPM and touch
+        
         
 #ifdef USE_OSC
         if(osc_object.gotBPM == true){
@@ -387,10 +434,10 @@ void ofApp::update(){
         } else{
             localInActiveTimer = ofGetElapsedTimef();
         }
-     
-       
+        
+        
         //MARK:fake other BPM
-        //if local is active for long enough but noone is on other end
+        //if local is active for long enough but no-one is on other end
         //then pick a fake other BPM
         if(bEnableAutoFake == true){
             if(ofGetElapsedTimef() - localActiveTimer > localActiveDuration && ofGetElapsedTimef() - remoteInActiveTimer > remoteInActiveDuration){
@@ -400,10 +447,10 @@ void ofApp::update(){
                 otherFakeTouched = true;
                 old_otherFakeTouched = true;
                 allHearts[1].setTouch(otherFakeTouched);
-//                allHearts[1].update();
+                //                allHearts[1].update();
                 otherFakeBPM = ofRandom(60,80);
-//                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
-//                allHearts[1].setBPM(otherFakeBPM);
+                //                allHearts[1].bpmCounter = allHearts[1].minBpmCounter;
+                //                allHearts[1].setBPM(otherFakeBPM);
                 
                 //                allHearts[1].setBPM(otherFakeBPM);
                 
@@ -422,7 +469,9 @@ void ofApp::update(){
             }
         }
         //-----
-        if(bFadeTest == false){
+        
+        
+        if(bFadeTest == false && osc_object.showState != SHOW_EMERGENCY && osc_object.showState != SHOW_STOP){
             allHearts[0].update(); //, firstPause);
             allHearts[1].update(); //, firstPause);
         }
@@ -432,32 +481,13 @@ void ofApp::update(){
         //        hands_object.update();
         
         
-        //TODO: if smaller than minBpm then ignor BPM but also unTouch
-        /*
-        if(hands_object.gotBPM == true && hands_object.bpm < minBpm){
-      
-            hands_object.gotBPM = false;
-            hands_object.gotTouch = false;
-            allHearts[0].setTouch(false);
-            
-#ifdef USE_OSC
-            osc_object.addTouchMessage(osc_object.sendToIP, false);
-#endif
-#ifdef USE_WEB
-            web_object.addTouchMessage(web_object.other_computerID, false);
-#endif
-            
-            ofLog()<<"bpm < minBPM so ignore it and unTouch";
-        }
-        */
-        
         if(hands_object.gotBPM == true){
             allHearts[0].setBPM(hands_object.bpm);
 #ifdef USE_OSC
             osc_object.addBPMMessage(osc_object.sendToIP, hands_object.bpm);
 #endif
 #ifdef USE_WEB
-             web_object.addBPMMessage(web_object.other_computerID, hands_object.bpm);
+            web_object.addBPMMessage(web_object.other_computerID, hands_object.bpm);
 #endif
             hands_object.gotBPM = false;
             if(hands_object.old_bpm != hands_object.bpm) bpmChangeTimer = ofGetElapsedTimef();
@@ -481,9 +511,9 @@ void ofApp::update(){
             if(hands_object.gotTouch == true){
                 if(hands_object.touch == 1){
                     //detected touch
-//                    hands_object.bpm = 71; //ofRandom(66,69);
-//                    allHearts[0].setBPM(hands_object.bpm);
-//                    allHearts[0].bpmCounter = minBpmCounter;
+                    //                    hands_object.bpm = 71; //ofRandom(66,69);
+                    //                    allHearts[0].setBPM(hands_object.bpm);
+                    //                    allHearts[0].bpmCounter = minBpmCounter;
                     meFakeBPM = ofRandom(50,100);
                     triggerFakeMe = true;
                     meFakeTouched = true;
@@ -498,7 +528,7 @@ void ofApp::update(){
                     }
                 }
             }
-           
+            
         }
         
         if(hands_object.gotTouch == true){
@@ -517,7 +547,7 @@ void ofApp::update(){
         if(osc_object.bEnableOSC == true)  osc_object.update(myIP);
 #endif
 #ifdef USE_WEB
-         if(web_object.bEnableWeb == true) web_object.update();
+        if(web_object.bEnableWeb == true) web_object.update();
 #endif
     }//end else if initDone
     
@@ -533,7 +563,7 @@ void ofApp::update(){
         osc_object.addTouchMessage(osc_object.sendToIP, meFakeTouched);
 #endif
 #ifdef USE_WEB
-         web_object.addTouchMessage(web_object.other_computerID, meFakeTouched);    
+        web_object.addTouchMessage(web_object.other_computerID, meFakeTouched);    
 #endif
     }
     if(triggerFakeMe == true && meFakeTouched == true){
@@ -560,6 +590,50 @@ void ofApp::update(){
     hands_object.update();
     
     //dmx brightness get's updated in oneHeart objects
+    //MARK: set DMX and STATES
+    
+    if(osc_object.showState == SHOW_START){
+        
+        for(int i =0; i<2; i++){
+            int offset = dmx_start_channels[i]-1;
+            dmx.setLevel(offset+dimmer_channel,127);
+            lamp_onOff[i] = true;
+            shutter_onOff[i] = true;
+            allHearts[i].setVolume(firstVolume, secondVolume);
+            
+        }
+        bTakeFromHearts = true;
+        osc_object.showState = SHOW_NEUTRAL;
+    }else if(osc_object.showState == SHOW_STOP){
+        
+        for(int i =0; i<2; i++){
+            int offset = dmx_start_channels[i]-1;
+            
+            dmx.setLevel(offset+dimmer_channel,0);
+                        lamp_onOff[i] = false;
+            shutter_onOff[i] = false;
+            allHearts[i].setVolume(0, 0);
+            tilt_angle_value[0] = tilt_angle_value[0].getMin();
+            tilt_angle_value[1] = tilt_angle_value[1].getMin();
+        }
+        bTakeFromHearts = false;
+    } else if(osc_object.showState == SHOW_EMERGENCY){
+        for(int i =0; i<2; i++){
+            int offset = dmx_start_channels[i]-1;
+            
+            dmx.setLevel(offset+dimmer_channel,255);
+                        lamp_onOff[i] = true;
+            shutter_onOff[i] = true;
+            allHearts[i].setVolume(0, 0);
+            
+            tilt_angle_value[0] = 0;
+            tilt_angle_value[1] = 0;
+        }
+        bTakeFromHearts = false;
+    } else if(osc_object.showState == SHOW_NEUTRAL){
+        
+    }
+    
     if(lightViaDmx == true){
         if(bUseMovingHead == true){
             
@@ -569,26 +643,90 @@ void ofApp::update(){
             for(int i =0; i<2; i++){
                 int offset = dmx_start_channels[i]-1;
                 
-                int angleInt = ofMap(pan_angle_value[i],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
-                int lowerBit = angleInt % 256;
-                int higherBit = angleInt >> 8;
+                int pan_angleInt = ofMap(pan_angle_value[i],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
+                int lowerBit = pan_angleInt >> 8;
+                int higherBit = pan_angleInt % 256;
                 dmx.setLevel(offset+pan_channel,lowerBit);
                 dmx.setLevel(offset+pan_fine_channel,higherBit);
+//                ofLog()<<i<<" pan_angleInt "<<pan_angle_value[i].get();
+//                ofLog()<<"offset "<<offset<<" pan_channel "<<pan_channel<<" pan_fine_channel "<<pan_fine_channel;
+//                ofLog()<<"lowerBit "<<int(lowerBit);
+//                ofLog()<<"higherBit "<<int(higherBit);
                 
-                angleInt = ofMap(tilt_angle_value[i],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
-                lowerBit = angleInt % 256;
-                higherBit = angleInt >> 8;
-                dmx.setLevel(offset+tilt_channel,lowerBit);
-                dmx.setLevel(offset+tilt_fine_channel,higherBit);
                 
+                if(bTakeFromHearts == false){
+                    
+                    
+                    int tilt_angleInt = ofMap(tilt_angle_value[i],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                    lowerBit = tilt_angleInt >> 8;
+                    higherBit = tilt_angleInt % 256;
+                    dmx.setLevel(offset+tilt_channel,lowerBit);
+                    dmx.setLevel(offset+tilt_fine_channel,higherBit);
+//                    ofLog()<<i<<" tilt_angleInt "<<tilt_angle_value[i];
+//                    ofLog()<<"offset "<<offset<<" tilt_channel "<<tilt_channel<<" tilt_fine_channel "<<tilt_fine_channel;
+//                    ofLog()<<"lowerBit "<<int(lowerBit);
+//                    ofLog()<<"higherBit "<<int(higherBit);
+                    
+                    dmx.setLevel(offset+dimmer_channel,ofMap(dimmer_value[i], dimmer_value[i].getMin(), dimmer_value[i].getMax(), 0, 255));
+                }else{
+                    if(allHearts[i].bUseLights){
+                        //                        int pan_angleInt = ofMap(pan_angle_value[0],pan_angle_value[0].getMin(),pan_angle_value[0].getMax(),0,65536);
+                        //                        int lowerBit = pan_angleInt >> 8;
+                        //                        int higherBit = pan_angleInt % 256;
+                        //                        dmx.setLevel(dmx_start_channels[0]-1+pan_channel,lowerBit);
+                        //                        dmx.setLevel(dmx_start_channels[0]-1+pan_fine_channel,higherBit);
+                        //                    
+                        //                        pan_angleInt = ofMap(pan_angle_value[1],pan_angle_value[1].getMin(),pan_angle_value[1].getMax(),0,65536);
+                        //                        lowerBit = pan_angleInt >> 8;
+                        //                        higherBit = pan_angleInt % 256;
+                        //                        dmx.setLevel(dmx_start_channels[1]-1+pan_channel,lowerBit);
+                        //                        dmx.setLevel(dmx_start_channels[1]-1+pan_fine_channel,higherBit);
+                        
+                        int tilt_angleInt =  ofMap(allHearts[i].cur_tilt[0],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                        lowerBit = tilt_angleInt >> 8;
+                        higherBit = tilt_angleInt % 256;
+                        dmx.setLevel(dmx_start_channels[0]-1+tilt_channel,lowerBit);
+                        dmx.setLevel(dmx_start_channels[0]-1+tilt_fine_channel,higherBit);
+                        
+                        tilt_angleInt = ofMap(allHearts[i].cur_tilt[1],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                        lowerBit = tilt_angleInt >> 8;
+                        higherBit = tilt_angleInt % 256;
+                        dmx.setLevel(dmx_start_channels[1]-1+tilt_channel,lowerBit);
+                        dmx.setLevel(dmx_start_channels[1]-1+tilt_fine_channel,higherBit);
+                        
+                        dimmer_value[0] = allHearts[i].curDimmer[0];
+                        dimmer_value[1] = allHearts[i].curDimmer[1];
+                        dmx.setLevel(dmx_start_channels[0]-1+dimmer_channel,ofMap(dimmer_value[0], dimmer_value[0].getMin(), dimmer_value[0].getMax(), 0, 255));
+                        dmx.setLevel(dmx_start_channels[1]-1+dimmer_channel,ofMap(dimmer_value[1], dimmer_value[1].getMin(), dimmer_value[1].getMax(), 0, 255));
+//                        dmx.setLevel(allHearts[i].beat1Channel,allHearts[i].curDimmer[0]);
+//                        dmx.setLevel(allHearts[i].beat2Channel,allHearts[i].curDimmer[1]);
+//                        ofLog()<<i<<" channel "<<allHearts[i].beat1Channel<<" "<<allHearts[i].beat2Channel;
+//                        ofLog()<<i<<" dmx level "<<dmx.getLevel(dmx_start_channels[0]-1+dimmer_channel)<<" "<<dmx.getLevel(dmx_start_channels[0]-1+dimmer_channel);
+//                        ofLog()<<i<<" curDimmer "<<allHearts[i].curDimmer[0]<<" "<<allHearts[i].curDimmer[1];
+                        
+                    }
+                    //                    ofLog()<<i<<" cur_tilt "<<allHearts[i].cur_tilt[i]<<" tilt_angleInt "<<tilt_angleInt<<" pan_angleInt "<<pan_angleInt;
+                }
+                
+                
+                
+                dmx.setLevel(offset+focus_channel,ofMap(focus_value[i], focus_value[i].getMin(), focus_value[i].getMax(), 0, 255));
                 dmx.setLevel(offset+zoom_channel,ofMap(zoom_value[i], zoom_value[i].getMin(), zoom_value[i].getMax(), 0, 255));
+                
+                dmx.setLevel(offset+cyan_channel,ofMap(cyan_value[i], cyan_value[i].getMin(), cyan_value[i].getMax(), 0, 255));
+                dmx.setLevel(offset+magenta_channel,ofMap(magenta_value[i], magenta_value[i].getMin(), magenta_value[i].getMax(), 0, 255));
+                dmx.setLevel(offset+yellow_channel,ofMap(yellow_value[i], yellow_value[i].getMin(), yellow_value[i].getMax(), 0, 255));
+                dmx.setLevel(offset+colorWheel_channel,ofMap(colorWheel_value[i], colorWheel_value[i].getMin(), colorWheel_value[i].getMax(), 0, 255));
+                
                 dmx.setLevel(offset+gobo_channel,gobo_value[i]);
+                
+                dmx.setLevel(offset+shutter_channel,shutter_curValue[i]);
+                //                ofLog()<<"focus_channel "<<(offset+focus_channel)<<" focus_value[i] "<<focus_value[i];
             }
-        }
-        dmx.update();
+        }//end if(bUseMovingHead == true)
         
-    }
-    
+        dmx.update();
+    }//end if(lightViaDmx == true)
     
 }
 
@@ -609,28 +747,32 @@ void ofApp::draw(){
     allHearts[0].draw(0, 0);
     allHearts[1].draw(300, 0); 
     if(otherFakeTouched == true){
-         arial.drawString("F", 405, 50);
+        arial.drawString("F", 405, 50);
     }
     ofPopMatrix();
     
     hands_object.draw(10,10);
     
+    float temp_dur0 = ofGetElapsedTimef() - localActiveTimer;
+    float temp_dur1 = ofGetElapsedTimef() - localInActiveTimer;
+    float temp_dur2 = ofGetElapsedTimef() - remoteInActiveTimer;
+    
+    ofSetColor(255);
+    stringstream ss;
+    ss<<"localActive "+ofToString(temp_dur0,1) + " / " +ofToString(localActiveDuration,1)<<endl;
+    ss<<"localInActive "+ofToString(temp_dur1,1) + " / " +ofToString(localInActiveDuration,1)<<endl;
+    ss<<"remoteInActive "+ofToString(temp_dur2,1) + " / " +ofToString(remoteInActiveDuration,1)<<endl;
+    ofDrawBitmapString(ss.str(), ofGetWidth()-200, ofGetHeight() - 80);
+    
 #ifdef USE_DMX
-    drawDmxBar(5,ofGetHeight() - 50, 30 ,2); 
+    drawDmxBar(5,ofGetHeight() - 50, 40 ,2); 
 #endif
     
     ofDrawBitmapStringHighlight("fps "+ofToString(ofGetFrameRate(),2), ofGetWidth()-100, ofGetHeight() - 30);
     
     
-    float temp_dur0 = ofGetElapsedTimef() - localActiveTimer;
-    float temp_dur1 = ofGetElapsedTimef() - localInActiveTimer;
-     float temp_dur2 = ofGetElapsedTimef() - remoteInActiveTimer;
     
-    ofSetColor(255);
-    ofDrawBitmapString("localActive "+ofToString(temp_dur0,1) + " / " +ofToString(localActiveDuration,1) , 10, ofGetHeight() - 100);
-    ofDrawBitmapString("localInActive "+ofToString(temp_dur1,1) + " / " +ofToString(localInActiveDuration,1) , 10, ofGetHeight() - 80);
-    ofDrawBitmapString("remoteInActive "+ofToString(temp_dur2,1) + " / " +ofToString(remoteInActiveDuration,1) , 10, ofGetHeight() - 60);
-
+    
     
     if(bShowGui == true){
         gui_main.draw();
@@ -696,6 +838,21 @@ void ofApp::checkGui(){
      }
      */
     
+    for(int i=0; i<2; i++){
+        if(shutter_onOff[i] != old_shutter_onOff[i]){
+            old_shutter_onOff[i] = shutter_onOff[i];
+            if(shutter_onOff[i] == false)  shutter_curValue[i] = shutter_closedValue;
+            else shutter_curValue[i] = shutter_openValue;
+        }
+        if(lamp_onOff[i] != old_lamp_onOff[i]){
+            old_lamp_onOff[i] = lamp_onOff[i];
+            if(lamp_onOff[i] == false)  lamp_curValue[i] = lamp_offValue;
+            else lamp_curValue[i] = lamp_onValue;
+        }
+    }
+    
+    
+    
     if(old_firstVolume != firstVolume || old_secondVolume != secondVolume){
         old_firstVolume = firstVolume;
         old_secondVolume = secondVolume;
@@ -708,6 +865,7 @@ void ofApp::checkGui(){
     
     for(auto & aHeart : allHearts){
         aHeart.touchBrightness = touchBrightness;
+        aHeart.unTouchBrightness = unTouchBrightness;
         aHeart.firstMinBrightness = firstMinBrightness;
         aHeart.firstMaxBrightness = firstMaxBrightness;
         aHeart.secondMinBrightness = secondMinBrightness;
@@ -735,7 +893,7 @@ void ofApp::checkGui(){
     if(old_testDmxValues != testDmxValues){
         old_testDmxValues = testDmxValues;
         ofLog()<<"testDmxValues "<<testDmxValues;
-        allHearts[0].setLevel(testDmxChannel,testDmxValues);
+        allHearts[0].setLevel(0,testDmxChannel,testDmxValues);
     }
     
     allHearts[0].lightViaSerial = lightViaSerial;
@@ -981,3 +1139,4 @@ void ofApp::drawDmxBar(int _x, int _y, int _groupSize, int _devices){
     }//end  if(dmxBarRect.inside(temp_mouse))
     ofPopStyle();
 }
+

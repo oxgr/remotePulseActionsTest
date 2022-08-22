@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>46 20220813 481b88d</ver>
+	<ver>47 20220821 e29eece</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -32,25 +32,29 @@
 	<secondVol>0.355</secondVol>
 	<heart_me>
 		<dmxChan_beat1>21</dmxChan_beat1>
-		<dmxChan_beat2>61</dmxChan_beat2>
+		<dmxChan_beat2>41</dmxChan_beat2>
 		<useAudio>0</useAudio>
-		<useLights>1</useLights>
+		<useLights>0</useLights>
 		<untouch_tilt_1>115</untouch_tilt_1>
 		<untouch_tilt_2>115</untouch_tilt_2>
 		<touch_tilt_1>120</touch_tilt_1>
 		<touch_tilt_2>120</touch_tilt_2>
 		<tiltEasying>0.0315816</tiltEasying>
+		<tiltEasing>0.1</tiltEasing>
+		<dimmerEasing>0.1</dimmerEasing>
 	</heart_me>
 	<heart_other>
-		<dmxChan_beat1>3</dmxChan_beat1>
-		<dmxChan_beat2>3</dmxChan_beat2>
+		<dmxChan_beat1>21</dmxChan_beat1>
+		<dmxChan_beat2>41</dmxChan_beat2>
 		<useAudio>1</useAudio>
-		<useLights>0</useLights>
+		<useLights>1</useLights>
 		<untouch_tilt_1>45</untouch_tilt_1>
 		<untouch_tilt_2>45</untouch_tilt_2>
 		<touch_tilt_1>55</touch_tilt_1>
 		<touch_tilt_2>55</touch_tilt_2>
 		<tiltEasying>0.1</tiltEasying>
+		<tiltEasing>0.1</tiltEasing>
+		<dimmerEasing>0.1</dimmerEasing>
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>1</minBpmCount>

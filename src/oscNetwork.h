@@ -11,6 +11,7 @@
 
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
+#include "ofxDropdown.h"
 
 //set computer to IP 188.0.1.250 with mask 255.255.255.0
 //#define HOST "188.0.1.255" // "192.168.100.101"
@@ -81,8 +82,12 @@ public:
     
     float lastMsgTimer = 0;
     
-    ofParameter<int> showState = -1;
-    ofParameter<string> showState_str;
+//    int showState = -1;
+//    ofParameter<int> showState = -1;
+//    ofParameter<string> showState_str;
+    
+    unique_ptr<ofxIntDropdown> intDropdown;
+    ofParameter<int> showState;
     
     string show_names[5] = {"neutral","start","stop","relaxed","emergency"};
     
@@ -119,10 +124,35 @@ public:
         gui_osc.add(txBPM_str.set("me bpm sent", ""));
         
         gui_osc.add(bPeriodicResend.set("periodicResend", false));
-        gui_osc.add(showState.set("state index", 0,0,4));
-        gui_osc.add(showState_str.set("state name", ""));
+  
+        showState.setName("app state");
+        intDropdown = make_unique<ofxIntDropdown>(showState);
+        intDropdown->enableCollapseOnSelection();
+        intDropdown->disableMultipleSelection();
+        intDropdown->add(0, "neutral");
+        intDropdown->add(1, "start");
+        intDropdown->add(2, "stop");
+        intDropdown->add(3, "relaxed");
+        intDropdown->add(4, "emergency");        
+        gui_osc.add(intDropdown.get());
+        
+//        strOptions_A.setName("app state");
+//        functionsDropdown_A = make_unique<ofxDropdown>(strOptions_A);
+//        functionsDropdown_A->enableCollapseOnSelection();
+//        functionsDropdown_A->disableMultipleSelection();
+//        functionsDropdown_A->add("neutral")
+//        functionsDropdown_A->add("start");
+//        functionsDropdown_A->add("stop");
+//        functionsDropdown_A->add("relaxed");
+//        functionsDropdown_A->add("emergency");
+//        
+//        gui_osc.add(functionsDropdown_A.get());
+        
+//        gui_osc.add(showState.set("state index", 0,0,4));
+//        gui_osc.add(showState_str.set("state name", ""));
         gui_osc.loadFromFile("GUIs/gui_osc.xml");
         
+        showState = SHOW_NEUTRAL;
         //        inputType = -1;
     }
     
@@ -499,7 +529,7 @@ public:
             //            if(bEnableOSC == false) sendMode(0);
         }
         
-        showState_str = show_names[showState];
+//        showState_str = show_names[showState];
     }
     
     

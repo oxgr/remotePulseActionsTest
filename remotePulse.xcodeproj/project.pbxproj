@@ -109,6 +109,7 @@
 		A0CF4A5A2CDFA2726D964E5A /* send_unsubscribe.c in Sources */ = {isa = PBXBuildFile; fileRef = 74238AE138CE2A3267A36D5D /* send_unsubscribe.c */; };
 		A787C986E75372E224152838 /* util_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 0778943EDCB6C150A9CF519A /* util_mosq.c */; };
 		A7CF97A6E1DAE4A002CA6F82 /* ofxBiquadFilterInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F32C175B3E53B0864752B5D7 /* ofxBiquadFilterInstance.cpp */; };
+		ABE30BE94180E9DE437D88BC /* ofxDropdownOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54E079CFA3C7876D98A1349F /* ofxDropdownOption.cpp */; };
 		ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADD194746185E2DA11468377 /* IpEndpointName.cpp */; };
 		B1BF03D79762719793CC9F1A /* SLIPEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1616DA13ECD5FC9DB4D5714 /* SLIPEncoding.cpp */; };
 		B266578FC55D23BFEBC042E7 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */; };
@@ -137,6 +138,7 @@
 		DB1B6C56A8D6E1DF0AB8B5DA /* SerialDeviceUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A28F98E9F26E32A14FAE918C /* SerialDeviceUtils.cpp */; };
 		DEEB3D08C66B2CFDBDBB142F /* send_disconnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 36485BEAF12A3FEAAB6EFF3C /* send_disconnect.c */; };
 		DFA0F30B1193D5DC1BB53E5E /* Base64Encoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D639BA31583580D80CFE15D /* Base64Encoding.cpp */; };
+		E03BE61A20EDC60FA3DF893F /* ofxDropdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09CE0CDFCC647DF97EC06861 /* ofxDropdown.cpp */; };
 		E1E8305A5D0725A497F370F1 /* tls_mosq.c in Sources */ = {isa = PBXBuildFile; fileRef = 86E56FC6895A2058C9F55B92 /* tls_mosq.c */; };
 		E2C54FD4C85A860582282F7C /* RecursiveDirectoryIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E95C4518AEDCDBEA357754B0 /* RecursiveDirectoryIterator.cpp */; };
 		E4029ECB5B38A0B16AA4C898 /* StreamFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 964894707DA74D07D5296965 /* StreamFilters.cpp */; };
@@ -181,6 +183,7 @@
 		0853C1E83DCC54A6D30F5C5A /* Hysteresis.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Hysteresis.h; path = ../../../addons/ofxTiming/src/Hysteresis.h; sourceTree = SOURCE_ROOT; };
 		08546F6696FA9F0107717C6F /* literal_cost.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = literal_cost.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/literal_cost.h; sourceTree = SOURCE_ROOT; };
 		088652885A423EF7C7EE8982 /* mosquitto_broker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mosquitto_broker.h; path = ../../../addons/ofxMQTT/libs/mosquitto/src/mosquitto_broker.h; sourceTree = SOURCE_ROOT; };
+		09CE0CDFCC647DF97EC06861 /* ofxDropdown.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDropdown.cpp; path = ../../../addons/ofxDropdown/src/ofxDropdown.cpp; sourceTree = SOURCE_ROOT; };
 		0A1DAC09F322AE313A40706D /* ofxToggle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxToggle.h; path = ../../../addons/ofxGui/src/ofxToggle.h; sourceTree = SOURCE_ROOT; };
 		0A6573F26422F8DA0D7A4299 /* block_encoder_inc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block_encoder_inc.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/block_encoder_inc.h; sourceTree = SOURCE_ROOT; };
 		0AED834CE4DEC5260AF302A2 /* ofxOscParameterSync.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxOscParameterSync.cpp; path = ../../../addons/ofxOsc/src/ofxOscParameterSync.cpp; sourceTree = SOURCE_ROOT; };
@@ -305,6 +308,7 @@
 		5235265B9D62AC76B086F9D7 /* port.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = port.h; path = ../../../addons/ofxIO/libs/brotli/src/dec/port.h; sourceTree = SOURCE_ROOT; };
 		5238C81C267C1BCAEB3497CA /* actions.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = actions.c; path = ../../../addons/ofxMQTT/libs/mosquitto/src/actions.c; sourceTree = SOURCE_ROOT; };
 		52AFA1F08C420992CAAAE648 /* ofxSlider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxSlider.h; path = ../../../addons/ofxGui/src/ofxSlider.h; sourceTree = SOURCE_ROOT; };
+		54E079CFA3C7876D98A1349F /* ofxDropdownOption.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDropdownOption.cpp; path = ../../../addons/ofxDropdown/src/ofxDropdownOption.cpp; sourceTree = SOURCE_ROOT; };
 		5565E3718DB1D46F1214EBFC /* md2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = md2.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/md2.h; sourceTree = SOURCE_ROOT; };
 		557678EEFF0D0C6D692D0DEC /* DeviceFilter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DeviceFilter.h; path = ../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/DeviceFilter.h; sourceTree = SOURCE_ROOT; };
 		55E6502FFB31969C644E02C1 /* ofxBiquadFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxBiquadFilter.cpp; path = ../../../addons/ofxBiquadFilter/src/ofxBiquadFilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -410,6 +414,7 @@
 		93DDD5610F4F457388FDB5DC /* utf8_mosq.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = utf8_mosq.c; path = ../../../addons/ofxMQTT/libs/mosquitto/src/utf8_mosq.c; sourceTree = SOURCE_ROOT; };
 		93E26814A54A32C6C2B713FE /* state.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = state.c; path = ../../../addons/ofxIO/libs/brotli/src/dec/state.c; sourceTree = SOURCE_ROOT; };
 		94519B019B0E47223B31FB5B /* context.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = context.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/context.h; sourceTree = SOURCE_ROOT; };
+		95AA6C1C9DAFF1E232EEC08D /* ofxDropdown.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDropdown.h; path = ../../../addons/ofxDropdown/src/ofxDropdown.h; sourceTree = SOURCE_ROOT; };
 		9604B925D32EE39065747725 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxBaseGui.cpp; path = ../../../addons/ofxGui/src/ofxBaseGui.cpp; sourceTree = SOURCE_ROOT; };
 		9634FA545F1B9E5582A31E4D /* static_dict_lut.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = static_dict_lut.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/static_dict_lut.h; sourceTree = SOURCE_ROOT; };
 		964894707DA74D07D5296965 /* StreamFilters.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StreamFilters.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/StreamFilters.cpp; sourceTree = SOURCE_ROOT; };
@@ -483,6 +488,7 @@
 		C36063CD39D292AF0CEB0E49 /* fast_log.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fast_log.h; path = ../../../addons/ofxIO/libs/brotli/src/enc/fast_log.h; sourceTree = SOURCE_ROOT; };
 		C373CBF6422737D147BA8B70 /* objects.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = objects.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/objects.h; sourceTree = SOURCE_ROOT; };
 		C388FEB5AAE4ED4271BE782D /* ecdsa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ecdsa.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/ecdsa.h; sourceTree = SOURCE_ROOT; };
+		C4604CE4D2A64B2B72D1286D /* ofxDropdownOption.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDropdownOption.hpp; path = ../../../addons/ofxDropdown/src/ofxDropdownOption.hpp; sourceTree = SOURCE_ROOT; };
 		C47B267674C0FB2984B769E8 /* handle_pubrec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = handle_pubrec.c; path = ../../../addons/ofxMQTT/libs/mosquitto/src/handle_pubrec.c; sourceTree = SOURCE_ROOT; };
 		C4CA054A26838033180F5EE5 /* camellia.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = camellia.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/camellia.h; sourceTree = SOURCE_ROOT; };
 		C4D2E84034752C8DDB2D67B2 /* ImageUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ImageUtils.cpp; path = ../../../addons/ofxIO/libs/ofxIO/src/ImageUtils.cpp; sourceTree = SOURCE_ROOT; };
@@ -811,6 +817,17 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		12AD859AE0F43B961AA45D61 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				09CE0CDFCC647DF97EC06861 /* ofxDropdown.cpp */,
+				95AA6C1C9DAFF1E232EEC08D /* ofxDropdown.h */,
+				54E079CFA3C7876D98A1349F /* ofxDropdownOption.cpp */,
+				C4604CE4D2A64B2B72D1286D /* ofxDropdownOption.hpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 		13C2436A78CDB4354594CA7D /* include */ = {
 			isa = PBXGroup;
 			children = (
@@ -1006,6 +1023,14 @@
 				86D2677079A3AF4A5A88E29A /* oscpack */,
 			);
 			name = libs;
+			sourceTree = "<group>";
+		};
+		3C927DC599F16C02E7D12F30 /* ofxDropdown */ = {
+			isa = PBXGroup;
+			children = (
+				12AD859AE0F43B961AA45D61 /* src */,
+			);
+			name = ofxDropdown;
 			sourceTree = "<group>";
 		};
 		3F13BF933566839ED4C7CCED /* include */ = {
@@ -1566,6 +1591,7 @@
 			children = (
 				27005CFF506A34FD3734C3CE /* ofxBiquadFilter */,
 				9C10541A7618D99B3938950F /* ofxDmx */,
+				3C927DC599F16C02E7D12F30 /* ofxDropdown */,
 				480A780D8D0308AE4A368801 /* ofxGui */,
 				0117D94CE0C695E5E5482BEC /* ofxPoco */,
 				A8792B4B23B2F70E1065D67F /* ofxIO */,
@@ -2162,6 +2188,8 @@
 				D820615CFDD5F497033D7C5A /* ofxBiquadFilter.cpp in Sources */,
 				A7CF97A6E1DAE4A002CA6F82 /* ofxBiquadFilterInstance.cpp in Sources */,
 				8BCF02B826253856D7DCF4D1 /* ofxDmx.cpp in Sources */,
+				E03BE61A20EDC60FA3DF893F /* ofxDropdown.cpp in Sources */,
+				ABE30BE94180E9DE437D88BC /* ofxDropdownOption.cpp in Sources */,
 				856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */,
 				5CBB2AB3A60F65431D7B555D /* ofxButton.cpp in Sources */,
 				853E0BA2F448076739446874 /* ofxColorPicker.cpp in Sources */,
@@ -2316,7 +2344,6 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				EXCLUDED_ARCHS = arm64;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -2337,6 +2364,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,
@@ -2407,6 +2435,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				EXCLUDED_ARCHS = arm64;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
@@ -2417,6 +2446,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,
@@ -2506,7 +2536,6 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				EXCLUDED_ARCHS = arm64;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -2525,6 +2554,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,
@@ -2597,7 +2627,6 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				EXCLUDED_ARCHS = arm64;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -2617,6 +2646,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,
@@ -2687,6 +2717,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				EXCLUDED_ARCHS = arm64;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2697,6 +2728,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,
@@ -2784,6 +2816,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
+				EXCLUDED_ARCHS = arm64;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
@@ -2793,6 +2826,7 @@
 					src,
 					../../../addons/ofxBiquadFilter/src,
 					../../../addons/ofxDmx/src,
+					../../../addons/ofxDropdown/src,
 					../../../addons/ofxGui/src,
 					../../../addons/ofxPoco/libs/poco/include,
 					../../../addons/ofxPoco/src,

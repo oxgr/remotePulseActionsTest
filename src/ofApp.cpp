@@ -682,13 +682,16 @@ void ofApp::update(){
                         //                        dmx.setLevel(dmx_start_channels[1]-1+pan_channel,lowerBit);
                         //                        dmx.setLevel(dmx_start_channels[1]-1+pan_fine_channel,higherBit);
                         
-                        int tilt_angleInt =  ofMap(allHearts[i].cur_tilt[0],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                        tilt_angle_value[0] = allHearts[i].cur_tilt[0];
+                        
+                        int tilt_angleInt =  ofMap(tilt_angle_value[0],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
                         lowerBit = tilt_angleInt >> 8;
                         higherBit = tilt_angleInt % 256;
                         dmx.setLevel(dmx_start_channels[0]-1+tilt_channel,lowerBit);
                         dmx.setLevel(dmx_start_channels[0]-1+tilt_fine_channel,higherBit);
                         
-                        tilt_angleInt = ofMap(allHearts[i].cur_tilt[1],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
+                        tilt_angle_value[1] = allHearts[i].cur_tilt[1];
+                        tilt_angleInt = ofMap(tilt_angle_value[1],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
                         lowerBit = tilt_angleInt >> 8;
                         higherBit = tilt_angleInt % 256;
                         dmx.setLevel(dmx_start_channels[1]-1+tilt_channel,lowerBit);

@@ -65,7 +65,7 @@ enum SHOWSTATES{
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "46 20220813 481b88d"
+#define APP_VERSION "47 20220821 e29eece"
 
 class ofApp : public ofBaseApp{
 public:

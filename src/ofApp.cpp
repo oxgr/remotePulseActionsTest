@@ -21,11 +21,9 @@ void ofApp::setup(){
     
     arial.load("Arial.ttf", 24, true, true);
     
-    allHearts.resize(2);
-    
-    allHearts[0].setup("me",0,1,dmx,serialSendBuffer);
-    allHearts[1].setup("other",1,3,dmx,serialSendBuffer);
-    
+    allHearts[0].setup("me",0,serialSendBuffer);
+    allHearts[1].setup("other",1,serialSendBuffer);
+//    
     group_debug.setName("debug");
     
     group_debug.add(bFadeTest.set("fadeTest",false));
@@ -68,10 +66,6 @@ void ofApp::setup(){
     gui_main.add(group_debug);
     gui_main.add(group_autoFake);
     
-    gui_main.add(allHearts[0].group_heart);
-    gui_main.add(allHearts[1].group_heart);
-    
-    
     gui_main.add(minBpmCounter.set("minBpmCount",2,0,4));
     gui_main.add(minBpm.set("minBpm",25,2,50)); //if below it will be ignored
     //    gui_main.add(beat2Offset.set("beat2Offset",0.2,0,1));
@@ -80,8 +74,7 @@ void ofApp::setup(){
     gui_main.add(firstPause.set("firstPause",0.2,0,1));
     gui_main.add(secondBeatOnDur.set("secondBeatOnDur",0.2,0,1));
     
-    gui_main.add(touchBrightness.set("touchBright",100,0,255));
-    gui_main.add(unTouchBrightness.set("unTouchBright",100,0,255));
+  
     gui_main.add(firstMinBrightness.set("firstMinBright",0,0,255));
     gui_main.add(firstMaxBrightness.set("firstMaxBright",127,0,255));
     gui_main.add(secondMinBrightness.set("secondMinBright",0,0,255));
@@ -100,11 +93,6 @@ void ofApp::setup(){
     triggerFakeOther = false;
     otherFakeTouched = false;
     
-    allHearts[0].cur_tilt[0] = allHearts[0].unTouch_tilt_value1;
-    allHearts[0].cur_tilt[1] = allHearts[0].unTouch_tilt_value2;
-    allHearts[1].cur_tilt[0] = allHearts[1].unTouch_tilt_value1;
-    allHearts[1].cur_tilt[1] = allHearts[1].unTouch_tilt_value2;    
-    
     
     gui_movingHead.setup();
     gui_movingHead.setName("moving head");
@@ -114,8 +102,8 @@ void ofApp::setup(){
     gui_movingHead.add(bUseMovingHead.set("use movingHead",true));
     gui_movingHead.add(bTakeFromHearts.set("use hearts",true));
     
+    group_dmx_values.setName("dmx values");
     for(int i=0; i<2; i++){
-        group_dmx_values.setName("dmx values");
         string letter = GetLetter(i);
         group_dmx_values.add(pan_angle_value[i].set("pan angle "+letter,0,-250,250));
         group_dmx_values.add(tilt_angle_value[i].set("tilt angle "+letter,0,-130,130));
@@ -257,7 +245,13 @@ void ofApp::setup(){
     fakeMe_minDuration = 5;
     fakeMe_running = false;
     
-    
+    allHearts[0].gui_heart.setPosition(gui_main.getShape().getRight()+5,gui_main.getShape().getTop());
+    allHearts[1].gui_heart.setPosition(allHearts[0].gui_heart.getShape().getRight()+5,gui_main.getShape().getTop());
+
+    osc_object.gui_osc.setPosition(ofGetWidth() - 250, gui_main.getShape().getTop());
+    hands_object.gui_sensor.setPosition(osc_object.gui_osc.getShape().getLeft(),osc_object.gui_osc.getShape().getBottom()+5);
+    gui_movingHead.setPosition(hands_object.gui_sensor.getShape().getLeft(),hands_object.gui_sensor.getShape().getBottom()+5);
+   
 }
 
 void ofApp::exit(){
@@ -284,9 +278,9 @@ void ofApp::exit(){
 void ofApp::update(){
     
 #ifdef USE_WEB
-    ofSetWindowTitle(myIP+" | BPM-sender | " + web_object.getComputerID());
+    ofSetWindowTitle(myIP+" | Remote Pulse | " + web_object.getComputerID());
 #else
-    ofSetWindowTitle(myIP+" | BPM-sender | ");
+    ofSetWindowTitle(myIP+" | Remote Pulse | ");
 #endif
     
     checkGui();
@@ -328,14 +322,16 @@ void ofApp::update(){
     }
     
     if(initDone == false){
+        //during init play sounds and light up fixtures
         if(initStage == 0){
             ofLog()<<"start init";
             initTimer = ofGetElapsedTimef();
-            
-            
-            //            if(lightViaDmx){
-            allHearts[0].setLevel(0,allHearts[0].beat1Channel,firstMaxBrightness);
-            //            }
+            //set fixture A of heart_me to a 50%
+            //play heart_me first beat sound
+            allHearts[0].myFixtures[0].setDimmer(127);
+            allHearts[0].myFixtures[1].setDimmer(0);
+            allHearts[1].myFixtures[0].setDimmer(0);
+            allHearts[1].myFixtures[1].setDimmer(0);
             allHearts[0].beatPlayer1.play();
             
             initDuration = 2;
@@ -343,21 +339,25 @@ void ofApp::update(){
         } else if(initStage == 1 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            //              if(lightViaDmx){
-            allHearts[0].setLevel(0,allHearts[0].beat1Channel,0);
-            allHearts[1].setLevel(0,allHearts[1].beat1Channel,firstMaxBrightness);
-            //              }
+            //set fixture A of heart_me to a 0%
+            //set fixture A of heart_other to a 50%
+            //play heart_me second beat sound
+            allHearts[0].myFixtures[0].setDimmer(0);
+            allHearts[0].myFixtures[1].setDimmer(127);
+            allHearts[1].myFixtures[0].setDimmer(0);
+            allHearts[1].myFixtures[1].setDimmer(0);
             allHearts[1].beatPlayer1.play();
+          
             
             initDuration = 2;
             initStage++;
         } else if(initStage == 2 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
-            
-            //   if(lightViaDmx){
-            allHearts[1].setLevel(0,allHearts[1].beat1Channel,0);
-            allHearts[0].setLevel(1,allHearts[0].beat2Channel,secondMaxBrightness);
-            //  }
+
+            allHearts[0].myFixtures[0].setDimmer(0);
+            allHearts[0].myFixtures[1].setDimmer(0);
+            allHearts[1].myFixtures[0].setDimmer(127);
+            allHearts[1].myFixtures[1].setDimmer(0);
             allHearts[0].beatPlayer2.play();
             
             initDuration = 2;
@@ -365,28 +365,21 @@ void ofApp::update(){
         } else if(initStage == 3 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            //  if(lightViaDmx){
-            allHearts[0].setLevel(1,allHearts[0].beat2Channel,0);
-            allHearts[1].setLevel(1,allHearts[1].beat2Channel,secondMaxBrightness);
-            //   }
-            if(allHearts[0].bUseSound){
-                allHearts[0].beatPlayer2.play();
-            }else{
-                allHearts[1].beatPlayer2.play();
-            }
-            
+            allHearts[0].myFixtures[0].setDimmer(0);
+            allHearts[0].myFixtures[1].setDimmer(0);
+            allHearts[1].myFixtures[0].setDimmer(0);
+            allHearts[1].myFixtures[1].setDimmer(127);
+            allHearts[1].beatPlayer2.play();            
             
             initDuration = 2;
             initStage++;
         } else if(initStage == 4 && ofGetElapsedTimef() - initTimer > initDuration){
             initTimer = ofGetElapsedTimef();
             
-            //  if(lightViaDmx){
-            allHearts[0].setLevel(0,allHearts[0].beat1Channel,0);
-            allHearts[0].setLevel(1,allHearts[0].beat2Channel,0);
-            allHearts[1].setLevel(0,allHearts[1].beat1Channel,0);
-            allHearts[1].setLevel(1,allHearts[1].beat2Channel,0);
-            // }
+            allHearts[0].myFixtures[0].setDimmer(0);
+            allHearts[0].myFixtures[1].setDimmer(0);
+            allHearts[1].myFixtures[0].setDimmer(0);
+            allHearts[1].myFixtures[1].setDimmer(0);
             initDuration = 2;
             initDone = true;
             ofLog()<<"end init";
@@ -640,6 +633,47 @@ void ofApp::update(){
             //            int start_1 = dmx_start_channle[0]-1; //upper mounted movinghead fixture
             //            int start_2 = dmx_start_channle[1]-1; //lower mounted
             
+     
+            vector<vector<float>> pan_collect;
+            pan_collect.resize(2);
+            vector<vector<float>> tilt_collect;
+            tilt_collect.resize(2);
+            vector<vector<float>> dimmer_collect;
+            dimmer_collect.resize(2);
+            
+            //go in to each heart object and check what their ideal fixture value are
+            //collect that for all hearts and fixtures
+            for(int i =0; i<2; i++){
+                for(int n =0; n<2; n++){    
+                    int temp_fixIndex = allHearts[i].myFixtures[n].fixtureIndex;
+                    if(temp_fixIndex != -1){
+                        pan_collect[temp_fixIndex].push_back(allHearts[i].myFixtures[n].cur_pan);
+                        tilt_collect[temp_fixIndex].push_back(allHearts[i].myFixtures[n].cur_tilt);
+                        dimmer_collect[temp_fixIndex].push_back(allHearts[i].myFixtures[n].cur_dimmer);
+                    }
+                }
+            }
+            //now calculate the avergage of all
+            for(int i =0; i<2; i++){
+                float sum = 0;
+                for(auto& num : pan_collect[i]){
+                    sum += num;
+                }
+                pan_angle_value[i] = sum / float(pan_collect[i].size());
+                
+                sum = 0;
+                for(auto& num : tilt_collect[i]){
+                    sum += num;
+                }
+                tilt_angle_value[i] = sum / tilt_collect[i].size();
+                
+                sum = 0;
+                for(auto& num : dimmer_collect[i]){
+                    sum += num;
+                }
+                dimmer_value[i] = sum / float(dimmer_collect[i].size());
+            }
+            
             for(int i =0; i<2; i++){
                 int offset = dmx_start_channels[i]-1;
                 
@@ -648,11 +682,6 @@ void ofApp::update(){
                 int higherBit = pan_angleInt % 256;
                 dmx.setLevel(offset+pan_channel,lowerBit);
                 dmx.setLevel(offset+pan_fine_channel,higherBit);
-//                ofLog()<<i<<" pan_angleInt "<<pan_angle_value[i].get();
-//                ofLog()<<"offset "<<offset<<" pan_channel "<<pan_channel<<" pan_fine_channel "<<pan_fine_channel;
-//                ofLog()<<"lowerBit "<<int(lowerBit);
-//                ofLog()<<"higherBit "<<int(higherBit);
-                
                 
                 if(bTakeFromHearts == false){
                     
@@ -662,11 +691,6 @@ void ofApp::update(){
                     higherBit = tilt_angleInt % 256;
                     dmx.setLevel(offset+tilt_channel,lowerBit);
                     dmx.setLevel(offset+tilt_fine_channel,higherBit);
-//                    ofLog()<<i<<" tilt_angleInt "<<tilt_angle_value[i];
-//                    ofLog()<<"offset "<<offset<<" tilt_channel "<<tilt_channel<<" tilt_fine_channel "<<tilt_fine_channel;
-//                    ofLog()<<"lowerBit "<<int(lowerBit);
-//                    ofLog()<<"higherBit "<<int(higherBit);
-                    
                     dmx.setLevel(offset+dimmer_channel,ofMap(dimmer_value[i], dimmer_value[i].getMin(), dimmer_value[i].getMax(), 0, 255));
                 }else{
                     if(allHearts[i].bUseLights){
@@ -682,6 +706,7 @@ void ofApp::update(){
                         //                        dmx.setLevel(dmx_start_channels[1]-1+pan_channel,lowerBit);
                         //                        dmx.setLevel(dmx_start_channels[1]-1+pan_fine_channel,higherBit);
                         
+                        /*
                         tilt_angle_value[0] = allHearts[i].cur_tilt[0];
                         
                         int tilt_angleInt =  ofMap(tilt_angle_value[0],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
@@ -701,6 +726,8 @@ void ofApp::update(){
                         dimmer_value[1] = allHearts[i].curDimmer[1];
                         dmx.setLevel(dmx_start_channels[0]-1+dimmer_channel,ofMap(dimmer_value[0], dimmer_value[0].getMin(), dimmer_value[0].getMax(), 0, 255));
                         dmx.setLevel(dmx_start_channels[1]-1+dimmer_channel,ofMap(dimmer_value[1], dimmer_value[1].getMin(), dimmer_value[1].getMax(), 0, 255));
+                        
+                        */
 //                        dmx.setLevel(allHearts[i].beat1Channel,allHearts[i].curDimmer[0]);
 //                        dmx.setLevel(allHearts[i].beat2Channel,allHearts[i].curDimmer[1]);
 //                        ofLog()<<i<<" channel "<<allHearts[i].beat1Channel<<" "<<allHearts[i].beat2Channel;
@@ -730,6 +757,7 @@ void ofApp::update(){
         
         dmx.update();
     }//end if(lightViaDmx == true)
+    
     
 }
 
@@ -788,7 +816,11 @@ void ofApp::draw(){
         web_object.gui_web.draw();
 #endif
         hands_object.gui_sensor.draw();
+        
+        allHearts[0].gui_heart.draw();
+        allHearts[1].gui_heart.draw();
     }
+     
 }
 
 void ofApp::drawRuntime(int _x, int _y){
@@ -815,6 +847,9 @@ void ofApp::saveGui(){
 #ifdef USE_WEB
     web_object.gui_web.saveToFile("GUIs/gui_web.xml");
 #endif
+    
+    allHearts[0].gui_heart.saveToFile("GUIs/gui_heart_me.xml");
+    allHearts[1].gui_heart.saveToFile("GUIs/gui_heart_other.xml");
 }
 
 void ofApp::checkGui(){
@@ -867,8 +902,7 @@ void ofApp::checkGui(){
     }
     
     for(auto & aHeart : allHearts){
-        aHeart.touchBrightness = touchBrightness;
-        aHeart.unTouchBrightness = unTouchBrightness;
+
         aHeart.firstMinBrightness = firstMinBrightness;
         aHeart.firstMaxBrightness = firstMaxBrightness;
         aHeart.secondMinBrightness = secondMinBrightness;
@@ -893,16 +927,16 @@ void ofApp::checkGui(){
         }
     }
     
-    if(old_testDmxValues != testDmxValues){
-        old_testDmxValues = testDmxValues;
-        ofLog()<<"testDmxValues "<<testDmxValues;
-        allHearts[0].setLevel(0,testDmxChannel,testDmxValues);
-    }
-    
-    allHearts[0].lightViaSerial = lightViaSerial;
-    allHearts[0].lightViaDmx = lightViaDmx;
-    allHearts[1].lightViaSerial = lightViaSerial;
-    allHearts[1].lightViaDmx = lightViaDmx;
+//    if(old_testDmxValues != testDmxValues){
+//        old_testDmxValues = testDmxValues;
+//        ofLog()<<"testDmxValues "<<testDmxValues;
+//        allHearts[0].setLevel(0,testDmxChannel,testDmxValues);
+//    }
+//    
+//    allHearts[0].lightViaSerial = lightViaSerial;
+//    allHearts[0].lightViaDmx = lightViaDmx;
+//    allHearts[1].lightViaSerial = lightViaSerial;
+//    allHearts[1].lightViaDmx = lightViaDmx;
     
 }
 //--------------------------------------------------------------

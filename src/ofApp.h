@@ -65,7 +65,7 @@ enum SHOWSTATES{
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "47 20220821 e29eece"
+#define APP_VERSION "48 20220822 bec8254"
 
 class ofApp : public ofBaseApp{
 public:
@@ -137,7 +137,8 @@ public:
     void drawRuntime(int _x, int _y);
     string runtime_str;
     
-    vector<oneHeart> allHearts;
+//    vector<oneHeart> allHearts;
+    oneHeart allHearts[2];
     
     DelayTimer test_delayTimer;
     
@@ -158,8 +159,6 @@ public:
     ofParameter<int> firstMaxBrightness;
      ofParameter<int> secondMinBrightness;
     ofParameter<int> secondMaxBrightness;
-    ofParameter<int> touchBrightness;
-    ofParameter<int> unTouchBrightness;
 //    ofParameter<float> beat2Offset;
     
     ofParameter<float> firstBeatOnDur;

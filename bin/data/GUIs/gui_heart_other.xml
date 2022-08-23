@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<heart_other>
+	<useLights>1</useLights>
+	<useAudio>1</useAudio>
+	<pulse_mix>2</pulse_mix>
+	<fixture_top>
+		<fixtureIndex>0</fixtureIndex>
+		<untouch_pan>0</untouch_pan>
+		<untouch_tilt>0</untouch_tilt>
+		<touch_pan>10</touch_pan>
+		<touch_tilt>10</touch_tilt>
+		<untouch_dimmer>30</untouch_dimmer>
+		<touch_dimmer>127</touch_dimmer>
+		<dimmerEasing>0.367347</dimmerEasing>
+		<angleEasing>0.38327</angleEasing>
+	</fixture_top>
+	<fixture_bottom>
+		<fixtureIndex>1</fixtureIndex>
+		<untouch_pan>0</untouch_pan>
+		<untouch_tilt>0</untouch_tilt>
+		<touch_pan>10</touch_pan>
+		<touch_tilt>10</touch_tilt>
+		<untouch_dimmer>30</untouch_dimmer>
+		<touch_dimmer>127</touch_dimmer>
+		<dimmerEasing>0.2</dimmerEasing>
+		<angleEasing>0.1</angleEasing>
+	</fixture_bottom>
+</heart_other>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>48 20220822 bec8254</ver>
+	<ver>49 20220825 31b7b7d</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -42,6 +42,11 @@
 		<tiltEasying>0.0315816</tiltEasying>
 		<tiltEasing>0.1</tiltEasing>
 		<dimmerEasing>0.1</dimmerEasing>
+		<untouch_pan_1>45</untouch_pan_1>
+		<untouch_pan_2>45</untouch_pan_2>
+		<touch_pan_1>135</touch_pan_1>
+		<touch_pan_2>73.0102</touch_pan_2>
+		<panEasing>0.1</panEasing>
 	</heart_me>
 	<heart_other>
 		<dmxChan_beat1>21</dmxChan_beat1>
@@ -55,6 +60,11 @@
 		<tiltEasying>0.1</tiltEasying>
 		<tiltEasing>0.1</tiltEasing>
 		<dimmerEasing>0.1</dimmerEasing>
+		<untouch_pan_1>45</untouch_pan_1>
+		<untouch_pan_2>45</untouch_pan_2>
+		<touch_pan_1>124.722</touch_pan_1>
+		<touch_pan_2>55</touch_pan_2>
+		<panEasing>0.1</panEasing>
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>1</minBpmCount>

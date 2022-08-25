@@ -104,6 +104,11 @@ void ofApp::setup(){
     allHearts[0].cur_tilt[1] = allHearts[0].unTouch_tilt_value2;
     allHearts[1].cur_tilt[0] = allHearts[1].unTouch_tilt_value1;
     allHearts[1].cur_tilt[1] = allHearts[1].unTouch_tilt_value2;    
+
+    allHearts[0].cur_pan[0] = allHearts[0].unTouch_pan_value1;
+    allHearts[0].cur_pan[1] = allHearts[0].unTouch_pan_value2;
+    allHearts[1].cur_pan[0] = allHearts[1].unTouch_pan_value1;
+    allHearts[1].cur_pan[1] = allHearts[1].unTouch_pan_value2;  
     
     
     gui_movingHead.setup();
@@ -615,6 +620,8 @@ void ofApp::update(){
             allHearts[i].setVolume(0, 0);
             tilt_angle_value[0] = tilt_angle_value[0].getMin();
             tilt_angle_value[1] = tilt_angle_value[1].getMin();
+            pan_angle_value[0] = pan_angle_value[0].getMin();
+            pan_angle_value[1] = pan_angle_value[1].getMin();
         }
         bTakeFromHearts = false;
     } else if(osc_object.showState == SHOW_EMERGENCY){
@@ -628,6 +635,8 @@ void ofApp::update(){
             
             tilt_angle_value[0] = 0;
             tilt_angle_value[1] = 0;
+            pan_angle_value[0] = 180;
+            pan_angle_value[1] = 190;
         }
         bTakeFromHearts = false;
     } else if(osc_object.showState == SHOW_NEUTRAL){
@@ -643,30 +652,19 @@ void ofApp::update(){
             for(int i =0; i<2; i++){
                 int offset = dmx_start_channels[i]-1;
                 
-                int pan_angleInt = ofMap(pan_angle_value[i],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
-                int lowerBit = pan_angleInt >> 8;
-                int higherBit = pan_angleInt % 256;
-                dmx.setLevel(offset+pan_channel,lowerBit);
-                dmx.setLevel(offset+pan_fine_channel,higherBit);
-//                ofLog()<<i<<" pan_angleInt "<<pan_angle_value[i].get();
-//                ofLog()<<"offset "<<offset<<" pan_channel "<<pan_channel<<" pan_fine_channel "<<pan_fine_channel;
-//                ofLog()<<"lowerBit "<<int(lowerBit);
-//                ofLog()<<"higherBit "<<int(higherBit);
-                
-                
                 if(bTakeFromHearts == false){
-                    
+                    int pan_angleInt = ofMap(pan_angle_value[i],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
+                    int lowerBit = pan_angleInt >> 8;
+                    int higherBit = pan_angleInt % 256;
+                    dmx.setLevel(offset+pan_channel,lowerBit);
+                    dmx.setLevel(offset+pan_fine_channel,higherBit);
                     
                     int tilt_angleInt = ofMap(tilt_angle_value[i],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
                     lowerBit = tilt_angleInt >> 8;
                     higherBit = tilt_angleInt % 256;
                     dmx.setLevel(offset+tilt_channel,lowerBit);
                     dmx.setLevel(offset+tilt_fine_channel,higherBit);
-//                    ofLog()<<i<<" tilt_angleInt "<<tilt_angle_value[i];
-//                    ofLog()<<"offset "<<offset<<" tilt_channel "<<tilt_channel<<" tilt_fine_channel "<<tilt_fine_channel;
-//                    ofLog()<<"lowerBit "<<int(lowerBit);
-//                    ofLog()<<"higherBit "<<int(higherBit);
-                    
+
                     dmx.setLevel(offset+dimmer_channel,ofMap(dimmer_value[i], dimmer_value[i].getMin(), dimmer_value[i].getMax(), 0, 255));
                 }else{
                     if(allHearts[i].bUseLights){
@@ -683,29 +681,42 @@ void ofApp::update(){
                         //                        dmx.setLevel(dmx_start_channels[1]-1+pan_fine_channel,higherBit);
                         
                         tilt_angle_value[0] = allHearts[i].cur_tilt[0];
+                        tilt_angle_value[1] = allHearts[i].cur_tilt[1];
+                        
+                        pan_angle_value[0] = allHearts[i].cur_pan[0];
+                        pan_angle_value[1] = allHearts[i].cur_pan[1];
                         
                         int tilt_angleInt =  ofMap(tilt_angle_value[0],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
-                        lowerBit = tilt_angleInt >> 8;
-                        higherBit = tilt_angleInt % 256;
+                        int lowerBit = tilt_angleInt >> 8;
+                        int higherBit = tilt_angleInt % 256;
                         dmx.setLevel(dmx_start_channels[0]-1+tilt_channel,lowerBit);
                         dmx.setLevel(dmx_start_channels[0]-1+tilt_fine_channel,higherBit);
                         
-                        tilt_angle_value[1] = allHearts[i].cur_tilt[1];
+                       
                         tilt_angleInt = ofMap(tilt_angle_value[1],tilt_angle_value[i].getMin(),tilt_angle_value[i].getMax(),0,65536);
                         lowerBit = tilt_angleInt >> 8;
                         higherBit = tilt_angleInt % 256;
                         dmx.setLevel(dmx_start_channels[1]-1+tilt_channel,lowerBit);
                         dmx.setLevel(dmx_start_channels[1]-1+tilt_fine_channel,higherBit);
                         
+                        int pan_angleInt =  ofMap(pan_angle_value[0],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
+                        lowerBit = pan_angleInt >> 8;
+                        higherBit = pan_angleInt % 256;
+                        dmx.setLevel(dmx_start_channels[0]-1+pan_channel,lowerBit);
+                        dmx.setLevel(dmx_start_channels[0]-1+pan_fine_channel,higherBit);
+                        
+                        
+                        pan_angleInt = ofMap(pan_angle_value[1],pan_angle_value[i].getMin(),pan_angle_value[i].getMax(),0,65536);
+                        lowerBit = pan_angleInt >> 8;
+                        higherBit = pan_angleInt % 256;
+                        dmx.setLevel(dmx_start_channels[1]-1+pan_channel,lowerBit);
+                        dmx.setLevel(dmx_start_channels[1]-1+pan_fine_channel,higherBit);
+                        
                         dimmer_value[0] = allHearts[i].curDimmer[0];
                         dimmer_value[1] = allHearts[i].curDimmer[1];
                         dmx.setLevel(dmx_start_channels[0]-1+dimmer_channel,ofMap(dimmer_value[0], dimmer_value[0].getMin(), dimmer_value[0].getMax(), 0, 255));
                         dmx.setLevel(dmx_start_channels[1]-1+dimmer_channel,ofMap(dimmer_value[1], dimmer_value[1].getMin(), dimmer_value[1].getMax(), 0, 255));
-//                        dmx.setLevel(allHearts[i].beat1Channel,allHearts[i].curDimmer[0]);
-//                        dmx.setLevel(allHearts[i].beat2Channel,allHearts[i].curDimmer[1]);
-//                        ofLog()<<i<<" channel "<<allHearts[i].beat1Channel<<" "<<allHearts[i].beat2Channel;
-//                        ofLog()<<i<<" dmx level "<<dmx.getLevel(dmx_start_channels[0]-1+dimmer_channel)<<" "<<dmx.getLevel(dmx_start_channels[0]-1+dimmer_channel);
-//                        ofLog()<<i<<" curDimmer "<<allHearts[i].curDimmer[0]<<" "<<allHearts[i].curDimmer[1];
+
                         
                     }
                     //                    ofLog()<<i<<" cur_tilt "<<allHearts[i].cur_tilt[i]<<" tilt_angleInt "<<tilt_angleInt<<" pan_angleInt "<<pan_angleInt;

@@ -87,14 +87,21 @@ public:
     
     float dst_tilt_1;
     float dst_tilt_2;
-    
     float cur_tilt[2] = {45,45};
-    
     ofParameter<float> unTouch_tilt_value1;
     ofParameter<float> unTouch_tilt_value2;
     ofParameter<float> touch_tilt_value1;
     ofParameter<float> touch_tilt_value2;
     ofParameter<float> tiltEasing;
+
+    float dst_pan_1;
+    float dst_pan_2;
+    float cur_pan[2] = {180,180};
+    ofParameter<float> unTouch_pan_value1;
+    ofParameter<float> unTouch_pan_value2;
+    ofParameter<float> touch_pan_value1;
+    ofParameter<float> touch_pan_value2;
+    ofParameter<float> panEasing;
     
     void setup(string _label, int _index, int _dmxStart, ofxDmx & dmx, std::vector<string> & _serialTxBuffer){
         
@@ -139,6 +146,13 @@ public:
         group_heart.add(touch_tilt_value1.set("touch tilt 1",55,-135,135));
         group_heart.add(touch_tilt_value2.set("touch tilt 2",55,-135,135));
         group_heart.add(tiltEasing.set("tiltEasing",0.1,0.001,1));
+        
+        group_heart.add(unTouch_pan_value1.set("untouch pan 1",45,-135,135));
+        group_heart.add(unTouch_pan_value2.set("untouch pan 2",45,-135,135));
+        group_heart.add(touch_pan_value1.set("touch pan 1",180,-270,270));
+        group_heart.add(touch_pan_value2.set("touch pan 2",180,-270,270));
+        group_heart.add(panEasing.set("panEasing",0.1,0.001,1));
+        
         group_heart.add(dimmerEasing.set("dimmerEasing",0.1,0.001,1));
         
         curDimmer[0] = 0;
@@ -184,6 +198,10 @@ public:
                 
                 dst_tilt_1 = touch_tilt_value1;
                 dst_tilt_2 = touch_tilt_value2;
+                
+                dst_pan_1 = touch_pan_value1;
+                dst_pan_2 = touch_pan_value2;
+                
                 //                beatPlayer1.stop();
                 //                beatPlayer2.stop();
                 
@@ -328,13 +346,19 @@ public:
             setLevel(1,beat2Channel,unTouchBrightness);
             dst_tilt_1 = unTouch_tilt_value1;
             dst_tilt_2 = unTouch_tilt_value2;
-
+            dst_pan_1 = unTouch_pan_value1;
+            dst_pan_2 = unTouch_pan_value2;
         }
         
         cur_tilt[0] = cur_tilt[0] + ((dst_tilt_1 - cur_tilt[0]) * tiltEasing);
         cur_tilt[1] = cur_tilt[1] + ((dst_tilt_2 - cur_tilt[1]) * tiltEasing);
         cur_tilt[0] = int(cur_tilt[0]*100 + 0.5) / 100.0;
         cur_tilt[1] = int(cur_tilt[1]*100 + 0.5) / 100.0;
+
+        cur_pan[0] = cur_pan[0] + ((dst_pan_1 - cur_pan[0]) * panEasing);
+        cur_pan[1] = cur_pan[1] + ((dst_pan_2 - cur_pan[1]) * panEasing);
+        cur_pan[0] = int(cur_pan[0]*100 + 0.5) / 100.0;
+        cur_pan[1] = int(cur_pan[1]*100 + 0.5) / 100.0;
         
 //        ofLog()<<"dst_tilt "<<dst_tilt_1<<" , "<<dst_tilt_2;
 //        ofLog()<<"cur_tilt "<<cur_tilt[0]<<" , "<<cur_tilt[1];
@@ -432,6 +456,8 @@ public:
         << " (" << int(100*bpm_lerpTimer.getProgress()) << "%)" << endl;
         msg << "tilt 1 " << cur_tilt[0] << "->" << dst_tilt_1<<endl;
         msg << "tilt 2 " << cur_tilt[1] << "->" << dst_tilt_2<<endl;
+        msg << "pan 1 " << cur_pan[0] << "->" << dst_pan_1<<endl;
+        msg << "pan 2 " << cur_pan[1] << "->" << dst_pan_2<<endl;
         ofDrawBitmapString(msg.str(),0,tempY+=15);
         
         

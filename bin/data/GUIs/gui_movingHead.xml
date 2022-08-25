@@ -6,20 +6,20 @@
 		<tilt_angle>0</tilt_angle>
 		<zoom>0</zoom>
 		<gobo>0</gobo>
-		<pan_angle_A>46.8</pan_angle_A>
-		<tilt_angle_A>45.23</tilt_angle_A>
+		<pan_angle_A>45</pan_angle_A>
+		<tilt_angle_A>45</tilt_angle_A>
 		<zoom_A>0</zoom_A>
 		<gobo_A>0</gobo_A>
-		<pan_angle_B>45.23</pan_angle_B>
-		<tilt_angle_B>45.23</tilt_angle_B>
+		<pan_angle_B>45</pan_angle_B>
+		<tilt_angle_B>45</tilt_angle_B>
 		<zoom_B>0</zoom_B>
 		<gobo_B>0</gobo_B>
-		<dimmer_A>65</dimmer_A>
+		<dimmer_A>25</dimmer_A>
 		<focus_A>0</focus_A>
 		<shutter_closedA>0</shutter_closedA>
 		<shutter_openA>255</shutter_openA>
 		<shutter_onOffA>0</shutter_onOffA>
-		<dimmer_B>65</dimmer_B>
+		<dimmer_B>0</dimmer_B>
 		<focus_B>0</focus_B>
 		<shutter_closedB>0</shutter_closedB>
 		<shutter_openB>255</shutter_openB>
@@ -61,5 +61,6 @@
 		<lamp_on>40</lamp_on>
 		<lamp_off>50</lamp_off>
 	</dmx_channels>
-	<use_hearts>1</use_hearts>
+	<use_hearts>0</use_hearts>
+	<use_angleKeys>1</use_angleKeys>
 </moving_head>

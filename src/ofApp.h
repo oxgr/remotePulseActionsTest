@@ -65,7 +65,7 @@ enum SHOWSTATES{
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "49 20220825 31b7b7d"
+#define APP_VERSION "50 20220825 bbe1dd0"
 
 class ofApp : public ofBaseApp{
 public:
@@ -272,4 +272,6 @@ public:
         char letter = (char) ('A' - 1 + value);
         return ofToString(letter);
     }
+    
+    ofParameter<bool> bUseAngleKeys;
 };

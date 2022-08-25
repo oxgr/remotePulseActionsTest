@@ -118,6 +118,7 @@ void ofApp::setup(){
     
     gui_movingHead.add(bUseMovingHead.set("use movingHead",true));
     gui_movingHead.add(bTakeFromHearts.set("use hearts",true));
+    gui_movingHead.add(bUseAngleKeys.set("use angleKeys",false));
     
     for(int i=0; i<2; i++){
         group_dmx_values.setName("dmx values");
@@ -174,6 +175,7 @@ void ofApp::setup(){
     bFadeTest = false;
     testDmxValues = 0;
     old_testDmxValues = 0;
+    bUseAngleKeys = false;
     
     shutter_curValue[0] = shutter_closedValue;
     shutter_curValue[1] = shutter_closedValue;
@@ -919,6 +921,33 @@ void ofApp::checkGui(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
+  
+    if(bUseAngleKeys == true){
+        
+        float angleStep = 0.1;
+        bool isSHIFT = ofGetKeyPressed(OF_KEY_SHIFT);
+        
+        if(isSHIFT == true) angleStep = 1;
+       
+        if(key == OF_KEY_UP){
+            tilt_angle_value[0] += angleStep;
+        }else if(key == OF_KEY_DOWN){
+            tilt_angle_value[0] -= angleStep;
+        }else if(key == OF_KEY_LEFT){
+            pan_angle_value[0] += angleStep;
+        }else if(key == OF_KEY_RIGHT){
+            pan_angle_value[0] -= angleStep;
+        }else if(key == 'w'){
+            tilt_angle_value[1] += angleStep;
+        }else if(key == 's'){
+            tilt_angle_value[1] -= angleStep;
+        }else if(key == 'a'){
+            pan_angle_value[1] += angleStep;
+        }else  if(key == 'd'){
+            pan_angle_value[1] -= angleStep;
+        }
+        
+    }
 }
 
 //--------------------------------------------------------------
@@ -932,14 +961,14 @@ void ofApp::keyReleased(int key){
         }
     }
     
-    if(key == 't'){
-        if(hands_object.touch == 1){
-            hands_object.touch = 0;
-        }else{
-            hands_object.touch = 1;
-        }
-        hands_object.gotTouch = true;
-    }
+//    if(key == 't'){
+//        if(hands_object.touch == 1){
+//            hands_object.touch = 0;
+//        }else{
+//            hands_object.touch = 1;
+//        }
+//        hands_object.gotTouch = true;
+//    }
 }
 
 //--------------------------------------------------------------

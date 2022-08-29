@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: app
+          path: app/remotePulse
       
       # Checking out openFrameworks with submodules into the folder "ofx"
       - name: Checkout openFrameworks
@@ -67,9 +67,9 @@ jobs:
           ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
 
       # Building the project
-      - name: Building IVA
+      - name: Building app
         run: |
-          cd ./iva/remotePulse
+          cd ./app/remotePulse
           ls -la
           xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 

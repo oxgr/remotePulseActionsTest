@@ -1,0 +1,81 @@
+name: build
+
+on:
+  # push:
+  #   branches: [ master ]
+  push:
+    branches: 
+      - 'version_*'
+
+jobs:
+
+  build-mac:
+    # the build server's operating system
+    runs-on: macos-latest
+
+    steps:
+      # Checking out our iva repo into the folder "app"
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: app
+      
+      # Checking out openFrameworks with submodules into the folder "ofx"
+      - name: Checkout openFrameworks
+        uses: actions/checkout@v2
+        with:
+          repository:  openframeworks/openFrameworks
+          path: ofx
+          submodules: true
+      
+      # Addons: Checking out additional addons into the correct openFrameworks directory
+      - name: Checkout ofxDmx addon
+        uses: actions/checkout@v2
+        with:
+          repository:  kylemcdonald/ofxDmx
+          path: ofx/addons/ofxDmx
+      - name: Checkout ofxtiming addon
+        uses: actions/checkout@v2
+        with:
+          repository:  kylemcdonald/ofxtiming
+          path: ofx/addons/ofxtiming
+      - name: Checkout ofxIO addon
+        uses: actions/checkout@v2
+        with:
+          repository:  bakercp/ofxIO
+          path: ofx/addons/ofxIO
+      - name: Checkout ofxSerial addon
+        uses: actions/checkout@v2
+        with:
+          repository:  bakercp/ofxSerial
+          path: ofx/addons/ofxSerial
+
+      # Downloading additional libs for ofx
+      - name: Download ofx libs
+        run: bash ./ofx/scripts/osx/download_libs.sh
+
+      - name: Install project generator
+        run: |
+          cd ./ofx/
+          echo "Downloading projectGenerator from ci server"
+          wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip
+          unzip projectGenerator-osx.zip
+          rm projectGenerator-osx.zip
+
+      - name: Create project files for xcode
+        run: |
+          ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
+
+      # Building the project
+      - name: Building IVA
+        run: |
+          cd ./iva/remotePulse
+          ls -la
+          xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
+
+      # Upload executable binaries to GitHub
+      - name: Uploading artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Mac Os Artifacts
+          path: ./app/remotePulse/bin/

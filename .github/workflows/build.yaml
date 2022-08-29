@@ -64,6 +64,8 @@ jobs:
 
       - name: Create project files for xcode
         run: |
+          ls ./app
+          ls ./app/remotePulse
           ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
 
       # Building the project

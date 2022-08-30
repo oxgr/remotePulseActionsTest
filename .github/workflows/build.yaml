@@ -34,11 +34,11 @@ jobs:
         with:
           repository:  kylemcdonald/ofxDmx
           path: ofx/addons/ofxDmx
-      - name: Checkout ofxtiming addon
+      - name: Checkout ofxTiming addon
         uses: actions/checkout@v2
         with:
-          repository:  kylemcdonald/ofxtiming
-          path: ofx/addons/ofxtiming
+          repository:  kylemcdonald/ofxTiming
+          path: ofx/addons/ofxTiming
       - name: Checkout ofxIO addon
         uses: actions/checkout@v2
         with:
@@ -73,7 +73,8 @@ jobs:
         run: |
           cd ./app/remotePulse
           ls -la
-          xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
+          make
+        # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub
       - name: Uploading artifacts

@@ -54,13 +54,13 @@ jobs:
       - name: Download ofx libs
         run: bash ./ofx/scripts/osx/download_libs.sh
 
-      # - name: Install project generator
-      #   run: |
-      #     cd ./ofx/
-      #     echo "Downloading projectGenerator from ci server"
-      #     wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip
-      #     unzip projectGenerator-osx.zip
-      #     rm projectGenerator-osx.zip
+      - name: Install project generator
+        run: |
+          cd ./ofx/
+          echo "Downloading projectGenerator from ci server"
+          wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip
+          unzip projectGenerator-osx.zip
+          rm projectGenerator-osx.zip
 
       - name: Create project files for xcode
         run: |

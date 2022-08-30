@@ -104,7 +104,7 @@ public:
         
         gui_sensor.setup();
         gui_sensor.setName("serialSensor");
-        gui_sensor.setPosition(220,70);
+        gui_sensor.setPosition(500,400);
         gui_sensor.setHeaderBackgroundColor(ofColor(255,0,0));
         gui_sensor.add(smoothing.set("smoothing",0.1,0.0001,1));
         gui_sensor.add(accumAmount.set("accumAmount",10,1,100));
@@ -147,21 +147,25 @@ public:
         
         if (!deviceDescriptors.empty()) {
             
-            ofLogNotice("sensorHandler::setup") << "Connected Devices: ";
+            ofLogNotice("sensorHandler::setupSerial") << "Connected Devices: ";
             for (auto deviceDescriptor: deviceDescriptors){
-                ofLogNotice("ofApp::setup") << "\t" << deviceDescriptor;
+                ofLogNotice("sensorHandler::setupSerial") << "\t" << deviceDescriptor;
             }
             
             //check how many devices match to what we are looking for
             int matchingDeviceCount = 0;
             for (auto deviceDescriptor: deviceDescriptors){
-#ifdef USE_SERIAL
-                if(ofIsStringInString(deviceDescriptor.description(), "Teensy")){
-#endif
-                    matchingDeviceCount++;
-#ifdef USE_SERIAL
+
+
+                if(ofIsStringInString(deviceDescriptor.description(), "Teensy") || ofIsStringInString(deviceDescriptor.description(), "ttyACM")){
+ ofLogNotice("sensorHandler::setupSerial") << "ofIsStringInString() \t" << deviceDescriptor;
+                    ofLogNotice("sensorHandler::setupSerial") << "deviceDescriptor.description() \t" << deviceDescriptor.description();
+
+
+                                       matchingDeviceCount++;
+
                 }
-#endif
+
             }
             
             devices.resize(matchingDeviceCount);
@@ -169,28 +173,28 @@ public:
             
             int cnt = 0;
             for (auto deviceDescriptor: deviceDescriptors){
-#ifdef USE_SERIAL
-                if(ofIsStringInString(deviceDescriptor.description(), "Teensy")){
-#endif
+
+                if(ofIsStringInString(deviceDescriptor.description(), "Teensy") || ofIsStringInString(deviceDescriptor.description(), "ttyACM")){
+
                     // Choose a device based on correct deviceDescriptor and connect
                     bool success = devices[cnt].setup(deviceDescriptor, 115200); //9600); //115200);
                     
                     if (success){
                         devices[cnt].registerAllEvents(this);
-                        ofLogNotice("ofApp::setup") << "Successfully setup " << deviceDescriptor;
+                        ofLogNotice("sensorHandler::setupSerial") << "Successfully setup " << deviceDescriptor;
                         //                        allButtons[cnt].myID = cnt;
                         bDeviceConnected = true;
                         cnt++;
                     } else {
-                        ofLogNotice("ofApp::setup") << "Unable to setup " << deviceDescriptor;
+                        ofLogNotice("sensorHandler::setupSerial") << "Unable to setup " << deviceDescriptor;
                     }
-#ifdef USE_SERIAL   
+  
                 }
-#endif
+
             }
             
         }else{
-            ofLogNotice("ofApp::setup") << "No devices connected.";
+            ofLogNotice("sensorHandler::setupSerial") << "No devices connected.";
             bDeviceConnected = false;
         }
         
@@ -228,7 +232,7 @@ public:
             
             if(ofGetElapsedTimeMillis() - serialSendTimer > 10){
                 
-#ifdef USE_SERIAL
+#ifdef USE_SERIAL_SENDING
                 
                 if(serialSendBuffer->size() > 0){
                     serialSendTimer = ofGetElapsedTimeMillis();
@@ -362,7 +366,7 @@ public:
     //void
     
     void sendBytes(string message){
-#ifdef USE_SERIAL
+#ifdef USE_SERIAL_SENDING
         ofLog()<<"sendBytes() "<<message;
         //        ofx::IO::ByteBuffer textBuffer(message);
         //        devices[0].writeBytes(textBuffer);

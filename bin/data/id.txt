@@ -1,2 +1,2 @@
-me:computer-a
-other:computer-b
+me:a
+other:b

@@ -2,6 +2,36 @@
 
 #include "ofMain.h"
 
+enum SHOWSTATES{
+
+    SHOW_NEUTRAL = 0,
+
+    SHOW_START = 1,
+
+    SHOW_STOP = 2,
+
+    SHOW_RELAXED = 3,
+
+    SHOW_EMERGENCY = 4
+
+};
+
+//
+
+//enum SHOWSTATES_NAMES{
+
+//    SHOW_NEURAL = "neutral",
+
+//    SHOW_START = "start",
+
+//    SHOW_STOP = "stop,
+
+//    SHOW_RELAXED = "relaxed",
+
+//    SHOW_EMERGENCY = "emergency"
+
+//};
+
 #include "ofxGui.h"
 
 #include "ofxBiquadFilter.h"
@@ -35,7 +65,7 @@
 #include "versionNumbering.h"
 
 
-#define APP_VERSION "36 20220519 66b350f"
+#define APP_VERSION "48 20220822 bec8254"
 
 class ofApp : public ofBaseApp{
 public:
@@ -129,6 +159,7 @@ public:
      ofParameter<int> secondMinBrightness;
     ofParameter<int> secondMaxBrightness;
     ofParameter<int> touchBrightness;
+    ofParameter<int> unTouchBrightness;
 //    ofParameter<float> beat2Offset;
     
     ofParameter<float> firstBeatOnDur;
@@ -162,6 +193,11 @@ public:
     
     ofParameterGroup group_autoFake;
     ofParameter<bool> bEnableAutoFake;
+    ofParameter<bool> bFakeMe;
+    float fakeMe_startTimer;
+    ofParameter<float> fakeMe_minDuration;
+    bool fakeMe_running;
+    
     ofParameter<int> minLocalActiveDuration;
     ofParameter<int> maxLocalActiveDuration;
     float localActiveTimer;
@@ -180,4 +216,60 @@ public:
     ofParameter<int> fakeTouchDuration;
     
         ofTrueTypeFont    arial;
+    ofxPanel gui_movingHead;
+    ofParameter<bool> bUseMovingHead;
+    
+    ofParameterGroup group_dmx_channel;
+    ofParameterGroup group_dmx_values;
+    
+    ofParameter<int> dmx_start_channels[2];
+    
+    ofParameter<int> pan_channel, pan_fine_channel;
+    ofParameter<float> pan_angle_value[2];
+    ofParameter<int> tilt_channel, tilt_fine_channel;
+    ofParameter<float> tilt_angle_value[2]; 
+    
+    ofParameter<int> zoom_channel, zoom_fine_channel;
+    ofParameter<float> zoom_value[2];
+    
+    ofParameter<int> gobo_channel;
+    ofParameter<int> gobo_value[2];
+    
+    ofParameter<int> shutter_channel;
+    ofParameter<bool> shutter_onOff[2];
+    bool old_shutter_onOff[2];
+    
+    ofParameter<int> shutter_openValue;
+    ofParameter<int> shutter_closedValue;
+    int shutter_curValue[2];
+    
+    ofParameter<int> lamp_channel;
+    ofParameter<bool> lamp_onOff[2];
+    bool old_lamp_onOff[2];
+    ofParameter<int> lamp_offValue;
+    ofParameter<int> lamp_onValue;
+    int lamp_curValue[2];
+    
+    ofParameter<int> dimmer_channel;
+    ofParameter<int> dimmer_value[2];
+    
+    ofParameter<int> cyan_channel;
+    ofParameter<int> cyan_value[2];
+    ofParameter<int> magenta_channel;
+    ofParameter<int> magenta_value[2];
+    ofParameter<int> yellow_channel;
+    ofParameter<int> yellow_value[2];
+    ofParameter<int> colorWheel_channel;
+    ofParameter<int> colorWheel_value[2];
+    
+    ofParameter<int> focus_channel;
+    ofParameter<int> focus_value[2];
+    
+    ofParameter<bool> bTakeFromHearts;
+    string GetLetter(int value)
+    {
+        value += 1; //so that int 0 gives us first letter i.e. A
+        char letter = (char) ('A' - 1 + value);
+        return ofToString(letter);
+    }
 };

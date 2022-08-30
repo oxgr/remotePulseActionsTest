@@ -19,14 +19,11 @@
 	<enableOSC>1</enableOSC>
 	<oscOutPort>9924</oscOutPort>
 	<oscInPort>9923</oscInPort>
-	<sendToIP>10.0.0.50</sendToIP>
+	<sendToIP>10.0.0.52</sendToIP>
 	<oscSendInterval>10</oscSendInterval>
 	<other_touch_received>0</other_touch_received>
 	<other_bpm_received>-1</other_bpm_received>
-	<me_touch_sent>0</me_touch_sent>
-	<me_bpm_sent>54</me_bpm_sent>
+	<me_touch_sent>1</me_touch_sent>
+	<me_bpm_sent>60</me_bpm_sent>
 	<periodicResend>0</periodicResend>
-	<state_index>0</state_index>
-	<state_name>neutral</state_name>
-	<app_state>0</app_state>
 </osc>

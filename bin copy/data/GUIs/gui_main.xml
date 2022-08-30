@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <remotePulse>
-	<ver>48 20220822 bec8254</ver>
+	<ver>38 20220523 70bdf32</ver>
 	<showGui>0</showGui>
 	<debug>1<triggerFake>0</triggerFake>
 		<meTouched>0</meTouched>
@@ -12,8 +12,8 @@
 		<triggerOtherFake>0</triggerOtherFake>
 		<testDmxValues>0</testDmxValues>
 		<fadeTest>0</fadeTest>
-		<testDmxChan>1</testDmxChan>
-		<meFakeBPM>54</meFakeBPM>
+		<testDmxChan>4</testDmxChan>
+		<meFakeBPM>77</meFakeBPM>
 		<otherFakeBPM>112</otherFakeBPM>
 	</debug>
 	<enableDMX>1</enableDMX>
@@ -25,49 +25,33 @@
 	<meTestBPM>60</meTestBPM>
 	<otherTestBPM>60</otherTestBPM>
 	<beat2Offset>0.2</beat2Offset>
-	<touchBright>165</touchBright>
+	<touchBright>47</touchBright>
 	<firstBright>209</firstBright>
 	<secondBright>206</secondBright>
 	<firstVol>0.525</firstVol>
 	<secondVol>0.355</secondVol>
 	<heart_me>
-		<dmxChan_beat1>21</dmxChan_beat1>
-		<dmxChan_beat2>41</dmxChan_beat2>
+		<dmxChan_beat1>4</dmxChan_beat1>
+		<dmxChan_beat2>4</dmxChan_beat2>
 		<useAudio>0</useAudio>
-		<useLights>0</useLights>
-		<untouch_tilt_1>115</untouch_tilt_1>
-		<untouch_tilt_2>115</untouch_tilt_2>
-		<touch_tilt_1>120</touch_tilt_1>
-		<touch_tilt_2>120</touch_tilt_2>
-		<tiltEasying>0.0315816</tiltEasying>
-		<tiltEasing>0.1</tiltEasing>
-		<dimmerEasing>0.1</dimmerEasing>
 	</heart_me>
 	<heart_other>
-		<dmxChan_beat1>21</dmxChan_beat1>
-		<dmxChan_beat2>41</dmxChan_beat2>
+		<dmxChan_beat1>3</dmxChan_beat1>
+		<dmxChan_beat2>3</dmxChan_beat2>
 		<useAudio>1</useAudio>
-		<useLights>1</useLights>
-		<untouch_tilt_1>45</untouch_tilt_1>
-		<untouch_tilt_2>45</untouch_tilt_2>
-		<touch_tilt_1>55</touch_tilt_1>
-		<touch_tilt_2>55</touch_tilt_2>
-		<tiltEasying>0.1</tiltEasying>
-		<tiltEasing>0.1</tiltEasing>
-		<dimmerEasing>0.1</dimmerEasing>
 	</heart_other>
 	<systemVolume>100</systemVolume>
 	<minBpmCount>1</minBpmCount>
-	<firstMinBright>38</firstMinBright>
-	<firstMaxBright>255</firstMaxBright>
-	<secondMinBright>45</secondMinBright>
-	<secondMaxBright>255</secondMaxBright>
+	<firstMinBright>8</firstMinBright>
+	<firstMaxBright>81</firstMaxBright>
+	<secondMinBright>10</secondMinBright>
+	<secondMaxBright>81</secondMaxBright>
 	<firstBeatOnDur>0.175</firstBeatOnDur>
 	<firstPause>0.3</firstPause>
 	<secondBeatOnDur>0.485</secondBeatOnDur>
 	<forceUnTouch>0</forceUnTouch>
-	<lightViaDmx>1</lightViaDmx>
-	<lightViaSerial>0</lightViaSerial>
+	<lightViaDmx>0</lightViaDmx>
+	<lightViaSerial>1</lightViaSerial>
 	<minBpm>25</minBpm>
 	<group>
 		<enableAutoFake>0</enableAutoFake>
@@ -89,6 +73,4 @@
 	</autoFake>
 	<enableAutoFake>0</enableAutoFake>
 	<IP_index>0</IP_index>
-	<at_Athens>0</at_Athens>
-	<unTouchBright>65</unTouchBright>
 </remotePulse>

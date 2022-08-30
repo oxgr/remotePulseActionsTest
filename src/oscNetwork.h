@@ -3,12 +3,15 @@
 #ifndef oscNetwork_h
 #define oscNetwork_h
 
+
+
 #ifdef USE_OSC
 
 #include "ofxOsc.h"
 
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
+#include "ofxDropdown.h"
 
 //set computer to IP 188.0.1.250 with mask 255.255.255.0
 //#define HOST "188.0.1.255" // "192.168.100.101"
@@ -17,6 +20,7 @@
 //
 //#define PORT_RECEIVER 9000
 #define NUM_MSG_STRINGS 45
+
 
 class oscNetwork{
 public:
@@ -58,25 +62,34 @@ public:
     int rxTouch;
     ofParameter<string> rxTouch_str;
     ofParameter<string> txTouch_str;
-//    bool initDone;
-//    float initTimer;
+    //    bool initDone;
+    //    float initTimer;
     
     
     float lastOscTimer;
     
     string myIP;
     string broadCastIP;
-//    int inputType;
+    //    int inputType;
     
     bool gotBPM = false;
     bool gotTouch = false;
     
     float other_runtime_fade = 255;
-    string other_runtimeStr = "hi";
-//    string old_other_runtimeStr = "hi";
-    string other_serialStr = "hi";
+    string other_runtimeStr = "Anfang";
+    //    string old_other_runtimeStr = "Anfang";
+    string other_serialStr = "Anfang";
     
     float lastMsgTimer = 0;
+    
+//    int showState = -1;
+//    ofParameter<int> showState = -1;
+//    ofParameter<string> showState_str;
+    
+    unique_ptr<ofxIntDropdown> intDropdown;
+    ofParameter<int> showState;
+    
+    string show_names[5] = {"neutral","start","stop","relaxed","emergency"};
     
     void setup(string _myIP, string _broadCastIP){
         
@@ -100,7 +113,7 @@ public:
         //        
         gui_osc.add(oscSendPort.set("oscOutPort", 9924,9923,9924));
         gui_osc.add(oscReceivePort.set("oscInPort", 9923,9923,9924));
-        gui_osc.add(sendToIP.set("sendToIP", "10.0.1.191"));
+        gui_osc.add(sendToIP.set("sendToIP", "10.100.0.50"));
         
         gui_osc.add(oscSendInterval.set("oscSendInterval", 10,0,100));
         
@@ -111,10 +124,36 @@ public:
         gui_osc.add(txBPM_str.set("me bpm sent", ""));
         
         gui_osc.add(bPeriodicResend.set("periodicResend", false));
+  
+        showState.setName("app state");
+        intDropdown = make_unique<ofxIntDropdown>(showState);
+        intDropdown->enableCollapseOnSelection();
+        intDropdown->disableMultipleSelection();
+        intDropdown->add(0, "neutral");
+        intDropdown->add(1, "start");
+        intDropdown->add(2, "stop");
+        intDropdown->add(3, "relaxed");
+        intDropdown->add(4, "emergency");        
+        gui_osc.add(intDropdown.get());
         
+//        strOptions_A.setName("app state");
+//        functionsDropdown_A = make_unique<ofxDropdown>(strOptions_A);
+//        functionsDropdown_A->enableCollapseOnSelection();
+//        functionsDropdown_A->disableMultipleSelection();
+//        functionsDropdown_A->add("neutral")
+//        functionsDropdown_A->add("start");
+//        functionsDropdown_A->add("stop");
+//        functionsDropdown_A->add("relaxed");
+//        functionsDropdown_A->add("emergency");
+//        
+//        gui_osc.add(functionsDropdown_A.get());
+        
+//        gui_osc.add(showState.set("state index", 0,0,4));
+//        gui_osc.add(showState_str.set("state name", ""));
         gui_osc.loadFromFile("GUIs/gui_osc.xml");
         
-//        inputType = -1;
+        showState = SHOW_NEUTRAL;
+        //        inputType = -1;
     }
     
     void init(){
@@ -130,8 +169,8 @@ public:
         
         receiver.setup(oscReceivePort);
         
-//        initDone = false;
-//        initTimer = ofGetElapsedTimef();
+        //        initDone = false;
+        //        initTimer = ofGetElapsedTimef();
     }
     
     void exit(){
@@ -255,7 +294,7 @@ public:
                 lastMsgTimer = ofGetElapsedTimef();
                 gotTouch = true;
                 rxTouch = 0;
-                 ofLog()<<" lastMsgTimer > 30. have not received anything for a long time via OSC! force unTouch";
+                ofLog()<<" lastMsgTimer > 30. have not received anything for a long time via OSC! force unTouch";
             }
         }//end if(bEnableOSC)
         
@@ -280,7 +319,7 @@ public:
                 if(bDebug) ofLog()<<"osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
-//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
+                    //                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
                     rxBPM = m.getArgAsInt(1);
                     rxBPM_str = ofToString(rxBPM);
                     gotBPM = true;
@@ -293,12 +332,54 @@ public:
                     ofLog()<<"myIP "<<myIP<<" osc for "<<temp_forWhom<<" bpm "<<m.getArgAsInt(1);
                 }
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
-//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
+                    //                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
                     rxTouch = m.getArgAsInt(1);
                     rxTouch_str = ofToString(rxTouch);
                     gotTouch= true;
                     lastMsgTimer = ofGetElapsedTimef();
                 }    
+                
+                // startShow (all lights and sound to normal)
+                // stopShow (all lights and sound off)
+                // relaxed (less light, less sound)
+                // emergency (all lights on, no sound)
+                
+            }else if(m.getAddress() == "/startShow"){
+                
+                ofLog()<<"m.getAddress() /startShow ";
+                showState = SHOW_START;
+                if(bDebug) ofLog()<<"myIP "<<myIP;
+                    
+                rxTouch_str = "ofToString(m.getAddress())";
+                lastMsgTimer = ofGetElapsedTimef();
+                
+            }else if(m.getAddress() == "/stopShow"){
+                
+                ofLog()<<"m.getAddress() /startShow ";
+                showState = SHOW_STOP;
+                if(bDebug) ofLog()<<"myIP "<<myIP;
+                    
+                rxTouch_str = "ofToString(m.getAddress())";
+                lastMsgTimer = ofGetElapsedTimef();
+                
+            }else if(m.getAddress() == "/relaxedShow"){
+                
+                ofLog()<<"m.getAddress() /relaxedShow ";
+                showState = SHOW_RELAXED;
+                if(bDebug) ofLog()<<"myIP "<<myIP;
+                    
+                rxTouch_str = "ofToString(m.getAddress())";
+                lastMsgTimer = ofGetElapsedTimef();
+   
+            }else if(m.getAddress() == "/emergencyShow"){
+                
+                ofLog()<<"m.getAddress() /emergencyShow ";
+                showState = SHOW_EMERGENCY;
+                if(bDebug) ofLog()<<"myIP "<<myIP;
+                    
+                rxTouch_str = "ofToString(m.getAddress())";
+                lastMsgTimer = ofGetElapsedTimef();
+                
                 
             }else if(m.getAddress() == "/appAlive"){
                 //MARK: /appAlive
@@ -311,9 +392,9 @@ public:
                     ofLog()<<"myIP:" <<endl;
                     printStringAsInts(myIP);
                     
-//                    ofLog()<<"|"<<temp_forWhom<<"|";
-//                    ofLog()<<"|"<<myIP<<"|";
-//                    ofLog()<<_myIP<<"|";
+                    //                    ofLog()<<"|"<<temp_forWhom<<"|";
+                    //                    ofLog()<<"|"<<myIP<<"|";
+                    //                    ofLog()<<_myIP<<"|";
                     ofLog()<<"runtimeStr "<<m.getArgAsString(1)<<" serialStr "<<m.getArgAsInt(2);
                     ofLog()<<"compare "<<(temp_forWhom == myIP ? "same" : "NOT");
                     ofLog()<<"ofIsStringInString "<<(ofIsStringInString(myIP,temp_forWhom) ? "same" : "NOT");
@@ -322,8 +403,8 @@ public:
                 //strcmp(param, "test") == 0
                 //temp_forWhom == myIP
                 
-//                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
-//                if(ofIsStringInString(myIP, temp_forWhom)){
+                //                if(temp_forWhom.compare(myIP) == true || temp_forWhom.compare(broadCastIP) == true){
+                //                if(ofIsStringInString(myIP, temp_forWhom)){
                 if(temp_forWhom == myIP || temp_forWhom == broadCastIP){
                     other_runtimeStr = m.getArgAsString(1);
                     other_serialStr = ofToString(m.getArgAsInt(2));
@@ -365,7 +446,7 @@ public:
             }
             
         }//end while(receiver.hasWaitingMessages()){
-//        if(bDebug)  ofLog()<<"oscNetwork update other_runtimeStr "<<other_runtimeStr;
+        //        if(bDebug)  ofLog()<<"oscNetwork update other_runtimeStr "<<other_runtimeStr;
     }
     
     void addSenderMsg(string _handle, int _valueA){
@@ -448,6 +529,7 @@ public:
             //            if(bEnableOSC == false) sendMode(0);
         }
         
+//        showState_str = show_names[showState];
     }
     
     

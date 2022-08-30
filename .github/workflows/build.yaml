@@ -54,13 +54,13 @@ jobs:
       - name: Download ofx libs
         run: bash ./ofx/scripts/osx/download_libs.sh
 
-      - name: Install project generator
-        run: |
-          cd ./ofx/
-          echo "Downloading projectGenerator from ci server"
-          wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip
-          unzip projectGenerator-osx.zip
-          rm projectGenerator-osx.zip
+      # - name: Install project generator
+      #   run: |
+      #     cd ./ofx/
+      #     echo "Downloading projectGenerator from ci server"
+      #     wget http://ci.openframeworks.cc/projectGenerator/projectGenerator-osx.zip
+      #     unzip projectGenerator-osx.zip
+      #     rm projectGenerator-osx.zip
 
       - name: Create project files for xcode
         run: |
@@ -73,11 +73,12 @@ jobs:
         run: |
           cd ./app/remotePulse
           ls -la
-          echo Makefile below **********
+          echo Makefile below \n\n
           cat Makefile
-          echo config.make below **********
+          echo config.make below \n\n
           cat config.make
-        # make
+          OF_ROOT=./ofx
+          make
         # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub

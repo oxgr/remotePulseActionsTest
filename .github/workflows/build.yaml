@@ -28,7 +28,7 @@ jobs:
           path: ofx
           submodules: true
       
-      # Addons: Checking out additional addons into the correct openFrameworks directory
+      # Addons: Checking out additional addons into the correct openFrameworks directory.
 
       - name: Checkout addons
         uses: actions/checkout@v2

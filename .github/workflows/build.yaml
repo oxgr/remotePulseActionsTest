@@ -29,26 +29,33 @@ jobs:
           submodules: true
       
       # Addons: Checking out additional addons into the correct openFrameworks directory
-      - name: Checkout ofxDmx addon
+
+      - name: Checkout addons
         uses: actions/checkout@v2
         with:
-          repository:  kylemcdonald/ofxDmx
-          path: ofx/addons/ofxDmx
-      - name: Checkout ofxTiming addon
-        uses: actions/checkout@v2
-        with:
-          repository:  kylemcdonald/ofxTiming
-          path: ofx/addons/ofxTiming
-      - name: Checkout ofxIO addon
-        uses: actions/checkout@v2
-        with:
-          repository:  bakercp/ofxIO
-          path: ofx/addons/ofxIO
-      - name: Checkout ofxSerial addon
-        uses: actions/checkout@v2
-        with:
-          repository:  bakercp/ofxSerial
-          path: ofx/addons/ofxSerial
+          repository: oxgr/addons
+          path: ofx/addons
+
+      # - name: Checkout ofxDmx addon
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository:  kylemcdonald/ofxDmx
+      #     path: ofx/addons/ofxDmx
+      # - name: Checkout ofxTiming addon
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository:  kylemcdonald/ofxTiming
+      #     path: ofx/addons/ofxTiming
+      # - name: Checkout ofxIO addon
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository:  bakercp/ofxIO
+      #     path: ofx/addons/ofxIO
+      # - name: Checkout ofxSerial addon
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository:  bakercp/ofxSerial
+      #     path: ofx/addons/ofxSerial
 
       # Downloading additional libs for ofx
       - name: Download ofx libs

@@ -81,11 +81,11 @@ jobs:
         run: |
           cd ./app/remotePulse
           ls -la
+          sed -i'' 's/OF_ROOT\ \=\ \/Applications\/of\_v0\.11\.2\_osx\_release//g' ./config.make
           echo Makefile below \n\n
           cat Makefile
           echo config.make below \n\n
           cat config.make
-          sed -i '' 's/OF_ROOT\ \=\ \/Applications\/of\_v0\.11\.2\_osx\_release//g' ./config.make
           make
         # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 

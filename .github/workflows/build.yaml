@@ -73,7 +73,11 @@ jobs:
         run: |
           cd ./app/remotePulse
           ls -la
-          make
+          echo Makefile below **********
+          cat Makefile
+          echo config.make below **********
+          cat config.make
+        # make
         # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub

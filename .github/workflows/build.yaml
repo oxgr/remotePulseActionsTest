@@ -15,7 +15,7 @@ jobs:
 
     steps:
       # Checking out our iva repo into the folder "app"
-      - name: Checkout
+      - name: Checkout app
         uses: actions/checkout@v2
         with:
           path: app/remotePulse
@@ -85,9 +85,9 @@ jobs:
           cat Makefile
           echo config.make below \n\n
           cat config.make
-          OF_ROOT=./ofx
-          xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
-        # make
+          sed -i '' 's/OF_ROOT\ \=\ \/Applications\/of\_v0\.11\.2\_osx\_release//g' ./config.make
+          make
+        # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub
       - name: Uploading artifacts

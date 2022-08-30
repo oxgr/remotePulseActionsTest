@@ -79,8 +79,8 @@ jobs:
           echo config.make below \n\n
           cat config.make
           OF_ROOT=./ofx
-          make
-        # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
+        # make
+          xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub
       - name: Uploading artifacts

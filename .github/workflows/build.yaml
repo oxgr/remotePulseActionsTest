@@ -25,9 +25,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository:  openframeworks/openFrameworks
+          ref: 'origin/stable'
           path: ofx
           submodules: true
-        ref: 'origin/stable'
       
       # Addons: Checking out additional addons into the correct openFrameworks directory.
 

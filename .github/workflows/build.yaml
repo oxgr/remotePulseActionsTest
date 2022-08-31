@@ -70,12 +70,12 @@ jobs:
           unzip projectGenerator-osx.zip
           rm projectGenerator-osx.zip
 
-      - name: Create project files for xcode
-        run: |
-          ls ./app
-          echo ---------------------------
-          ls ./app/remotePulse
-          ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
+      # - name: Create project files for xcode
+      #   run: |
+      #     ls ./app
+      #     echo ---------------------------
+      #     ls ./app/remotePulse
+      #     ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
 
       # Building the project
       - name: Building app

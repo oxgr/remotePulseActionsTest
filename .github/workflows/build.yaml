@@ -96,3 +96,9 @@ jobs:
         with:
           name: Mac Os Artifacts
           path: ./app/remotePulse/bin/ 
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: test-release
+          files: app/**

@@ -82,7 +82,7 @@ jobs:
         run: |
           cd ./app/remotePulse
           ls -la
-          sed -i '' 's/^OF\_ROOT\ \=*/OF\_ROOT\ \=\ \.\.\/\.\.\/ofx/g' config.make
+          sed -i '' 's/^OF\_ROOT\ \=.*/OF\_ROOT\ \=\ \.\.\/\.\.\/ofx/g' config.make
           echo Makefile below \n\n
           cat Makefile
           echo config.make below \n\n

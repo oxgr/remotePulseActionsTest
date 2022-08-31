@@ -2,7 +2,6 @@ ofxBiquadFilter
 ofxDmx
 ofxDropdown
 ofxGui
-ofxPoco
 ofxIO
 ofxJSON
 ofxMQTT

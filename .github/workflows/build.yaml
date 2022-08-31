@@ -27,7 +27,7 @@ jobs:
           repository:  openframeworks/openFrameworks
           path: ofx
           submodules: true
-        # ref: '0.11.2'
+        ref: 'origin/stable'
       
       # Addons: Checking out additional addons into the correct openFrameworks directory.
 

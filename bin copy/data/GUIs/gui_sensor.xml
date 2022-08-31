@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<serialSensor>
-	<smoothing>0.1</smoothing>
-	<accumAmount>10</accumAmount>
-</serialSensor>

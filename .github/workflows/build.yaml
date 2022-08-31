@@ -70,24 +70,25 @@ jobs:
           unzip projectGenerator-osx.zip
           rm projectGenerator-osx.zip
 
-      # - name: Create project files for xcode
-      #   run: |
-      #     ls ./app
-      #     echo ---------------------------
-      #     ls ./app/remotePulse
-      #     ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
+      - name: Create project files for xcode
+        run: |
+          ls ./app
+          echo ---------------------------
+          ls ./app/remotePulse
+          ./ofx/projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator -o"./ofx" -p"osx" ./app/remotePulse
 
       # Building the project
       - name: Building app
         run: |
           cd ./app/remotePulse
           ls -la
-          sed -i '' 's/\/Applications\/of\_v0\.11\.2\_osx\_release/\.\.\/\.\.\/ofx/g' config.make
+          sed -i '' 's/^OF\_ROOT\ \=*/OF\_ROOT\ \=\ \.\.\/\.\.\/ofx/g' config.make
           echo Makefile below \n\n
           cat Makefile
           echo config.make below \n\n
           cat config.make
           make
+        # sed -i '' 's/\/Applications\/of\_v0\.11\.2\_osx\_release/\.\.\/\.\.\/ofx/g' config.make
         # xcodebuild -configuration Release -target remotePulse -project "remotePulse.xcodeproj"
 
       # Upload executable binaries to GitHub
